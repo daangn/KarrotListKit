@@ -1,3 +1,7 @@
+//
+//  Copyright (c) 2024 Danggeun Market Inc.
+//
+
 import XCTest
 @testable import KarrotListKit
 
