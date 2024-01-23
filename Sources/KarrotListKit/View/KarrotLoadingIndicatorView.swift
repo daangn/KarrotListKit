@@ -4,8 +4,6 @@
 
 import UIKit
 
-import KarrotUIKit
-
 public final class KarrotLoadingIndicatorView: UIView {
   public struct ViewModel: Equatable {
     public let color: UIColor
@@ -13,7 +11,7 @@ public final class KarrotLoadingIndicatorView: UIView {
     public let layoutMode: ContentLayoutMode
 
     public init(
-      color: UIColor = .carrot500,
+      color: UIColor,
       style: UIActivityIndicatorView.Style = .medium,
       layoutMode: ContentLayoutMode = .flexibleHeight(estimatedHeight: 44.0)
     ) {

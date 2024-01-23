@@ -12,7 +12,7 @@ public struct KarrotLoadingIndicatorComponent: Component {
     viewModel.layoutMode
   }
 
-  public init(viewModel: KarrotLoadingIndicatorView.ViewModel = .init()) {
+  public init(viewModel: KarrotLoadingIndicatorView.ViewModel) {
     self.viewModel = viewModel
   }
 

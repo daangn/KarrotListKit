@@ -5,14 +5,12 @@
 import Combine
 import Foundation
 
-import PINRemoteImage
-
 public final class RemoteImagePrefetchingPlugin: CollectionViewPrefetchingPlugin {
 
-  private let remoteImageManager: PINRemoteImageManager
+  private let remoteImageProvider: RemoteImageProviding
 
-  public init(remoteImageManager: PINRemoteImageManager = PINRemoteImageManager.shared()) {
-    self.remoteImageManager = remoteImageManager
+  public init(remoteImageProvider: RemoteImageProviding) {
+    self.remoteImageProvider = remoteImageProvider
   }
 
   public func prefetch(dataSource: ComponentPrefetchable) -> AnyCancellable? {
@@ -21,12 +19,12 @@ public final class RemoteImagePrefetchingPlugin: CollectionViewPrefetchingPlugin
     }
 
     let uuids = dataSource.remoteImageURLs.compactMap {
-      remoteImageManager.prefetchImage(with: $0)
+      remoteImageProvider.fetchImage(url: $0)
     }
 
     return AnyCancellable { [weak self] in
       for uuid in uuids {
-        self?.remoteImageManager.cancelTask(with: uuid)
+        self?.remoteImageProvider.cancelTask(uuid: uuid)
       }
     }
   }
