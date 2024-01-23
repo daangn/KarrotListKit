@@ -7,8 +7,6 @@ import UIKit
 
 import DifferenceKit
 
-import KarrotUIKit
-
 final public class CollectionViewAdapter: NSObject {
   public var configuration: CollectionViewAdapterConfiguration
 
@@ -33,7 +31,9 @@ final public class CollectionViewAdapter: NSObject {
   private var list: List?
 
   private lazy var pullToRefreshControl = UIRefreshControl().then {
-    $0.tintColor = UIColor.carrot500
+    if let refreshControlTintColor = configuration.refreshControlTintColor {
+      $0.tintColor = refreshControlTintColor
+    }
     $0.addTarget(
       self,
       action: #selector(pullToRefresh),
