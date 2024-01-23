@@ -1,0 +1,20 @@
+name: Draft Release Note
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  draft-release-note:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: release-drafter/release-drafter@v5
+        with:
+          version: ${{ inputs.version_tag || github.ref_name }}
+          footer: "${{ steps.component_version_table.outputs.markdown }}"
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
