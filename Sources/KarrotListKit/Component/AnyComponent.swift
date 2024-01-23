@@ -4,8 +4,6 @@
 
 import UIKit
 
-import KarrotFoundation
-
 public struct AnyViewModel: Equatable {
 
   private let base: any Equatable
