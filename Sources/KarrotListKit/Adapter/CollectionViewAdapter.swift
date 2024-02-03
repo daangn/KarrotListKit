@@ -401,6 +401,24 @@ extension CollectionViewAdapter {
       )
     )
   }
+
+  public func scrollViewWillEndDragging(
+    _ scrollView: UIScrollView,
+    withVelocity velocity: CGPoint,
+    targetContentOffset: UnsafeMutablePointer<CGPoint>
+  ) {
+    guard let collectionView else {
+      return
+    }
+
+    list?.event(for: WillEndDraggingEvent.self)?.handler(
+      .init(
+        collectionView: collectionView,
+        velocity: velocity,
+        targetContentOffset: targetContentOffset
+      )
+    )
+  }
 }
 
 // MARK: - UICollectionViewDataSourcePrefetching

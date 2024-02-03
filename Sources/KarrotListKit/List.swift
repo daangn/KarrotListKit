@@ -40,4 +40,7 @@ extension List {
     registerEvent(WillBeginDraggingEvent(handler: handler))
   }
 
+  public func willEndDragging(_ handler: @escaping (WillEndDraggingEvent.EventContext) -> Void) -> Self {
+    registerEvent(WillEndDraggingEvent(handler: handler))
+  }
 }
