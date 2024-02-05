@@ -432,13 +432,13 @@ extension CollectionViewAdapter: UICollectionViewDataSourcePrefetching {
       }
 
       guard let item = item(at: indexPath),
-            let dataSource = item.component.as(ComponentPrefetchable.self)
+            let prefetchableComponent = item.component.as(ComponentResourcePrefetchable.self)
       else {
         continue
       }
 
       prefetchingIndexPathOperations[indexPath] = prefetchingPlugins.compactMap {
-        $0.prefetch(dataSource: dataSource)
+        $0.prefetch(with: prefetchableComponent)
       }
     }
   }
