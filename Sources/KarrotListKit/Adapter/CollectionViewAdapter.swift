@@ -31,9 +31,7 @@ final public class CollectionViewAdapter: NSObject {
   private var list: List?
 
   private lazy var pullToRefreshControl = UIRefreshControl().then {
-    if let refreshControlTintColor = configuration.refreshControlTintColor {
-      $0.tintColor = refreshControlTintColor
-    }
+    $0.tintColor = configuration.refreshControl.tintColor
     $0.addTarget(
       self,
       action: #selector(pullToRefresh),
@@ -44,7 +42,7 @@ final public class CollectionViewAdapter: NSObject {
   // MARK: - Initializer
 
   public init(
-    configuration: CollectionViewAdapterConfiguration = .init(),
+    configuration: CollectionViewAdapterConfiguration,
     collectionView: UICollectionView,
     layoutAdapter: CollectionViewLayoutAdaptable,
     prefetchingPlugins: [CollectionViewPrefetchingPlugin] = []
@@ -63,7 +61,7 @@ final public class CollectionViewAdapter: NSObject {
       collectionView.prefetchDataSource = self
     }
 
-    if configuration.pullToRefreshEnabled {
+    if configuration.refreshControl.isEnabled {
       collectionView.refreshControl = pullToRefreshControl
     }
   }
