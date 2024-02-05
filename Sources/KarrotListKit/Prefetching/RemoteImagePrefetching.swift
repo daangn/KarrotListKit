@@ -4,7 +4,7 @@
 
 import Foundation
 
-public protocol RemoteImageProviding {
-  func fetchImage(url: URL) -> UUID
+public protocol RemoteImagePrefetching {
+  func prefetchImage(url: URL) -> UUID?
   func cancelTask(uuid: UUID)
 }
