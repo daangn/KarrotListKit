@@ -7,10 +7,10 @@ import Foundation
 
 public final class RemoteImagePrefetchingPlugin: CollectionViewPrefetchingPlugin {
 
-  private let remoteImageProvider: RemoteImageProviding
+  private let remoteImagePrefetcher: RemoteImagePrefetching
 
-  public init(remoteImageProvider: RemoteImageProviding) {
-    self.remoteImageProvider = remoteImageProvider
+  public init(remoteImagePrefetcher: RemoteImagePrefetching) {
+    self.remoteImagePrefetcher = remoteImagePrefetcher
   }
 
   public func prefetch(dataSource: ComponentPrefetchable) -> AnyCancellable? {
@@ -19,12 +19,12 @@ public final class RemoteImagePrefetchingPlugin: CollectionViewPrefetchingPlugin
     }
 
     let uuids = dataSource.remoteImageURLs.compactMap {
-      remoteImageProvider.fetchImage(url: $0)
+      remoteImagePrefetcher.prefetchImage(url: $0)
     }
 
     return AnyCancellable { [weak self] in
       for uuid in uuids {
-        self?.remoteImageProvider.cancelTask(uuid: uuid)
+        self?.remoteImagePrefetcher.cancelTask(uuid: uuid)
       }
     }
   }
