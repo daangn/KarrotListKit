@@ -13,12 +13,12 @@ public final class RemoteImagePrefetchingPlugin: CollectionViewPrefetchingPlugin
     self.remoteImagePrefetcher = remoteImagePrefetcher
   }
 
-  public func prefetch(dataSource: ComponentPrefetchable) -> AnyCancellable? {
-    guard let dataSource = dataSource as? RemoteImagePrefetchable else {
+  public func prefetch(with component: ComponentResourcePrefetchable) -> AnyCancellable? {
+    guard let component = component as? ComponentRemoteImagePrefetchable else {
       return nil
     }
 
-    let uuids = dataSource.remoteImageURLs.compactMap {
+    let uuids = component.remoteImageURLs.compactMap {
       remoteImagePrefetcher.prefetchImage(url: $0)
     }
 
@@ -29,4 +29,3 @@ public final class RemoteImagePrefetchingPlugin: CollectionViewPrefetchingPlugin
     }
   }
 }
-
