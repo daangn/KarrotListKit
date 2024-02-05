@@ -5,19 +5,35 @@
 import UIKit
 
 public struct CollectionViewAdapterConfiguration {
-  public let pullToRefreshEnabled: Bool
 
+  public let refreshControl: RefreshControl
   public let batchUpdateInterruptCount: Int
 
-  public let refreshControlTintColor: UIColor?
-
   public init(
-    pullToRefreshEnabled: Bool = false,
-    batchUpdateInterruptCount: Int = 100,
-    refreshControlTintColor: UIColor? = nil
+    refreshControl: RefreshControl = .disabled(),
+    batchUpdateInterruptCount: Int = 100
   ) {
-    self.pullToRefreshEnabled = pullToRefreshEnabled
+    self.refreshControl = refreshControl
     self.batchUpdateInterruptCount = batchUpdateInterruptCount
-    self.refreshControlTintColor = refreshControlTintColor
+  }
+}
+
+
+// MARK: - RefreshControl
+
+extension CollectionViewAdapterConfiguration {
+
+  public struct RefreshControl {
+
+    public let isEnabled: Bool
+    public let tintColor: UIColor
+
+    public static func enabled(tintColor: UIColor) -> RefreshControl {
+      .init(isEnabled: true, tintColor: tintColor)
+    }
+
+    public static func disabled() -> RefreshControl {
+      .init(isEnabled: false, tintColor: .clear)
+    }
   }
 }
