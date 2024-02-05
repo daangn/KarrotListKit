@@ -6,7 +6,15 @@ import UIKit
 
 public struct CollectionViewAdapterConfiguration {
 
+  /// CollectionView 의 RefreshControl 구성
+  ///
+  /// 기본값은 `.disabled()` 입니다.
   public let refreshControl: RefreshControl
+
+  /// changeSet 이 `batchUpdateInterruptCount` 수를 넘기면 
+  /// `UICollectionView` 가 animated updates 가 아닌 reloadData 로 동작합니다.
+  ///
+  /// 기본값은 `100` 입니다.
   public let batchUpdateInterruptCount: Int
 
   public init(
@@ -25,7 +33,10 @@ extension CollectionViewAdapterConfiguration {
 
   public struct RefreshControl {
 
+    /// RefreshControl 적용 여부
     public let isEnabled: Bool
+
+    /// RefreshControl 의 tintColor
     public let tintColor: UIColor
 
     public static func enabled(tintColor: UIColor) -> RefreshControl {
