@@ -5,9 +5,9 @@
 import Combine
 import UIKit
 
-final class UICollectionViewComponentCell: UICollectionViewCell, ComponentRenderable {
+public final class UICollectionViewComponentCell: UICollectionViewCell, ComponentRenderable {
 
-  var renderedContent: UIView?
+  public internal(set) var renderedContent: UIView?
 
   var coordinator: Any?
 
@@ -20,11 +20,11 @@ final class UICollectionViewComponentCell: UICollectionViewCell, ComponentRender
   // MARK: - Initializing
 
   @available(*, unavailable)
-  public required init?(coder aDecoder: NSCoder) {
+  required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
 
-  public override init(frame: CGRect) {
+  override init(frame: CGRect) {
     super.init(frame: frame)
 
     backgroundColor = .clear
@@ -37,7 +37,7 @@ final class UICollectionViewComponentCell: UICollectionViewCell, ComponentRender
 
   // MARK: - Override Methods
 
-  override func prepareForReuse() {
+  public override func prepareForReuse() {
     super.prepareForReuse()
 
     cancellables?.forEach { $0.cancel() }
