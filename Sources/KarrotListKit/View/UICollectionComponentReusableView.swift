@@ -17,11 +17,11 @@ final class UICollectionComponentReusableView: UICollectionReusableView, Compone
   // MARK: - Initializing
 
   @available(*, unavailable)
-  public required init?(coder aDecoder: NSCoder) {
+  required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
 
-  public override init(frame: CGRect) {
+  override init(frame: CGRect) {
     super.init(frame: frame)
 
     backgroundColor = .clear
@@ -29,7 +29,7 @@ final class UICollectionComponentReusableView: UICollectionReusableView, Compone
 
   // MARK: - Override Methods
 
-  public override func preferredLayoutAttributesFitting(
+  override func preferredLayoutAttributesFitting(
     _ layoutAttributes: UICollectionViewLayoutAttributes
   ) -> UICollectionViewLayoutAttributes {
     let attributes = super.preferredLayoutAttributesFitting(layoutAttributes)
