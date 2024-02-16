@@ -28,6 +28,10 @@ extension Component {
   public var reuseIdentifier: String {
     String(reflecting: Self.self)
   }
+
+  public func eraseToAnyPublisher() -> AnyComponent {
+    AnyComponent(self)
+  }
 }
 
 extension Component where Coordinator == Void {

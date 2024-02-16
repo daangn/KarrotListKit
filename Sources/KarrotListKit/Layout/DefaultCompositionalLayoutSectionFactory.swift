@@ -17,6 +17,8 @@ public struct DefaultCompositionalLayoutSectionFactory: CompositionalLayoutSecti
 
   private let spec: LayoutSpec
 
+  private let estimatedSize = CGSize(width: 44.0, height: 44.0)
+
   public static var vertical: Self = .init(spec: .vertical(spacing: 0))
 
   public static var horizontal: Self = .init(spec: .horizontal(spacing: 0, scrollingBehavior: .continuous))
@@ -71,12 +73,23 @@ public struct DefaultCompositionalLayoutSectionFactory: CompositionalLayoutSecti
 
   private func makeVerticalSectionLayout(spacing: CGFloat) -> SectionLayout? {
     { context -> NSCollectionLayoutSection? in
+      let subitems: [NSCollectionLayoutItem] = context.section.cells.map {
+        NSCollectionLayoutItem(
+          layoutSize: .init(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(
+              context.sizeStorage.cellSize(for: $0)?.height ?? estimatedSize.height
+            )
+          )
+        )
+      }
+
       let group = NSCollectionLayoutGroup.vertical(
         layoutSize: .init(
           widthDimension: .fractionalWidth(1.0),
           heightDimension: .estimated(context.environment.container.contentSize.height)
         ),
-        subitems: layoutCellItems(cells: context.section.cells, sizeStorage: context.sizeStorage)
+        subitems: subitems
       ).then {
         $0.interItemSpacing = .fixed(spacing)
         if let contentInsets = groupContentInsets {
@@ -93,14 +106,7 @@ public struct DefaultCompositionalLayoutSectionFactory: CompositionalLayoutSecti
           $0.visibleItemsInvalidationHandler = visibleItemsInvalidationHandler
         }
 
-        $0.boundarySupplementaryItems = [
-          layoutHeaderItem(section: context.section, sizeStorage: context.sizeStorage)?.then {
-            if let headerPinToVisibleBounds {
-              $0.pinToVisibleBounds = headerPinToVisibleBounds
-            }
-          },
-          layoutFooterItem(section: context.section, sizeStorage: context.sizeStorage),
-        ].compactMap { $0 }
+        $0.boundarySupplementaryItems = boundarySupplementaryItems(context: context)
       }
     }
   }
@@ -110,12 +116,22 @@ public struct DefaultCompositionalLayoutSectionFactory: CompositionalLayoutSecti
     orthogonalScrollingBehavior: UICollectionLayoutSectionOrthogonalScrollingBehavior
   ) -> SectionLayout? {
     { context -> NSCollectionLayoutSection? in
+      let subitems: [NSCollectionLayoutItem] = context.section.cells.map { cell -> NSCollectionLayoutItem in
+        let cellSize = context.sizeStorage.cellSize(for: cell)
+        return NSCollectionLayoutItem(
+          layoutSize: .init(
+            widthDimension: .estimated(cellSize?.width ?? estimatedSize.width),
+            heightDimension: .estimated(cellSize?.height ?? estimatedSize.width)
+          )
+        )
+      }
+
       let group = NSCollectionLayoutGroup.horizontal(
         layoutSize: .init(
           widthDimension: .estimated(context.environment.container.contentSize.width),
           heightDimension: .estimated(context.environment.container.contentSize.height)
         ),
-        subitems: layoutCellItems(cells: context.section.cells, sizeStorage: context.sizeStorage)
+        subitems: subitems
       ).then {
         $0.interItemSpacing = .fixed(spacing)
         if let contentInsets = groupContentInsets {
@@ -134,14 +150,7 @@ public struct DefaultCompositionalLayoutSectionFactory: CompositionalLayoutSecti
 
         $0.orthogonalScrollingBehavior = orthogonalScrollingBehavior
 
-        $0.boundarySupplementaryItems = [
-          layoutHeaderItem(section: context.section, sizeStorage: context.sizeStorage)?.then {
-            if let headerPinToVisibleBounds {
-              $0.pinToVisibleBounds = headerPinToVisibleBounds
-            }
-          },
-          layoutFooterItem(section: context.section, sizeStorage: context.sizeStorage),
-        ].compactMap { $0 }
+        $0.boundarySupplementaryItems = boundarySupplementaryItems(context: context)
       }
     }
   }
@@ -154,10 +163,19 @@ public struct DefaultCompositionalLayoutSectionFactory: CompositionalLayoutSecti
     { context -> NSCollectionLayoutSection? in
       var verticalGroupHeight: CGFloat = 0
       let horizontalGroups = context.section.cells.chunks(ofCount: numberOfItemsInRow).map { chunkedCells in
-        let horizontalGroupHeight = layoutCellItems(cells: Array(chunkedCells), sizeStorage: context.sizeStorage)
-          .max { layout1, layout2 in
-            layout1.layoutSize.heightDimension.dimension < layout2.layoutSize.heightDimension.dimension
-          }?.layoutSize.heightDimension ?? .estimated(context.environment.container.contentSize.height)
+        let subitems: [NSCollectionLayoutItem] = chunkedCells.map { cell -> NSCollectionLayoutItem in
+          let cellSize = context.sizeStorage.cellSize(for: cell)
+          return NSCollectionLayoutItem(
+            layoutSize: .init(
+              widthDimension: .estimated(cellSize?.width ?? estimatedSize.width),
+              heightDimension: .estimated(cellSize?.height ?? estimatedSize.height)
+            )
+          )
+        }
+
+        let horizontalGroupHeight = subitems.max { layout1, layout2 in
+          layout1.layoutSize.heightDimension.dimension < layout2.layoutSize.heightDimension.dimension
+        }?.layoutSize.heightDimension ?? .estimated(estimatedSize.height)
 
         verticalGroupHeight += horizontalGroupHeight.dimension
 
@@ -200,14 +218,7 @@ public struct DefaultCompositionalLayoutSectionFactory: CompositionalLayoutSecti
           $0.visibleItemsInvalidationHandler = visibleItemsInvalidationHandler
         }
 
-        $0.boundarySupplementaryItems = [
-          layoutHeaderItem(section: context.section, sizeStorage: context.sizeStorage)?.then {
-            if let headerPinToVisibleBounds {
-              $0.pinToVisibleBounds = headerPinToVisibleBounds
-            }
-          },
-          layoutFooterItem(section: context.section, sizeStorage: context.sizeStorage),
-        ].compactMap { $0 }
+        $0.boundarySupplementaryItems = boundarySupplementaryItems(context: context)
       }
     }
   }
@@ -237,5 +248,52 @@ public struct DefaultCompositionalLayoutSectionFactory: CompositionalLayoutSecti
     var copy = self
     copy.visibleItemsInvalidationHandler = visibleItemsInvalidationHandler
     return copy
+  }
+
+  private func boundarySupplementaryItems(
+    context: LayoutContext
+  ) -> [NSCollectionLayoutBoundarySupplementaryItem] {
+    let headerItem: NSCollectionLayoutBoundarySupplementaryItem? = {
+      guard let header = context.section.header else {
+        return nil
+      }
+
+      let headerSize = context.sizeStorage.headerSize(for: context.section)
+
+      return NSCollectionLayoutBoundarySupplementaryItem(
+        layoutSize: .init(
+          widthDimension: .fractionalWidth(1.0),
+          heightDimension: .estimated(headerSize?.height ?? estimatedSize.height)
+        ),
+        elementKind: header.kind,
+        alignment: header.alignment
+      )
+    }()
+
+    let footerItem: NSCollectionLayoutBoundarySupplementaryItem? = {
+      guard let footer = context.section.footer else {
+        return nil
+      }
+
+      let footerSize = context.sizeStorage.footerSize(for: context.section)
+
+      return NSCollectionLayoutBoundarySupplementaryItem(
+        layoutSize: .init(
+          widthDimension: .fractionalWidth(1.0),
+          heightDimension: .estimated(footerSize?.height ?? estimatedSize.height)
+        ),
+        elementKind: footer.kind,
+        alignment: footer.alignment
+      )
+    }()
+
+    return [
+      headerItem?.then {
+        if let headerPinToVisibleBounds {
+          $0.pinToVisibleBounds = headerPinToVisibleBounds
+        }
+      },
+      footerItem
+    ].compactMap { $0 }
   }
 }

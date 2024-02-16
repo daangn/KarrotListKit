@@ -26,7 +26,7 @@ final public class CollectionViewAdapter: NSObject {
     completion: (() -> Void)?
   )?
 
-  private var componentSizeStorage: ComponentSizeStorage = ComponentSizeStorageImpl()
+  private var componentSizeStorage = ComponentSizeStorageImpl()
 
   private var list: List?
 
@@ -496,7 +496,9 @@ extension CollectionViewAdapter: UICollectionViewDataSource {
     }
 
     cell.onSizeChanged = { [weak self] size in
-      self?.componentSizeStorage.cellSizeStore[item.id] = (size, item.component.viewModel)
+      self?.componentSizeStorage.setCellSize(
+        .init(id: item.id, size: size, component: item.component)
+      )
     }
     cell.cancellables = prefetchingIndexPathOperations.removeValue(forKey: indexPath)
     cell.render(component: item.component)
@@ -527,7 +529,9 @@ extension CollectionViewAdapter: UICollectionViewDataSource {
       }
 
       headerView.onSizeChanged = { [weak self] size in
-        self?.componentSizeStorage.headerSizeStore[section.id] = (size, header.component.viewModel)
+        self?.componentSizeStorage.setHeaderSize(
+          .init(id: section.id, size: size, component: header.component)
+        )
       }
       headerView.render(component: header.component)
 
@@ -550,7 +554,9 @@ extension CollectionViewAdapter: UICollectionViewDataSource {
       }
 
       footerView.onSizeChanged = { [weak self] size in
-        self?.componentSizeStorage.footerSizeStore[section.id] = (size, footer.component.viewModel)
+        self?.componentSizeStorage.setFooterSize(
+          .init(id: section.id, size: size, component: footer.component)
+        )
       }
       footerView.render(component: footer.component)
 
