@@ -24,10 +24,6 @@ public struct AnyComponent: Component, Equatable {
     box.base
   }
 
-  public var layoutMode: ContentLayoutMode {
-    box.layoutMode
-  }
-
   public var reuseIdentifier: String {
     box.reuseIdentifier
   }
@@ -70,7 +66,6 @@ private protocol ComponentBox {
 
   var base: Base { get }
   var reuseIdentifier: String { get }
-  var layoutMode: ContentLayoutMode { get }
   var viewModel: Base.ViewModel { get }
 
   func renderContent(coordinator: Any) -> UIView
@@ -87,10 +82,6 @@ private struct AnyComponentBox<Base: Component>: ComponentBox {
 
   var viewModel: Base.ViewModel {
     baseComponent.viewModel
-  }
-
-  var layoutMode: ContentLayoutMode {
-    baseComponent.layoutMode
   }
 
   var baseComponent: Base

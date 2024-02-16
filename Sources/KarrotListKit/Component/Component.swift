@@ -15,8 +15,6 @@ public protocol Component {
 
   var reuseIdentifier: String { get }
 
-  var layoutMode: ContentLayoutMode { get }
-
   func renderContent(coordinator: Coordinator) -> Content
 
   func render(in content: Content, coordinator: Coordinator)
