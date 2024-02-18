@@ -112,6 +112,8 @@ final public class CollectionViewAdapter: NSObject {
       self.list = list
       collectionView.reloadData()
       collectionView.layoutIfNeeded()
+      // 최초 업데이트 이후 최빈값 사이즈를 사용하여 contentSize를 재계산 하는 로직을 수행합니다.
+      collectionView.collectionViewLayout.invalidateLayout()
       overridedCompletion(true)
       return
     }
