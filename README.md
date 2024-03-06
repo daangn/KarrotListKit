@@ -183,5 +183,5 @@ Feel free to submit pull requests to enhance the functionalities of this project
 
 ## License
 
-This project is licensed under the terms of the MIT License.
+This project is licensed under the Apache License 2.0. See [LICENSE](https://github.com/daangn/KarrotListKit/blob/main/LICENSE) for details.
 
