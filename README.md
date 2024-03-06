@@ -59,8 +59,8 @@ The component has an interface very similar to `UIViewRepresentable`. This simil
 ```swift
 struct ButtonComponent: Component {
 
-  typealias Content = ButtonView
-  typealias ViewModel = ButtonView.ViewModel
+  typealias Content = Button
+  typealias ViewModel = Button.ViewModel
   typealias Coordinator = Void
 
   let viewModel: ViewModel
@@ -69,11 +69,11 @@ struct ButtonComponent: Component {
     self.viewModel = viewModel
   }
 
-  func renderContent(coordinator: Coordinator) -> ButtonView {
-    ButtonView()
+  func renderContent(coordinator: Coordinator) -> Button {
+    Button()
   }
 
-  func render(in content: ButtonView, coordinator: Coordinator) {
+  func render(in content: Button, coordinator: Coordinator) {
     content.configure(viewModel: viewModel)
   }
 
@@ -128,17 +128,17 @@ The size of a View is actually adjusted when the View is displayed on the screen
 
 ```swift
 struct ButtonComponent: Component {
-  typealias Content = ButtonView
+  typealias Content = Button
   // ...
   var layoutMode: ContentLayoutMode {
     .flexibleHeight(estimatedHeight: 44.0)
   }
 }
 
-final class ButtonView: UIView {
+final class Button: UIControl {
   // ...
   override func sizeThatFits(_ size: CGSize) -> CGSize {
-    // return size of a ButtonView
+    // return size of a Button
   }
 }
 ```
