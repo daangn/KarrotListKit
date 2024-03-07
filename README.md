@@ -33,9 +33,11 @@ Now you're ready to start using the KarrotListKit Framework
 The `CollectionViewAdapter` object serves as an adapter between the `UIColletionView` logic and the KarrotListKit logic, encapsulating the core implementation logic of the framework
 
 ```swift
+private let configuration = CollectionViewAdapterConfiguration()
 private let layoutAdapter = CollectionViewLayoutAdapter()
 
 private lazy var collectionViewAdapter = CollectionViewAdapter(
+  configuration: configuration,
   collectionView: collectionView,
   layoutAdapter: layoutAdapter
 )
