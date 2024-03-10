@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+    paths:
+      - "Package.swift"
+      - "Package.resolved"
+      - "Sources/**"
+      - "Tests/**"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build_and_test:
+    runs-on:
+      group: ios-org-runners
+
+    env:
+      SCHEME: KarrotListKit
+      DESTINATION: platform=iOS Simulator,name=iPhone 15 Pro,OS=latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Xcode Version
+        shell: bash
+        run: |
+          XCODE_VERSION=$(cat .xcode-version)
+          echo "DEVELOPER_DIR=/Applications/Xcode-$XCODE_VERSION.app/Contents/Developer/" >> $GITHUB_ENV
+
+      - name: Run `build-for-testing`
+        run: |
+          xcodebuild build-for-testing \
+            -scheme "$SCHEME" \
+            -destination "$DESTINATION" \
+            -configuration Debug \
+            | xcbeautify --renderer github-actions
+
+      - name: Run `test-without-building`
+        run: |
+          xcodebuild test-without-building \
+            -scheme $(XCODEBUILD_SCHEME) \
+            -destination $(XCODEBUILD_DESTINATION) \
+            -configuration Debug \
+            | xcbeautify --renderer github-actions
