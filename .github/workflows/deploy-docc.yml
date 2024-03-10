@@ -28,6 +28,8 @@ jobs:
       - name: Build Documentation
         run: bash ./scripts/build-docc.sh
 
+      - uses: actions/upload-pages-artifact@v3
+
   deploy:
     name: Deploy Documentation
     needs: build
@@ -43,4 +45,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v3
+        uses: actions/deploy-pages@v4
