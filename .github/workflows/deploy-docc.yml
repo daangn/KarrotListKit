@@ -26,7 +26,7 @@ jobs:
           echo "DEVELOPER_DIR=/Applications/Xcode-$XCODE_VERSION.app/Contents/Developer/" >> $GITHUB_ENV
 
       - name: Build Documentation
-        run: sh scripts/build-docs.sh
+        run: bash ./scripts/build-docc.sh
 
   deploy:
     name: Deploy Documentation
