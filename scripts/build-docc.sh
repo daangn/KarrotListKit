@@ -14,5 +14,5 @@ xcodebuild docbuild -scheme KarrotListKit \
   --transform-for-static-hosting \
   --source-service github \
   --source-service-base-url https://github.com/daangn/KarrotListKit/blob/main \
-  --output-path _site \
+  --output-path $ROOT_DIR/_site \
   --checkout-path $ROOT_DIR"
