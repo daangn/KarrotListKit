@@ -11,10 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: release-drafter/release-drafter@v5
+      - uses: release-drafter/release-drafter@v6
         with:
-          version: ${{ inputs.version_tag || github.ref_name }}
-          footer: "${{ steps.component_version_table.outputs.markdown }}"
+          version: ${{ github.ref_name }}
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
