@@ -33,7 +33,7 @@ jobs:
 
       - name: Run `build-for-testing`
         run: |
-          xcodebuild build-for-testing \
+          set -o pipefail && xcodebuild build-for-testing \
             -scheme "$SCHEME" \
             -destination "$DESTINATION" \
             -configuration Debug \
@@ -41,8 +41,8 @@ jobs:
 
       - name: Run `test-without-building`
         run: |
-          xcodebuild test-without-building \
-            -scheme $(XCODEBUILD_SCHEME) \
-            -destination $(XCODEBUILD_DESTINATION) \
+          set -o pipefail && xcodebuild test-without-building \
+            -scheme "$SCHEME" \
+            -destination "$DESTINATION" \
             -configuration Debug \
             | xcbeautify --renderer github-actions
