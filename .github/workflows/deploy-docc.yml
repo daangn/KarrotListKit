@@ -1,1 +1,46 @@
+name: Deploy DocC
 
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+concurrency:
+  group: tuist-docc-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Documentation
+
+    runs-on:
+      group: ios-org-runners
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Xcode Version
+        shell: bash
+        run: |
+          XCODE_VERSION=$(cat .xcode-version)
+          echo "DEVELOPER_DIR=/Applications/Xcode-$XCODE_VERSION.app/Contents/Developer/" >> $GITHUB_ENV
+
+      - name: Build Documentation
+        run: sh scripts/build-docs.sh
+
+  deploy:
+    name: Deploy Documentation
+    needs: build
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
