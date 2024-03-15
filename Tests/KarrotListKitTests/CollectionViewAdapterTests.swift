@@ -93,6 +93,20 @@ extension CollectionViewAdapterTests {
     XCTAssertTrue(collectionView.prefetchDataSource === sut)
   }
 
+  func test_given_emptyPrefetchingPlugins_when_inititalized_then_prefetchDataSource_is_nil() {
+    // given
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+
+    // when
+    _ = sut(
+      collectionView: collectionView,
+      prefetchingPlugins: []
+    )
+
+    // then
+    XCTAssertNil(collectionView.prefetchDataSource)
+  }
+
   func test_given_enabledRefreshControl_when_inititalized_then_setup_refreshControl() {
     let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let configuration = CollectionViewAdapterConfiguration(
@@ -107,5 +121,21 @@ extension CollectionViewAdapterTests {
 
     // then
     XCTAssertNotNil(collectionView.refreshControl)
+  }
+
+  func test_given_disabledRefreshControl_when_inititalized_then_refreshControl_is_nil() {
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let configuration = CollectionViewAdapterConfiguration(
+      refreshControl: .disabled()
+    )
+
+    // when
+    _ = sut(
+      configuration: configuration,
+      collectionView: collectionView
+    )
+
+    // then
+    XCTAssertNil(collectionView.refreshControl)
   }
 }
