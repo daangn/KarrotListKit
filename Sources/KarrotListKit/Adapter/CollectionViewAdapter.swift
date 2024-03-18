@@ -36,7 +36,7 @@ final public class CollectionViewAdapter: NSObject {
 
   private var componentSizeStorage: ComponentSizeStorage = ComponentSizeStorageImpl()
 
-  private var list: List?
+  var list: List?
 
   private lazy var pullToRefreshControl = UIRefreshControl().then {
     $0.tintColor = configuration.refreshControl.tintColor
