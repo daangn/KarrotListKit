@@ -331,3 +331,77 @@ extension CollectionViewAdapterTests {
     await fulfillment(of: [expectation], timeout: 2.0)
   }
 }
+
+// MARK: - Register reuseIdentifiers
+
+extension CollectionViewAdapterTests {
+
+  func test_when_apply_then_can_return_cell() {
+    // given
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView)
+
+    // when
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          Cell(id: UUID(), component: DummyComponent())
+        }
+      }
+    )
+
+    // then
+    XCTAssertNotNil(
+      collectionView.dataSource?.collectionView(
+        collectionView,
+        cellForItemAt: IndexPath(item: 0, section: 0)
+      )
+    )
+  }
+
+  func test_when_apply_then_can_return_header() {
+    // given
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView)
+
+    // when
+    sut.apply(
+      List {
+        Section(id: UUID(), cells: [])
+          .withHeader(DummyComponent())
+      }
+    )
+
+    // then
+    XCTAssertNotNil(
+      collectionView.dataSource?.collectionView?(
+        collectionView,
+        viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
+        at: IndexPath(item: 0, section: 0)
+      )
+    )
+  }
+
+  func test_when_apply_then_can_return_footer() {
+    // given
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView)
+
+    // when
+    sut.apply(
+      List {
+        Section(id: UUID(), cells: [])
+          .withFooter(DummyComponent())
+      }
+    )
+
+    // then
+    XCTAssertNotNil(
+      collectionView.dataSource?.collectionView?(
+        collectionView,
+        viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionFooter,
+        at: IndexPath(item: 0, section: 0)
+      )
+    )
+  }
+}
