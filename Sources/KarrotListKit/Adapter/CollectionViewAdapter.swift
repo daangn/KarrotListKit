@@ -18,8 +18,13 @@ import DifferenceKit
 final public class CollectionViewAdapter: NSObject {
   public var configuration: CollectionViewAdapterConfiguration
 
+  /// The set of cell reuseIdentifiers that have been registered on the collection view.
   private var registeredCellReuseIdentifiers = Set<String>()
+
+  /// The set of header reuseIdentifiers that have been registered on the collection view.
   private var registeredHeaderReuseIdentifiers = Set<String>()
+
+  /// The set of footer reuseIdentifiers that have been registered on the collection view.
   private var registeredFooterReuseIdentifiers = Set<String>()
 
   private weak var collectionView: UICollectionView?
@@ -185,6 +190,12 @@ final public class CollectionViewAdapter: NSObject {
     )
   }
 
+  /// Registers reuse identifiers for cells, headers, and footers in a UICollectionView.
+  ///
+  /// It dynamically registers the cells, headers, and footers at runtime. 
+  /// This allows for greater flexibility and reduces the need for boilerplate code.
+  ///
+  /// - Parameter sections: An array of `Section` objects. Each `Section` object contains information about a cell, header, and footer.
   private func registerReuseIdentifiers(with sections: [Section]) {
     sections.forEach { section in
       if let headerReuseIdentifier = section.header?.component.reuseIdentifier,
