@@ -7,6 +7,14 @@ import UIKit
 
 import DifferenceKit
 
+/// An adapter for `UICollectionView`
+///
+/// The `CollectionViewAdapter` object serves as an adapter between the `UIColletionView` logic and the `KarrotListKit` logic
+/// encapsulating the core implementation logic of the framework
+///
+/// Internally, it uses the collectionView delegate and dataSource. If you want to implement callback methods,
+/// you can receive callbacks through modifiers.
+/// Please note, you should never set the delegate and dataSource of the collectionView directly.
 final public class CollectionViewAdapter: NSObject {
   public var configuration: CollectionViewAdapterConfiguration
 
@@ -41,6 +49,13 @@ final public class CollectionViewAdapter: NSObject {
 
   // MARK: - Initializer
 
+  /// Initialize a new instance of `UICollectionViewAdapter`.
+  ///
+  /// - Parameters:
+  ///   - configuration: The configuration for adapter.
+  ///   - collectionView: The `UICollectionView` that be displayed on the screen.
+  ///   - layoutAdapter: Adapting between collectionView-layout and data-model.
+  ///   - prefetchingPlugins: The plugins for prefetching resource
   public init(
     configuration: CollectionViewAdapterConfiguration,
     collectionView: UICollectionView,
