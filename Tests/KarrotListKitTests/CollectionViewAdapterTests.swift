@@ -452,3 +452,250 @@ extension CollectionViewAdapterTests {
     )
   }
 }
+
+// MARK: - UICollectionViewDelegate
+
+extension CollectionViewAdapterTests {
+
+  func test_given_selectionHandler_when_selectCell_then_handleEvent() {
+    // given
+    var eventContext: DidSelectEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let component = DummyComponent()
+    let sut = sut(collectionView: collectionView).then {
+      $0.list = List {
+        Section(id: UUID()) {
+          Cell(id: UUID(), component: component)
+            .didSelect { context in
+              eventContext = context
+            }
+        }
+      }
+    }
+    _ = sut
+
+    // when
+    collectionView
+      .delegate?
+      .collectionView?(
+        collectionView,
+        didSelectItemAt: IndexPath(item: 0, section: 0)
+      )
+
+    // then
+    XCTAssertEqual(
+      eventContext.indexPath,
+      IndexPath(item: 0, section: 0)
+    )
+  }
+
+  func test_given_willDisplayHandler_when_willDisplayCell_then_handleEvent() {
+    // given
+    var eventContext: WillDisplayEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let component = DummyComponent()
+    let sut = sut(collectionView: collectionView).then {
+      $0.list = List {
+        Section(id: UUID()) {
+          Cell(id: UUID(), component: component)
+            .willDisplay { context in
+              eventContext = context
+            }
+        }
+      }
+    }
+    _ = sut
+
+    // when
+    collectionView
+      .delegate?
+      .collectionView?(
+        collectionView,
+        willDisplay: UICollectionViewCell(
+          frame: CGRect(origin: .zero, size: .init(width: 44.0, height: 44.0))
+        ),
+        forItemAt: IndexPath(item: 0, section: 0)
+      )
+
+    // then
+    XCTAssertEqual(
+      eventContext.indexPath,
+      IndexPath(item: 0, section: 0)
+    )
+  }
+
+  func test_given_didEndDisplayingHandler_when_didEndDisplayingCell_then_handleEvent() {
+    // given
+    var eventContext: DidEndDisplayingEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let component = DummyComponent()
+    let sut = sut(collectionView: collectionView).then {
+      $0.list = List {
+        Section(id: UUID()) {
+          Cell(id: UUID(), component: component)
+            .didEndDisplay { context in
+              eventContext = context
+            }
+        }
+      }
+    }
+    _ = sut
+
+    // when
+    collectionView
+      .delegate?
+      .collectionView?(
+        collectionView,
+        didEndDisplaying: UICollectionViewCell(
+          frame: CGRect(origin: .zero, size: .init(width: 44.0, height: 44.0))
+        ),
+        forItemAt: IndexPath(item: 0, section: 0)
+      )
+
+    // then
+    XCTAssertEqual(
+      eventContext.indexPath,
+      IndexPath(item: 0, section: 0)
+    )
+  }
+
+  func test_given_willDisplayHandler_when_willDisplayHeader_then_handleEvent() {
+    // given
+    var eventContext: WillDisplayEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let component = DummyComponent()
+    let sut = sut(collectionView: collectionView).then {
+      $0.list = List {
+        Section(id: UUID(), cells: [])
+          .withHeader(component)
+          .willDisplayHeader { context in
+            eventContext = context
+          }
+      }
+    }
+    _ = sut
+
+    // when
+    collectionView
+      .delegate?
+      .collectionView?(
+        collectionView,
+        willDisplaySupplementaryView: UICollectionReusableView(
+          frame: CGRect(origin: .zero, size: CGSize(width: 44.0, height: 44.0))
+        ),
+        forElementKind: UICollectionView.elementKindSectionHeader,
+        at: IndexPath(item: 0, section: 0)
+      )
+
+    // then
+    XCTAssertEqual(
+      eventContext.indexPath,
+      IndexPath(item: 0, section: 0)
+    )
+  }
+
+  func test_given_willDisplayHandler_when_willDisplayFooter_then_handleEvent() {
+    // given
+    var eventContext: WillDisplayEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let component = DummyComponent()
+    let sut = sut(collectionView: collectionView).then {
+      $0.list = List {
+        Section(id: UUID(), cells: [])
+          .withFooter(component)
+          .willDisplayFooter { context in
+            eventContext = context
+          }
+      }
+    }
+    _ = sut
+
+    // when
+    collectionView
+      .delegate?
+      .collectionView?(
+        collectionView,
+        willDisplaySupplementaryView: UICollectionReusableView(
+          frame: CGRect(origin: .zero, size: CGSize(width: 44.0, height: 44.0))
+        ),
+        forElementKind: UICollectionView.elementKindSectionFooter,
+        at: IndexPath(item: 0, section: 0)
+      )
+
+    // then
+    XCTAssertEqual(
+      eventContext.indexPath,
+      IndexPath(item: 0, section: 0)
+    )
+  }
+
+  func test_given_didEndDisplayHandler_when_didEndDisplayingHeader_then_handleEvent() {
+    // given
+    var eventContext: DidEndDisplayingEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let component = DummyComponent()
+    let sut = sut(collectionView: collectionView).then {
+      $0.list = List {
+        Section(id: UUID(), cells: [])
+          .withHeader(component)
+          .didEndDisplayHeader { context in
+            eventContext = context
+          }
+      }
+    }
+    _ = sut
+
+    // when
+    collectionView
+      .delegate?
+      .collectionView?(
+        collectionView,
+        didEndDisplayingSupplementaryView: UICollectionReusableView(
+          frame: CGRect(origin: .zero, size: CGSize(width: 44.0, height: 44.0))
+        ),
+        forElementOfKind: UICollectionView.elementKindSectionHeader,
+        at: IndexPath(item: 0, section: 0)
+      )
+
+    // then
+    XCTAssertEqual(
+      eventContext.indexPath,
+      IndexPath(item: 0, section: 0)
+    )
+  }
+
+  func test_given_didEndDisplayHandler_when_didEndDisplayingFooter_then_handleEvent() {
+    // given
+    var eventContext: DidEndDisplayingEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let component = DummyComponent()
+    let sut = sut(collectionView: collectionView).then {
+      $0.list = List {
+        Section(id: UUID(), cells: [])
+          .withFooter(component)
+          .didEndDisplayFooter { context in
+            eventContext = context
+          }
+      }
+    }
+    _ = sut
+
+    // when
+    collectionView
+      .delegate?
+      .collectionView?(
+        collectionView,
+        didEndDisplayingSupplementaryView: UICollectionReusableView(
+          frame: CGRect(origin: .zero, size: CGSize(width: 44.0, height: 44.0))
+        ),
+        forElementOfKind: UICollectionView.elementKindSectionFooter,
+        at: IndexPath(item: 0, section: 0)
+      )
+
+    // then
+    XCTAssertEqual(
+      eventContext.indexPath,
+      IndexPath(item: 0, section: 0)
+    )
+  }
+}
