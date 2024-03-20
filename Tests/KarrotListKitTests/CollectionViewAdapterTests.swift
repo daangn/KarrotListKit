@@ -48,6 +48,10 @@ final class CollectionViewAdapterTests: XCTestCase {
     override func moveItem(at indexPath: IndexPath, to newIndexPath: IndexPath) { }
   }
 
+  final class DummyView: UIView {
+
+  }
+
   struct DummyComponent: Component {
 
     struct ViewModel: Equatable { }
@@ -63,6 +67,34 @@ final class CollectionViewAdapterTests: XCTestCase {
 
     func renderContent(coordinator: Coordinator) -> UIView {
       UIView()
+    }
+
+    func render(in content: UIView, coordinator: Coordinator) {
+      // nothing
+    }
+  }
+
+  struct ComponentStub: Component {
+
+    struct ViewModel: Equatable { }
+
+    typealias Content = UIView
+    typealias Coordinator = Void
+
+    var viewModel: ViewModel {
+      viewModelStub
+    }
+
+    var layoutMode: ContentLayoutMode {
+      layoutModeStub
+    }
+
+    var layoutModeStub: ContentLayoutMode!
+    var viewModelStub: ViewModel!
+    var contentStub: UIView!
+
+    func renderContent(coordinator: Coordinator) -> UIView {
+      contentStub
     }
 
     func render(in content: UIView, coordinator: Coordinator) {
@@ -340,22 +372,27 @@ extension CollectionViewAdapterTests {
     // given
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let sut = sut(collectionView: collectionView)
+    let view = DummyView()
+    var component = ComponentStub()
+    component.contentStub = view
 
     // when
     sut.apply(
       List {
         Section(id: UUID()) {
-          Cell(id: UUID(), component: DummyComponent())
+          Cell(id: UUID(), component: component)
         }
       }
     )
 
     // then
-    XCTAssertNotNil(
-      collectionView.dataSource?.collectionView(
-        collectionView,
-        cellForItemAt: IndexPath(item: 0, section: 0)
-      )
+    let cell = collectionView.dataSource?.collectionView(
+      collectionView,
+      cellForItemAt: IndexPath(item: 0, section: 0)
+    ) as! UICollectionViewComponentCell
+    XCTAssertEqual(
+      cell.renderedContent,
+      view
     )
   }
 
@@ -363,22 +400,27 @@ extension CollectionViewAdapterTests {
     // given
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let sut = sut(collectionView: collectionView)
+    let view = DummyView()
+    var component = ComponentStub()
+    component.contentStub = view
 
     // when
     sut.apply(
       List {
         Section(id: UUID(), cells: [])
-          .withHeader(DummyComponent())
+          .withHeader(component)
       }
     )
 
     // then
-    XCTAssertNotNil(
-      collectionView.dataSource?.collectionView?(
-        collectionView,
-        viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
-        at: IndexPath(item: 0, section: 0)
-      )
+    let header = collectionView.dataSource?.collectionView?(
+      collectionView,
+      viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
+      at: IndexPath(item: 0, section: 0)
+    ) as! UICollectionComponentReusableView
+    XCTAssertEqual(
+      header.renderedContent,
+      view
     )
   }
 
@@ -386,22 +428,27 @@ extension CollectionViewAdapterTests {
     // given
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let sut = sut(collectionView: collectionView)
+    let view = DummyView()
+    var component = ComponentStub()
+    component.contentStub = view
 
     // when
     sut.apply(
       List {
         Section(id: UUID(), cells: [])
-          .withFooter(DummyComponent())
+          .withFooter(component)
       }
     )
 
     // then
-    XCTAssertNotNil(
-      collectionView.dataSource?.collectionView?(
-        collectionView,
-        viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionFooter,
-        at: IndexPath(item: 0, section: 0)
-      )
+    let footer = collectionView.dataSource?.collectionView?(
+      collectionView,
+      viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionFooter,
+      at: IndexPath(item: 0, section: 0)
+    ) as! UICollectionComponentReusableView
+    XCTAssertEqual(
+      footer.renderedContent,
+      view
     )
   }
 }
