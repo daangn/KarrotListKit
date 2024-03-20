@@ -36,7 +36,7 @@ final public class CollectionViewAdapter: NSObject {
 
   private var componentSizeStorage: ComponentSizeStorage = ComponentSizeStorageImpl()
 
-  private var list: List?
+  var list: List?
 
   private lazy var pullToRefreshControl = UIRefreshControl().then {
     $0.tintColor = configuration.refreshControl.tintColor
@@ -83,6 +83,12 @@ final public class CollectionViewAdapter: NSObject {
 
   // MARK: - Public Methods
 
+  /// Updates the UI to reflect the state of the data in the list, optionally animating the UI changes and executing a completion handler.
+  ///
+  /// - Parameters:
+  ///   - list: The list that reflects the new state of the data in the collection view.
+  ///   - animatingDifferences: If true, the framework animates the updates to the collection view. If false, the framework doesn’t animate the updates to the collection view.
+  ///   - completion: A closure to execute when the updates are complete. This closure has no return value and takes no parameters. The framework calls this closure from the main queue.
   public func apply(
     _ list: List,
     animatingDifferences: Bool = true,
@@ -150,6 +156,11 @@ final public class CollectionViewAdapter: NSObject {
         )
       }
     }
+  }
+
+  /// Representation of the current state of the data in the collection view.
+  public func snapshot() -> List? {
+    list
   }
 
   // MARK: - Private Methods

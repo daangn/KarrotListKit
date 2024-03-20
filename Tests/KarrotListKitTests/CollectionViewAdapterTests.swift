@@ -22,6 +22,54 @@ final class CollectionViewAdapterTests: XCTestCase {
     }
   }
 
+  final class CollectionViewMock: UICollectionView {
+    
+    override var window: UIWindow? {
+      .init()
+    }
+
+    var performBatchUpdatesCallCount: Int = 0
+    var performBatchUpdatesHandler: ((_ updates: (() -> Void)?, _ completion: ((Bool) -> Void)?) -> Void)?
+    override func performBatchUpdates(_ updates: (() -> Void)?, completion: ((Bool) -> Void)? = nil) {
+      performBatchUpdatesCallCount += 1
+      if let performBatchUpdatesHandler {
+        performBatchUpdatesHandler(updates, completion)
+      }
+    }
+
+    override func reloadData() { }
+    override func deleteSections(_ sections: IndexSet) { }
+    override func insertSections(_ sections: IndexSet) { }
+    override func reloadSections(_ sections: IndexSet) { }
+    override func moveSection(_ section: Int, toSection newSection: Int) { }
+    override func deleteItems(at indexPaths: [IndexPath]) { }
+    override func insertItems(at indexPaths: [IndexPath]) { }
+    override func reloadItems(at indexPaths: [IndexPath]) { }
+    override func moveItem(at indexPath: IndexPath, to newIndexPath: IndexPath) { }
+  }
+
+  struct DummyComponent: Component {
+
+    struct ViewModel: Equatable { }
+
+    typealias Content = UIView
+    typealias Coordinator = Void
+
+    var layoutMode: ContentLayoutMode {
+      .flexibleHeight(estimatedHeight: 44.0)
+    }
+
+    var viewModel: ViewModel = .init()
+
+    func renderContent(coordinator: Coordinator) -> UIView {
+      UIView()
+    }
+
+    func render(in content: UIView, coordinator: Coordinator) {
+      // nothing
+    }
+  }
+
   func sut(
     configuration: CollectionViewAdapterConfiguration = .init(),
     collectionView: UICollectionView,
@@ -137,5 +185,149 @@ extension CollectionViewAdapterTests {
 
     // then
     XCTAssertNil(collectionView.refreshControl)
+  }
+}
+
+// MARK: - Applying list
+
+extension CollectionViewAdapterTests {
+  
+  func test_when_first_apply_then_setup_list() {
+    // given
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView)
+    sut.list = nil
+
+    // when
+    sut.apply(
+      List {
+        Section(id: "Section") {
+          Cell(
+            id: "Cell",
+            component: DummyComponent()
+          )
+        }
+      }
+    )
+
+    // then
+    XCTAssertEqual(
+      sut.snapshot()?.sections,
+      [
+        Section(id: "Section") {
+          Cell(
+            id: "Cell",
+            component: DummyComponent()
+          )
+        }
+      ]
+    )
+  }
+
+  @MainActor
+  func test_given_applied_list_when_apply_then_update() async {
+    // given
+    let expectation = XCTestExpectation().then {
+      $0.expectedFulfillmentCount = 1
+    }
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter()).then {
+      $0.performBatchUpdatesHandler = { updates, completion in
+        updates?()
+        completion?(true)
+      }
+    }
+    let sut = sut(collectionView: collectionView).then {
+      $0.list = List {
+        Section(id: UUID()) {
+          Cell(id: UUID(), component: DummyComponent())
+        }
+      }
+    }
+
+    // when
+    sut.apply(
+      List {
+        Section(id: "Section") {
+          Cell(
+            id: "Cell",
+            component: DummyComponent()
+          )
+        }
+      },
+      completion: {
+        expectation.fulfill()
+      }
+    )
+
+    await fulfillment(of: [expectation], timeout: 1.0)
+
+    // then
+    XCTAssertEqual(
+      sut.snapshot()?.sections,
+      [
+        Section(id: "Section") {
+          Cell(
+            id: "Cell",
+            component: DummyComponent()
+          )
+        }
+      ]
+    )
+  }
+
+  @MainActor
+  func test_when_multiple_async_apply_then_safe_update() async {
+    // given
+    let expectation = XCTestExpectation().then {
+      $0.expectedFulfillmentCount = 1
+    }
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter()).then {
+      $0.performBatchUpdatesHandler = { updates, completion in
+        updates?()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+          completion?(true)
+        }
+      }
+    }
+    let sut = sut(collectionView: collectionView)
+
+    // when
+    for i in 0 ... 100 {
+      DispatchQueue.main.async {
+        sut.apply(
+          List {
+            Section(id: "Section-\(i)") {
+              Cell(
+                id: "Cell-\(i)",
+                component: DummyComponent()
+              )
+            }
+          },
+          completion: {
+            // then
+            let areEqual = sut.snapshot()!.sections.isContentEqual(
+              to: [
+                Section(
+                  id: "Section-\(i)",
+                  cells: [
+                    Cell(
+                      id: "Cell-\(i)",
+                      component: DummyComponent()
+                    )
+                  ]
+                )
+              ]
+            )
+            XCTAssertTrue(areEqual)
+
+            if i == 100 {
+              expectation.fulfill()
+            }
+          }
+        )
+      }
+    }
+
+    await fulfillment(of: [expectation], timeout: 2.0)
   }
 }
