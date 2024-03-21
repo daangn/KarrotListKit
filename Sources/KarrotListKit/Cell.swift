@@ -36,8 +36,8 @@ extension Cell {
     registerEvent(WillDisplayEvent(handler: handler))
   }
 
-  public func didEndDisplay(_ handler: @escaping (DidEndDisplayEvent.EventContext) -> Void) -> Self {
-    registerEvent(DidEndDisplayEvent(handler: handler))
+  public func didEndDisplay(_ handler: @escaping (DidEndDisplayingEvent.EventContext) -> Void) -> Self {
+    registerEvent(DidEndDisplayingEvent(handler: handler))
   }
 }
 

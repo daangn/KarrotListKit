@@ -320,7 +320,7 @@ extension CollectionViewAdapter: UICollectionViewDelegate {
       return
     }
 
-    item.event(for: DidEndDisplayEvent.self)?.handler(
+    item.event(for: DidEndDisplayingEvent.self)?.handler(
       .init(
         indexPath: indexPath,
         anyComponent: item.component,
