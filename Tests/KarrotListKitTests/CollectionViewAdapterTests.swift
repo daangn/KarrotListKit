@@ -390,7 +390,7 @@ extension CollectionViewAdapterTests {
       collectionView,
       cellForItemAt: IndexPath(item: 0, section: 0)
     ) as! UICollectionViewComponentCell
-    XCTAssertEqual(
+    XCTAssertIdentical(
       cell.renderedContent,
       view
     )
@@ -418,7 +418,7 @@ extension CollectionViewAdapterTests {
       viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
       at: IndexPath(item: 0, section: 0)
     ) as! UICollectionComponentReusableView
-    XCTAssertEqual(
+    XCTAssertIdentical(
       header.renderedContent,
       view
     )
@@ -446,7 +446,7 @@ extension CollectionViewAdapterTests {
       viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionFooter,
       at: IndexPath(item: 0, section: 0)
     ) as! UICollectionComponentReusableView
-    XCTAssertEqual(
+    XCTAssertIdentical(
       footer.renderedContent,
       view
     )
@@ -725,7 +725,7 @@ extension CollectionViewAdapterTests {
       )
 
     // then
-    XCTAssertEqual(
+    XCTAssertIdentical(
       eventContext.collectionView,
       collectionView
     )
@@ -752,7 +752,7 @@ extension CollectionViewAdapterTests {
       )
 
     // then
-    XCTAssertEqual(
+    XCTAssertIdentical(
       eventContext.collectionView,
       collectionView
     )
@@ -783,7 +783,7 @@ extension CollectionViewAdapterTests {
       )
 
     // then
-    XCTAssertEqual(
+    XCTAssertIdentical(
       eventContext.collectionView,
       collectionView
     )
