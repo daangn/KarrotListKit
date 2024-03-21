@@ -48,6 +48,10 @@ final class CollectionViewAdapterTests: XCTestCase {
     override func moveItem(at indexPath: IndexPath, to newIndexPath: IndexPath) { }
   }
 
+  final class DummyView: UIView {
+
+  }
+
   struct DummyComponent: Component {
 
     struct ViewModel: Equatable { }
@@ -63,6 +67,34 @@ final class CollectionViewAdapterTests: XCTestCase {
 
     func renderContent(coordinator: Coordinator) -> UIView {
       UIView()
+    }
+
+    func render(in content: UIView, coordinator: Coordinator) {
+      // nothing
+    }
+  }
+
+  struct ComponentStub: Component {
+
+    struct ViewModel: Equatable { }
+
+    typealias Content = UIView
+    typealias Coordinator = Void
+
+    var viewModel: ViewModel {
+      viewModelStub
+    }
+
+    var layoutMode: ContentLayoutMode {
+      layoutModeStub
+    }
+
+    var layoutModeStub: ContentLayoutMode!
+    var viewModelStub: ViewModel!
+    var contentStub: UIView!
+
+    func renderContent(coordinator: Coordinator) -> UIView {
+      contentStub
     }
 
     func render(in content: UIView, coordinator: Coordinator) {
@@ -329,5 +361,94 @@ extension CollectionViewAdapterTests {
     }
 
     await fulfillment(of: [expectation], timeout: 2.0)
+  }
+}
+
+// MARK: - Register reuseIdentifiers
+
+extension CollectionViewAdapterTests {
+
+  func test_when_apply_then_can_return_cell() {
+    // given
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView)
+    let view = DummyView()
+    var component = ComponentStub()
+    component.contentStub = view
+
+    // when
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          Cell(id: UUID(), component: component)
+        }
+      }
+    )
+
+    // then
+    let cell = collectionView.dataSource?.collectionView(
+      collectionView,
+      cellForItemAt: IndexPath(item: 0, section: 0)
+    ) as! UICollectionViewComponentCell
+    XCTAssertEqual(
+      cell.renderedContent,
+      view
+    )
+  }
+
+  func test_when_apply_then_can_return_header() {
+    // given
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView)
+    let view = DummyView()
+    var component = ComponentStub()
+    component.contentStub = view
+
+    // when
+    sut.apply(
+      List {
+        Section(id: UUID(), cells: [])
+          .withHeader(component)
+      }
+    )
+
+    // then
+    let header = collectionView.dataSource?.collectionView?(
+      collectionView,
+      viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
+      at: IndexPath(item: 0, section: 0)
+    ) as! UICollectionComponentReusableView
+    XCTAssertEqual(
+      header.renderedContent,
+      view
+    )
+  }
+
+  func test_when_apply_then_can_return_footer() {
+    // given
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView)
+    let view = DummyView()
+    var component = ComponentStub()
+    component.contentStub = view
+
+    // when
+    sut.apply(
+      List {
+        Section(id: UUID(), cells: [])
+          .withFooter(component)
+      }
+    )
+
+    // then
+    let footer = collectionView.dataSource?.collectionView?(
+      collectionView,
+      viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionFooter,
+      at: IndexPath(item: 0, section: 0)
+    ) as! UICollectionComponentReusableView
+    XCTAssertEqual(
+      footer.renderedContent,
+      view
+    )
   }
 }
