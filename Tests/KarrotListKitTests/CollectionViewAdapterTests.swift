@@ -390,7 +390,7 @@ extension CollectionViewAdapterTests {
       collectionView,
       cellForItemAt: IndexPath(item: 0, section: 0)
     ) as! UICollectionViewComponentCell
-    XCTAssertEqual(
+    XCTAssertIdentical(
       cell.renderedContent,
       view
     )
@@ -418,7 +418,7 @@ extension CollectionViewAdapterTests {
       viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
       at: IndexPath(item: 0, section: 0)
     ) as! UICollectionComponentReusableView
-    XCTAssertEqual(
+    XCTAssertIdentical(
       header.renderedContent,
       view
     )
@@ -446,7 +446,7 @@ extension CollectionViewAdapterTests {
       viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionFooter,
       at: IndexPath(item: 0, section: 0)
     ) as! UICollectionComponentReusableView
-    XCTAssertEqual(
+    XCTAssertIdentical(
       footer.renderedContent,
       view
     )
@@ -697,5 +697,138 @@ extension CollectionViewAdapterTests {
       eventContext.indexPath,
       IndexPath(item: 0, section: 0)
     )
+  }
+}
+
+// MARK: - UIScrollViewDelegate
+
+extension CollectionViewAdapterTests {
+
+  func test_given_didScrollHandler_when_didScroll_then_handleEvent() {
+    // given
+    var eventContext: DidScrollEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView).then {
+      $0.list = List(
+        sections: []
+      ).didScroll { context in
+        eventContext = context
+      }
+    }
+    _ = sut
+
+    // when
+    collectionView
+      .delegate?
+      .scrollViewDidScroll?(
+        collectionView
+      )
+
+    // then
+    XCTAssertIdentical(
+      eventContext.collectionView,
+      collectionView
+    )
+  }
+
+  func test_given_willBeginDraggingHandler_when_willBeginDragging_then_handleEvent() {
+    // given
+    var eventContext: WillBeginDraggingEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView).then {
+      $0.list = List(
+        sections: []
+      ).willBeginDragging { context in
+        eventContext = context
+      }
+    }
+    _ = sut
+
+    // when
+    collectionView
+      .delegate?
+      .scrollViewWillBeginDragging?(
+        collectionView
+      )
+
+    // then
+    XCTAssertIdentical(
+      eventContext.collectionView,
+      collectionView
+    )
+  }
+
+  func test_given_willEndDraggingHandler_when_willEndDragging_then_handleEvent() {
+    // given
+    var eventContext: WillEndDraggingEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView).then {
+      $0.list = List(
+        sections: []
+      ).willEndDragging { context in
+        eventContext = context
+      }
+    }
+    _ = sut
+
+    // when
+    let velocity = CGPoint(x: 0, y: 100)
+    var targetContentOffset = CGPoint(x: 0, y: 1000)
+    collectionView
+      .delegate?
+      .scrollViewWillEndDragging?(
+        collectionView,
+        withVelocity: velocity,
+        targetContentOffset: withUnsafeMutablePointer(to: &targetContentOffset) { $0 }
+      )
+
+    // then
+    XCTAssertIdentical(
+      eventContext.collectionView,
+      collectionView
+    )
+    XCTAssertEqual(
+      eventContext.velocity,
+      velocity
+    )
+    XCTAssertEqual(
+      eventContext.targetContentOffset.pointee,
+      targetContentOffset
+    )
+  }
+
+  func test_given_refreshControlEnabled_and_handler_when_pullToRefresh_then_handleEvent() {
+    // given
+    var eventContext: PullToRefreshEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(
+      configuration: .init(refreshControl: .enabled(tintColor: .clear)),
+      collectionView: collectionView
+    ).then {
+      $0.list = List(
+        sections: []
+      ).onRefresh { context in
+        eventContext = context
+      }
+    }
+    _ = sut
+
+    // when
+    collectionView
+      .refreshControl?
+      .allTargets.forEach { target in
+        collectionView
+          .refreshControl?
+          .actions(forTarget: target, forControlEvent: .valueChanged)?
+          .forEach {
+            (target.base as! NSObject).perform(
+              NSSelectorFromString($0),
+              with: collectionView.refreshControl
+            )
+          }
+      }
+
+    // then
+    XCTAssertNotNil(eventContext)
   }
 }
