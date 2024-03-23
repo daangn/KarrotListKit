@@ -29,7 +29,7 @@ final public class CollectionViewAdapter: NSObject {
 
   private weak var collectionView: UICollectionView?
 
-  private var prefetchingIndexPathOperations = [IndexPath: [AnyCancellable]]()
+  var prefetchingIndexPathOperations = [IndexPath: [AnyCancellable]]()
   private let prefetchingPlugins: [CollectionViewPrefetchingPlugin]
 
   private var isUpdating = false

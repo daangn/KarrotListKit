@@ -52,7 +52,7 @@ final class CollectionViewAdapterTests: XCTestCase {
 
   }
 
-  struct DummyComponent: Component {
+  struct DummyComponent: Component, ComponentResourcePrefetchable {
 
     struct ViewModel: Equatable { }
 
@@ -99,6 +99,26 @@ final class CollectionViewAdapterTests: XCTestCase {
 
     func render(in content: UIView, coordinator: Coordinator) {
       // nothing
+    }
+  }
+
+  final class CollectionViewPrefetchingPluginMock: CollectionViewPrefetchingPlugin {
+
+    var prefetchHandler: ((ComponentResourcePrefetchable) -> AnyCancellable?)?
+    func prefetch(with component: ComponentResourcePrefetchable) -> AnyCancellable? {
+      if let prefetchHandler {
+        return prefetchHandler(component)
+      }
+
+      fatalError("prefetchHandler must be set")
+    }
+  }
+
+  final class CancellableSpy: Cancellable {
+
+    var cancelCallCount: Int = 0
+    func cancel() {
+      cancelCallCount += 1
     }
   }
 
@@ -830,5 +850,115 @@ extension CollectionViewAdapterTests {
 
     // then
     XCTAssertNotNil(eventContext)
+  }
+}
+
+// MARK: - UICollectionViewDataSourcePrefetching
+
+extension CollectionViewAdapterTests {
+
+  func test_given_prefetchable_when_prefetch_then_added() {
+    // given: prefetchingPlugin and prefetchable component
+    let cancellable = AnyCancellable { }
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let prefetchingPlugin = CollectionViewPrefetchingPluginMock()
+    prefetchingPlugin.prefetchHandler = { _ in
+      return cancellable
+    }
+    let sut = sut(
+      collectionView: collectionView,
+      prefetchingPlugins: [prefetchingPlugin]
+    ).then {
+      $0.list = List {
+        Section(id: UUID()) {
+          Cell(
+            id: UUID(), component: DummyComponent()
+          )
+        }
+      }
+    }
+
+    // when
+    collectionView
+      .prefetchDataSource?
+      .collectionView(
+        collectionView,
+        prefetchItemsAt: [IndexPath(item: 0, section: 0)]
+      )
+
+    // then
+    XCTAssertEqual(
+      sut.prefetchingIndexPathOperations.count,
+      1
+    )
+    XCTAssertIdentical(
+      sut.prefetchingIndexPathOperations[IndexPath(item: 0, section: 0)]!.first!,
+      cancellable
+    )
+  }
+
+  func test_given_prefetchingOperation_when_cancelPrefetching_then_removed() {
+    // given
+    let cancellable = CancellableSpy()
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(
+      collectionView: collectionView,
+      prefetchingPlugins: [CollectionViewPrefetchingPluginDummy()]
+    ).then {
+      $0.prefetchingIndexPathOperations = [
+        IndexPath(item: 0, section: 0): [AnyCancellable(cancellable)]
+      ]
+    }
+
+    // when
+    collectionView
+      .prefetchDataSource?
+      .collectionView?(
+        collectionView,
+        cancelPrefetchingForItemsAt: [IndexPath(item: 0, section: 0)]
+      )
+
+    // then
+    XCTAssertTrue(sut.prefetchingIndexPathOperations.isEmpty)
+    XCTAssertEqual(cancellable.cancelCallCount, 1)
+  }
+
+  func test_given_prefetchingOperation_when_setUpCell_then_pass_operation() {
+    // given
+    let cancellable = AnyCancellable { }
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(
+      collectionView: collectionView
+    ).then {
+      $0.apply(List {
+        Section(id: UUID()) {
+          Cell(
+            id: UUID(), component: DummyComponent()
+          )
+        }
+      })
+      $0.prefetchingIndexPathOperations = [
+        IndexPath(item: 0, section: 0): [cancellable]
+      ]
+    }
+
+    // when
+    let cell = collectionView
+      .dataSource?
+      .collectionView(
+        collectionView,
+        cellForItemAt: IndexPath(item: 0, section: 0)
+      ) as! UICollectionViewComponentCell
+
+    // then
+    XCTAssertTrue(sut.prefetchingIndexPathOperations.isEmpty)
+    XCTAssertEqual(
+      cell.cancellables!.count,
+      1
+    )
+    XCTAssertIdentical(
+      cell.cancellables!.first!,
+      cancellable
+    )
   }
 }
