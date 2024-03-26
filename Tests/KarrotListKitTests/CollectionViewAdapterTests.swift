@@ -410,10 +410,7 @@ extension CollectionViewAdapterTests {
       collectionView,
       cellForItemAt: IndexPath(item: 0, section: 0)
     ) as! UICollectionViewComponentCell
-    XCTAssertIdentical(
-      cell.renderedContent,
-      view
-    )
+    XCTAssertIdentical(cell.renderedContent, view)
   }
 
   func test_when_apply_then_can_return_header() {
@@ -438,10 +435,7 @@ extension CollectionViewAdapterTests {
       viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
       at: IndexPath(item: 0, section: 0)
     ) as! UICollectionComponentReusableView
-    XCTAssertIdentical(
-      header.renderedContent,
-      view
-    )
+    XCTAssertIdentical(header.renderedContent, view)
   }
 
   func test_when_apply_then_can_return_footer() {
@@ -466,10 +460,7 @@ extension CollectionViewAdapterTests {
       viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionFooter,
       at: IndexPath(item: 0, section: 0)
     ) as! UICollectionComponentReusableView
-    XCTAssertIdentical(
-      footer.renderedContent,
-      view
-    )
+    XCTAssertIdentical(footer.renderedContent, view)
   }
 }
 
@@ -503,10 +494,7 @@ extension CollectionViewAdapterTests {
       )
 
     // then
-    XCTAssertEqual(
-      eventContext.indexPath,
-      IndexPath(item: 0, section: 0)
-    )
+    XCTAssertEqual(eventContext.indexPath, IndexPath(item: 0, section: 0))
   }
 
   func test_given_willDisplayHandler_when_willDisplayCell_then_handleEvent() {
@@ -538,10 +526,7 @@ extension CollectionViewAdapterTests {
       )
 
     // then
-    XCTAssertEqual(
-      eventContext.indexPath,
-      IndexPath(item: 0, section: 0)
-    )
+    XCTAssertEqual(eventContext.indexPath, IndexPath(item: 0, section: 0))
   }
 
   func test_given_didEndDisplayingHandler_when_didEndDisplayingCell_then_handleEvent() {
@@ -573,10 +558,7 @@ extension CollectionViewAdapterTests {
       )
 
     // then
-    XCTAssertEqual(
-      eventContext.indexPath,
-      IndexPath(item: 0, section: 0)
-    )
+    XCTAssertEqual(eventContext.indexPath, IndexPath(item: 0, section: 0))
   }
 
   func test_given_willDisplayHandler_when_willDisplayHeader_then_handleEvent() {
@@ -608,10 +590,7 @@ extension CollectionViewAdapterTests {
       )
 
     // then
-    XCTAssertEqual(
-      eventContext.indexPath,
-      IndexPath(item: 0, section: 0)
-    )
+    XCTAssertEqual(eventContext.indexPath, IndexPath(item: 0, section: 0))
   }
 
   func test_given_willDisplayHandler_when_willDisplayFooter_then_handleEvent() {
@@ -643,10 +622,7 @@ extension CollectionViewAdapterTests {
       )
 
     // then
-    XCTAssertEqual(
-      eventContext.indexPath,
-      IndexPath(item: 0, section: 0)
-    )
+    XCTAssertEqual(eventContext.indexPath, IndexPath(item: 0, section: 0))
   }
 
   func test_given_didEndDisplayHandler_when_didEndDisplayingHeader_then_handleEvent() {
@@ -678,10 +654,7 @@ extension CollectionViewAdapterTests {
       )
 
     // then
-    XCTAssertEqual(
-      eventContext.indexPath,
-      IndexPath(item: 0, section: 0)
-    )
+    XCTAssertEqual(eventContext.indexPath, IndexPath(item: 0, section: 0))
   }
 
   func test_given_didEndDisplayHandler_when_didEndDisplayingFooter_then_handleEvent() {
@@ -713,10 +686,7 @@ extension CollectionViewAdapterTests {
       )
 
     // then
-    XCTAssertEqual(
-      eventContext.indexPath,
-      IndexPath(item: 0, section: 0)
-    )
+    XCTAssertEqual(eventContext.indexPath, IndexPath(item: 0, section: 0))
   }
 }
 
@@ -745,10 +715,7 @@ extension CollectionViewAdapterTests {
       )
 
     // then
-    XCTAssertIdentical(
-      eventContext.collectionView,
-      collectionView
-    )
+    XCTAssertIdentical(eventContext.collectionView, collectionView)
   }
 
   func test_given_willBeginDraggingHandler_when_willBeginDragging_then_handleEvent() {
@@ -772,10 +739,7 @@ extension CollectionViewAdapterTests {
       )
 
     // then
-    XCTAssertIdentical(
-      eventContext.collectionView,
-      collectionView
-    )
+    XCTAssertIdentical(eventContext.collectionView, collectionView)
   }
 
   func test_given_willEndDraggingHandler_when_willEndDragging_then_handleEvent() {
@@ -803,18 +767,9 @@ extension CollectionViewAdapterTests {
       )
 
     // then
-    XCTAssertIdentical(
-      eventContext.collectionView,
-      collectionView
-    )
-    XCTAssertEqual(
-      eventContext.velocity,
-      velocity
-    )
-    XCTAssertEqual(
-      eventContext.targetContentOffset.pointee,
-      targetContentOffset
-    )
+    XCTAssertIdentical(eventContext.collectionView, collectionView)
+    XCTAssertEqual(eventContext.velocity, velocity)
+    XCTAssertEqual(eventContext.targetContentOffset.pointee, targetContentOffset)
   }
 
   func test_given_refreshControlEnabled_and_handler_when_pullToRefresh_then_handleEvent() {
@@ -887,10 +842,7 @@ extension CollectionViewAdapterTests {
       )
 
     // then
-    XCTAssertEqual(
-      sut.prefetchingIndexPathOperations.count,
-      1
-    )
+    XCTAssertEqual(sut.prefetchingIndexPathOperations.count, 1)
     XCTAssertIdentical(
       sut.prefetchingIndexPathOperations[IndexPath(item: 0, section: 0)]!.first!,
       cancellable
@@ -952,13 +904,7 @@ extension CollectionViewAdapterTests {
 
     // then
     XCTAssertTrue(sut.prefetchingIndexPathOperations.isEmpty)
-    XCTAssertEqual(
-      cell.cancellables!.count,
-      1
-    )
-    XCTAssertIdentical(
-      cell.cancellables!.first!,
-      cancellable
-    )
+    XCTAssertEqual(cell.cancellables!.count, 1)
+    XCTAssertIdentical(cell.cancellables!.first!, cancellable)
   }
 }
