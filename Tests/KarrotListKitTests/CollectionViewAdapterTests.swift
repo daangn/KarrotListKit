@@ -102,6 +102,33 @@ final class CollectionViewAdapterTests: XCTestCase {
     }
   }
 
+  final class ComponentSpy: Component {
+
+    struct ViewModel: Equatable { }
+
+    typealias Content = UIView
+    typealias Coordinator = Void
+
+    var viewModel: ViewModel {
+      .init()
+    }
+
+    var layoutMode: ContentLayoutMode {
+      .flexibleHeight(estimatedHeight: 44.0)
+    }
+
+    var renderContentCallCount: Int = 0
+    func renderContent(coordinator: Coordinator) -> UIView {
+      renderContentCallCount += 1
+      return UIView()
+    }
+
+    var renderCallCount: Int = 0
+    func render(in content: UIView, coordinator: Coordinator) {
+      renderCallCount += 1
+    }
+  }
+
   final class CollectionViewPrefetchingPluginMock: CollectionViewPrefetchingPlugin {
 
     var prefetchHandler: ((ComponentResourcePrefetchable) -> AnyCancellable?)?
@@ -960,5 +987,140 @@ extension CollectionViewAdapterTests {
       cell.cancellables!.first!,
       cancellable
     )
+  }
+}
+
+// MARK: - UICollectionViewDataSource
+
+extension CollectionViewAdapterTests {
+
+  func test_given_applied_list_when_numberOfItems_then_item_count_in_section() {
+    // given
+    let cellCount = 100
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView).then {
+      $0.list = List {
+        Section(id: UUID()) {
+          (0 ..< cellCount).map {
+            Cell(id: "\($0)", component: DummyComponent())
+          }
+        }
+      }
+    }
+    _ = sut
+
+    // when
+    let numberOfItems = collectionView
+      .dataSource?
+      .collectionView(
+        collectionView,
+        numberOfItemsInSection: 0
+      )
+
+    // then
+    XCTAssertEqual(numberOfItems, cellCount)
+  }
+
+  func test_given_applied_list_when_numberOfSections_then_section_count() {
+    // given
+    let sectionCount = 100
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView).then {
+      $0.list = List {
+        (0 ..< 100).map {
+          Section(id: "\($0)", cells: [])
+        }
+      }
+    }
+    _ = sut
+
+    // when
+    let numberOfSections = collectionView
+      .dataSource?
+      .numberOfSections?(in: collectionView)
+
+    // then
+    XCTAssertEqual(numberOfSections, sectionCount)
+  }
+
+  func test_given_applied_list_when_dequeue_cell_then_render() {
+    // given
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let component = ComponentSpy()
+    let sut = sut(collectionView: collectionView).then {
+      $0.apply(
+        List {
+          Section(id: UUID()) {
+            [Cell(id: UUID(), component: component)]
+          }
+        }
+      )
+    }
+    _ = sut
+
+    // when
+    _ = collectionView
+      .dataSource?
+      .collectionView(
+        collectionView,
+        cellForItemAt: IndexPath(item: 0, section: 0)
+      )
+
+    // then
+    XCTAssertEqual(component.renderCallCount, 1)
+  }
+
+  func test_given_applied_list_when_dequeue_header_then_render() {
+    // given
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let component = ComponentSpy()
+    let sut = sut(collectionView: collectionView).then {
+      $0.apply(
+        List {
+          Section(id: UUID(), cells: [])
+            .withHeader(component)
+        }
+      )
+    }
+    _ = sut
+
+    // when
+    _ = collectionView
+      .dataSource?
+      .collectionView?(
+        collectionView,
+        viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
+        at: IndexPath(item: 0, section: 0)
+      )
+
+    // then
+    XCTAssertEqual(component.renderCallCount, 1)
+  }
+
+  func test_given_applied_list_when_dequeue_footer_then_render() {
+    // given
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let component = ComponentSpy()
+    let sut = sut(collectionView: collectionView).then {
+      $0.apply(
+        List {
+          Section(id: UUID(), cells: [])
+            .withFooter(component)
+        }
+      )
+    }
+    _ = sut
+
+    // when
+    _ = collectionView
+      .dataSource?
+      .collectionView?(
+        collectionView,
+        viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionFooter,
+        at: IndexPath(item: 0, section: 0)
+      )
+
+    // then
+    XCTAssertEqual(component.renderCallCount, 1)
   }
 }
