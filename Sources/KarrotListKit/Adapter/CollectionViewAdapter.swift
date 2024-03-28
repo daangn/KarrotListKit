@@ -533,7 +533,10 @@ extension CollectionViewAdapter: UICollectionViewDataSource {
     }
 
     cell.onSizeChanged = { [weak self] size in
-      self?.componentSizeStorage.cellSizeStore[item.id] = (size, item.component.viewModel)
+      self?.componentSizeStorage.setCellSize(
+        (size, item.component.viewModel),
+        for: item.id
+      )
     }
     cell.cancellables = prefetchingIndexPathOperations.removeValue(forKey: indexPath)
     cell.render(component: item.component)
@@ -564,7 +567,10 @@ extension CollectionViewAdapter: UICollectionViewDataSource {
       }
 
       headerView.onSizeChanged = { [weak self] size in
-        self?.componentSizeStorage.headerSizeStore[section.id] = (size, header.component.viewModel)
+        self?.componentSizeStorage.setHeaderSize(
+          (size, header.component.viewModel),
+          for: section.id
+        )
       }
       headerView.render(component: header.component)
 
@@ -587,7 +593,10 @@ extension CollectionViewAdapter: UICollectionViewDataSource {
       }
 
       footerView.onSizeChanged = { [weak self] size in
-        self?.componentSizeStorage.footerSizeStore[section.id] = (size, footer.component.viewModel)
+        self?.componentSizeStorage.setFooterSize(
+          (size, footer.component.viewModel),
+          for: section.id
+        )
       }
       footerView.render(component: footer.component)
 
