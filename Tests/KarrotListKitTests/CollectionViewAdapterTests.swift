@@ -52,6 +52,14 @@ final class CollectionViewAdapterTests: XCTestCase {
 
   }
 
+  final class ViewStub: UIView {
+
+    var sizeThatFitsStub: CGSize!
+    override func sizeThatFits(_ size: CGSize) -> CGSize {
+      sizeThatFitsStub
+    }
+  }
+
   struct DummyComponent: Component, ComponentResourcePrefetchable {
 
     struct ViewModel: Equatable { }
@@ -1122,5 +1130,123 @@ extension CollectionViewAdapterTests {
 
     // then
     XCTAssertEqual(component.renderCallCount, 1)
+  }
+}
+
+// MARK: - SizeStorage
+
+extension CollectionViewAdapterTests {
+
+  func test_given_dequeued_cell_when_calculate_size_then_store_size() {
+    // given
+    let cellID = UUID()
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    var component = ComponentStub()
+    component.viewModelStub = .init()
+    component.contentStub = ViewStub().then {
+      $0.sizeThatFitsStub = CGSize(width: 44.0, height: 44.0)
+    }
+    let sut = sut(collectionView: collectionView).then {
+      $0.apply(
+        List {
+          Section(id: UUID()) {
+            Cell(id: cellID, component: component)
+          }
+        }
+      )
+    }
+
+    let cell = collectionView
+      .dataSource?
+      .collectionView(
+        collectionView,
+        cellForItemAt: IndexPath(item: 0, section: 0)
+      ) as! UICollectionViewComponentCell
+
+    // when
+    _ = cell.preferredLayoutAttributesFitting(
+      UICollectionViewLayoutAttributes(forCellWith: IndexPath(item: 0, section: 0))
+    )
+
+    // then
+    XCTAssertEqual(
+      sut.sizeStorage().cellSize(for: cellID)?.size,
+      CGSize(width: 44.0, height: 44.0)
+    )
+  }
+
+  func test_given_dequeued_header_when_calculate_size_then_store_size() {
+    // given
+    let sectionID = UUID()
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    var component = ComponentStub()
+    component.viewModelStub = .init()
+    component.contentStub = ViewStub().then {
+      $0.sizeThatFitsStub = CGSize(width: 44.0, height: 44.0)
+    }
+    let sut = sut(collectionView: collectionView).then {
+      $0.apply(
+        List {
+          Section(id: sectionID, cells: [])
+            .withHeader(component)
+        }
+      )
+    }
+
+    let header = collectionView
+      .dataSource?
+      .collectionView?(
+        collectionView,
+        viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
+        at: IndexPath(item: 0, section: 0)
+      ) as! UICollectionComponentReusableView
+
+    // when
+    _ = header.preferredLayoutAttributesFitting(
+      UICollectionViewLayoutAttributes(forCellWith: IndexPath(item: 0, section: 0))
+    )
+
+    // then
+    XCTAssertEqual(
+      sut.sizeStorage().headerSize(for: sectionID)?.size,
+      CGSize(width: 44.0, height: 44.0)
+    )
+  }
+
+  func test_given_dequeued_footer_when_calculate_size_then_store_size() {
+    // given
+    let sectionID = UUID()
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    var component = ComponentStub()
+    component.viewModelStub = .init()
+    component.contentStub = ViewStub().then {
+      $0.sizeThatFitsStub = CGSize(width: 44.0, height: 44.0)
+    }
+    let sut = sut(collectionView: collectionView).then {
+      $0.apply(
+        List {
+          Section(id: sectionID, cells: [])
+            .withFooter(component)
+        }
+      )
+    }
+    let header = collectionView
+      .dataSource?
+      .collectionView?(
+        collectionView,
+        viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionFooter,
+        at: IndexPath(item: 0, section: 0)
+      ) as! UICollectionComponentReusableView
+
+    // when
+    _ = header.preferredLayoutAttributesFitting(
+      UICollectionViewLayoutAttributes(forCellWith: IndexPath(item: 0, section: 0))
+    )
+
+    // then
+    XCTAssertEqual(
+      sut.sizeStorage().footerSize(for: sectionID)?.size,
+      CGSize(width: 44.0, height: 44.0)
+    )
   }
 }
