@@ -824,13 +824,16 @@ extension CollectionViewAdapterTests {
       collectionView: collectionView,
       prefetchingPlugins: [prefetchingPlugin]
     ).then {
-      $0.list = List {
-        Section(id: UUID()) {
-          Cell(
-            id: UUID(), component: DummyComponent()
-          )
+      // given: applied list
+      $0.apply(
+        List {
+          Section(id: UUID()) {
+            Cell(
+              id: UUID(), component: DummyComponent()
+            )
+          }
         }
-      }
+      )
     }
 
     // when
@@ -850,17 +853,35 @@ extension CollectionViewAdapterTests {
   }
 
   func test_given_prefetchingOperation_when_cancelPrefetching_then_removed() {
-    // given
+    // given: mocking prefetchingPlugin
     let cancellable = CancellableSpy()
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let prefetchingPlugin = CollectionViewPrefetchingPluginMock()
+    prefetchingPlugin.prefetchHandler = { _ in
+      return AnyCancellable(cancellable)
+    }
     let sut = sut(
       collectionView: collectionView,
-      prefetchingPlugins: [CollectionViewPrefetchingPluginDummy()]
+      prefetchingPlugins: [prefetchingPlugin]
     ).then {
-      $0.prefetchingIndexPathOperations = [
-        IndexPath(item: 0, section: 0): [AnyCancellable(cancellable)]
-      ]
+      // given: applied list
+      $0.apply(
+        List {
+          Section(id: UUID()) {
+            Cell(
+              id: UUID(), component: DummyComponent()
+            )
+          }
+        }
+      )
     }
+    // given: creating prefetchingOperation
+    collectionView
+      .prefetchDataSource?
+      .collectionView(
+        collectionView,
+        prefetchItemsAt: [IndexPath(item: 0, section: 0)]
+      )
 
     // when
     collectionView
@@ -876,12 +897,18 @@ extension CollectionViewAdapterTests {
   }
 
   func test_given_prefetchingOperation_when_setUpCell_then_pass_operation() {
-    // given
+    // given: mocking prefetchingPlugin
     let cancellable = AnyCancellable { }
+    let prefetchingPlugin = CollectionViewPrefetchingPluginMock()
+    prefetchingPlugin.prefetchHandler = { _ in
+      return cancellable
+    }
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let sut = sut(
-      collectionView: collectionView
+      collectionView: collectionView,
+      prefetchingPlugins: [prefetchingPlugin]
     ).then {
+      // given: applied list
       $0.apply(List {
         Section(id: UUID()) {
           Cell(
@@ -889,10 +916,14 @@ extension CollectionViewAdapterTests {
           )
         }
       })
-      $0.prefetchingIndexPathOperations = [
-        IndexPath(item: 0, section: 0): [cancellable]
-      ]
     }
+    // given: creating prefetchingOperation
+    collectionView
+      .prefetchDataSource?
+      .collectionView(
+        collectionView,
+        prefetchItemsAt: [IndexPath(item: 0, section: 0)]
+      )
 
     // when
     let cell = collectionView
