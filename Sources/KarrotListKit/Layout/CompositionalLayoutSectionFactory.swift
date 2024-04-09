@@ -27,7 +27,7 @@ public protocol CompositionalLayoutSectionFactory {
 extension CompositionalLayoutSectionFactory {
   public func layoutCellItems(cells: [Cell], sizeStorage: ComponentSizeStorage) -> [NSCollectionLayoutItem] {
     cells.map {
-      if let sizeContext = sizeStorage.cellSizeStore[$0.id],
+      if let sizeContext = sizeStorage.cellSize(for: $0.id),
          sizeContext.viewModel == $0.component.viewModel {
         return NSCollectionLayoutItem(layoutSize: makeLayoutSize(
           mode: $0.component.layoutMode,
@@ -49,7 +49,7 @@ extension CompositionalLayoutSectionFactory {
       return nil
     }
 
-    if let sizeContext = sizeStorage.headerSizeStore[section.id],
+    if let sizeContext = sizeStorage.headerSize(for: section.id),
        sizeContext.viewModel == header.component.viewModel {
       return NSCollectionLayoutBoundarySupplementaryItem(
         layoutSize: makeLayoutSize(
@@ -76,7 +76,7 @@ extension CompositionalLayoutSectionFactory {
       return nil
     }
 
-    if let sizeContext = sizeStorage.footerSizeStore[section.id],
+    if let sizeContext = sizeStorage.footerSize(for: section.id),
        sizeContext.viewModel == footer.component.viewModel {
       return NSCollectionLayoutBoundarySupplementaryItem(
         layoutSize: makeLayoutSize(
