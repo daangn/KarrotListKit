@@ -4,4 +4,5 @@
 
 import Foundation
 
+/// Represents a component that can be uniquely identify.
 public protocol IdentifiableComponent: Identifiable, Component {}

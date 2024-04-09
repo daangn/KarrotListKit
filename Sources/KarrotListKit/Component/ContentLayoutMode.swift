@@ -4,16 +4,27 @@
 
 import Foundation
 
+/// An enumeration that defines how a `Component`'s content should be laid out in a `UICollectionView`.
 public enum ContentLayoutMode: Equatable {
-  /// 너비 / 높이 부모 크기에 맞추기
+
+  /// The content's width and height are adjusted to fit the size of the parent container.
   case fitContainer
 
-  /// 너비는 부모가 결정하고, 높이는 내부 Content 크기에 맞추기
+  /// The content's width is determined by the parent container, and its height is adjusted to fit the size of the content itself.
+  /// An estimated height is provided for use before the actual height is calculated.
+  ///
+  /// - Parameter estimatedHeight: The estimated height of the content.
   case flexibleHeight(estimatedHeight: CGFloat)
 
-  /// 높이는 부모가 결정하고, 너비는 내부 Content 크기에 맞추기
+  /// The content's height is determined by the parent container, and its width is adjusted to fit the size of the content itself.
+  /// An estimated width is provided for use before the actual width is calculated.
+  ///
+  /// - Parameter estimatedWidth: The estimated width of the content.
   case flexibleWidth(estimatedWidth: CGFloat)
 
-  /// 너비 / 높이 모두 내부 Content 크기에 맞추기
+  /// Both the content's width and height are adjusted to fit the size of the content itself.
+  /// An estimated size is provided for use before the actual size is calculated.
+  ///
+  /// - Parameter estimatedSize: The estimated size of the content.
   case fitContent(estimatedSize: CGSize)
 }

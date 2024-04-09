@@ -48,92 +48,11 @@ final class CollectionViewAdapterTests: XCTestCase {
     override func moveItem(at indexPath: IndexPath, to newIndexPath: IndexPath) { }
   }
 
-  final class DummyView: UIView {
-
-  }
-
   final class ViewStub: UIView {
 
     var sizeThatFitsStub: CGSize!
     override func sizeThatFits(_ size: CGSize) -> CGSize {
       sizeThatFitsStub
-    }
-  }
-
-  struct DummyComponent: Component, ComponentResourcePrefetchable {
-
-    struct ViewModel: Equatable { }
-
-    typealias Content = UIView
-    typealias Coordinator = Void
-
-    var layoutMode: ContentLayoutMode {
-      .flexibleHeight(estimatedHeight: 44.0)
-    }
-
-    var viewModel: ViewModel = .init()
-
-    func renderContent(coordinator: Coordinator) -> UIView {
-      UIView()
-    }
-
-    func render(in content: UIView, coordinator: Coordinator) {
-      // nothing
-    }
-  }
-
-  struct ComponentStub: Component {
-
-    struct ViewModel: Equatable { }
-
-    typealias Content = UIView
-    typealias Coordinator = Void
-
-    var viewModel: ViewModel {
-      viewModelStub
-    }
-
-    var layoutMode: ContentLayoutMode {
-      layoutModeStub
-    }
-
-    var layoutModeStub: ContentLayoutMode!
-    var viewModelStub: ViewModel!
-    var contentStub: UIView!
-
-    func renderContent(coordinator: Coordinator) -> UIView {
-      contentStub
-    }
-
-    func render(in content: UIView, coordinator: Coordinator) {
-      // nothing
-    }
-  }
-
-  final class ComponentSpy: Component {
-
-    struct ViewModel: Equatable { }
-
-    typealias Content = UIView
-    typealias Coordinator = Void
-
-    var viewModel: ViewModel {
-      .init()
-    }
-
-    var layoutMode: ContentLayoutMode {
-      .flexibleHeight(estimatedHeight: 44.0)
-    }
-
-    var renderContentCallCount: Int = 0
-    func renderContent(coordinator: Coordinator) -> UIView {
-      renderContentCallCount += 1
-      return UIView()
-    }
-
-    var renderCallCount: Int = 0
-    func render(in content: UIView, coordinator: Coordinator) {
-      renderCallCount += 1
     }
   }
 
@@ -427,7 +346,7 @@ extension CollectionViewAdapterTests {
     // given
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let sut = sut(collectionView: collectionView)
-    let view = DummyView()
+    let view = UIView()
     var component = ComponentStub()
     component.contentStub = view
 
@@ -452,7 +371,7 @@ extension CollectionViewAdapterTests {
     // given
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let sut = sut(collectionView: collectionView)
-    let view = DummyView()
+    let view = UIView()
     var component = ComponentStub()
     component.contentStub = view
 
@@ -477,7 +396,7 @@ extension CollectionViewAdapterTests {
     // given
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let sut = sut(collectionView: collectionView)
-    let view = DummyView()
+    let view = UIView()
     var component = ComponentStub()
     component.contentStub = view
 
