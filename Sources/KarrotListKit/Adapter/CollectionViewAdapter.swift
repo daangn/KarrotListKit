@@ -288,8 +288,6 @@ extension CollectionViewAdapter: UICollectionViewDelegate {
     willDisplay cell: UICollectionViewCell,
     forItemAt indexPath: IndexPath
   ) {
-    guard cell.isValidSize() else { return }
-
     guard let item = item(at: indexPath) else {
       return
     }
@@ -312,8 +310,6 @@ extension CollectionViewAdapter: UICollectionViewDelegate {
     didEndDisplaying cell: UICollectionViewCell,
     forItemAt indexPath: IndexPath
   ) {
-    guard cell.isValidSize() else { return }
-
     guard let item = item(at: indexPath) else {
       return
     }
@@ -333,8 +329,6 @@ extension CollectionViewAdapter: UICollectionViewDelegate {
     forElementKind elementKind: String,
     at indexPath: IndexPath
   ) {
-    guard view.isValidSize() else { return }
-
     guard let section = sectionItem(at: indexPath.section) else {
       return
     }
@@ -373,8 +367,6 @@ extension CollectionViewAdapter: UICollectionViewDelegate {
     forElementOfKind elementKind: String,
     at indexPath: IndexPath
   ) {
-    guard view.isValidSize() else { return }
-
     guard let section = sectionItem(at: indexPath.section) else {
       return
     }
@@ -488,22 +480,6 @@ extension CollectionViewAdapter: UICollectionViewDataSourcePrefetching {
       }
     }
   }
-}
-
-extension UIView {
-
-  fileprivate func isValidSize() -> Bool {
-    if frame.height == 0.0 {
-      return false
-    }
-
-    if frame.width == 0.0 {
-      return false
-    }
-
-    return true
-  }
-
 }
 
 // MARK: - UICollectionViewDataSource
