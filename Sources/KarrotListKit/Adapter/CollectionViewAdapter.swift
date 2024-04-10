@@ -144,12 +144,9 @@ final public class CollectionViewAdapter: NSObject {
       return
     }
 
-    CATransaction.begin()
-    CATransaction.setDisableActions(true)
     if animatingDifferences {
       performDifferentialUpdates(
         old: self.list, new: list, completion: { flag in
-          CATransaction.commit()
           overridedCompletion(flag)
         }
       )
@@ -157,7 +154,6 @@ final public class CollectionViewAdapter: NSObject {
       UIView.performWithoutAnimation {
         performDifferentialUpdates(
           old: self.list, new: list, completion: { flag in
-            CATransaction.commit()
             overridedCompletion(flag)
           }
         )
