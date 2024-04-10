@@ -7,17 +7,41 @@ import UIKit
 import DifferenceKit
 import Then
 
+/// The `Section` that representing a UICollectionView Section.
+///
+/// The Section has a data structure similar to a Section UI hierarchy for example, an array of Cells, header, footer, etc.
+/// So we just make the section data for represent Section UI
+///
+/// - Note: The layout depends on NSCollectionLayoutSection and
+/// you must set the layout through the withSectionLayout modifier.
 public struct Section: Identifiable, ListingViewEventHandler, Then {
+
+  /// The identifier for `Section`
   public let id: AnyHashable
+
+  /// The header that representing header view
   public var header: SupplementaryView?
+
+  /// A array of cell that representing UICollectionViewCell.
   public var cells: [Cell]
+
+  /// The footer that representing footer view
   public var footer: SupplementaryView?
+
+  /// The object that encapsulates information about the next batch of updates.
   public var nextBatchTrigger: NextBatchTrigger?
+  
   private var sectionLayout: CompositionalLayoutSectionFactory.SectionLayout?
+  
   let eventStorage: ListingViewEventStorage
 
   // MARK: - Initializer
 
+  /// The initializer method that creates a Section.
+  ///
+  /// - Parameters:
+  ///  - id: The identifier that identifies the Section.
+  ///  - cells: An array of cell to be displayed on the screen.
   public init(
     id: some Hashable,
     cells: [Cell]
@@ -27,6 +51,11 @@ public struct Section: Identifiable, ListingViewEventHandler, Then {
     self.eventStorage = ListingViewEventStorage()
   }
 
+  /// The initializer method that creates a Section.
+  ///
+  /// - Parameters:
+  ///  - id: The identifier that identifies the Section.
+  ///  - cells: The Builder that creates an array of cell to be displayed on the screen.
   public init(
     id: some Hashable,
     @CellsBuilder _ cells: () -> [Cell]
@@ -36,24 +65,41 @@ public struct Section: Identifiable, ListingViewEventHandler, Then {
     self.eventStorage = ListingViewEventStorage()
   }
 
+  /// The modifier that specifies the layout for the Section.
+  ///
+  /// - Parameters:
+  ///  - sectionLayout: A closure that custom section layout provider.
   public func withSectionLayout(_ sectionLayout: CompositionalLayoutSectionFactory.SectionLayout?) -> Self {
     var copy = self
     copy.sectionLayout = sectionLayout
     return copy
   }
 
+  /// The modifier that sets the layout for the Section.
+  ///
+  /// - Parameters:
+  ///  - layoutMaker: A factory object that creates an NSCollectionLayoutSection.
   public func withSectionLayout(_ layoutMaker: CompositionalLayoutSectionFactory) -> Self {
     var copy = self
     copy.sectionLayout = layoutMaker.makeSectionLayout()
     return copy
   }
 
+  /// The modifier that sets the layout for the Section.
+  ///
+  /// - Parameters:
+  ///  - defaultLayoutMaker: The basic layout factory provided by the framework.
   public func withSectionLayout(_ defaultLayoutMaker: DefaultCompositionalLayoutSectionFactory) -> Self {
     var copy = self
     copy.sectionLayout = defaultLayoutMaker.makeSectionLayout()
     return copy
   }
 
+  /// The modifier that sets the Header for the Section.
+  ///
+  /// - Parameters:
+  ///  - headerComponent: The component that the header represents.
+  ///  - alignment: The alignment of the component.
   public func withHeader(
     _ headerComponent: some Component,
     alignment: NSRectAlignment = .top
@@ -67,6 +113,11 @@ public struct Section: Identifiable, ListingViewEventHandler, Then {
     return copy
   }
 
+  /// The modifier that sets the Footer for the Section.
+  ///
+  /// - Parameters:
+  ///  - footerComponent: The component that the footer represents.
+  ///  - alignment: The alignment of the component.
   public func withFooter(
     _ footerComponent: some Component,
     alignment: NSRectAlignment = .bottom
@@ -80,6 +131,22 @@ public struct Section: Identifiable, ListingViewEventHandler, Then {
     return copy
   }
 
+  /// The modifier that sets the NextBatchTrigger for the Section.
+  ///
+  /// The Section supports Pagination.
+  /// It allows us to create and receive callbacks for the timing of the next batch update.
+  /// Below is a sample code.
+  ///
+  ///```swift
+  /// Section(id: UUID()) {
+  ///  ...
+  /// }
+  /// .withNextBatchTrigger(threshold: 7) {
+  ///  /// handle next batch trigger
+  /// }
+  ///```
+  /// - Parameters:
+  ///  - trigger: A trigger object that stores the timing and handler for the next batch update.
   public func withNextBatchTrigger(_ trigger: NextBatchTrigger?) -> Self {
     var copy = self
     copy.nextBatchTrigger = trigger
@@ -99,6 +166,10 @@ public struct Section: Identifiable, ListingViewEventHandler, Then {
 // MARK: - Event Handler
 
 extension Section {
+  /// Register a callback handler that will be called when the header is displayed on the screen.
+  ///
+  /// - Parameters:
+  ///   - handler: The callback handler when header is displayed on the screen.
   @discardableResult
   public func willDisplayHeader(_ handler: @escaping (WillDisplayEvent.EventContext) -> Void) -> Self {
     var copy = self
@@ -106,6 +177,10 @@ extension Section {
     return copy
   }
 
+  /// Register a callback handler that will be called when the footer is displayed on the screen.
+  ///
+  /// - Parameters:
+  ///   - handler: The callback handler when footer is displayed on the screen.
   @discardableResult
   public func willDisplayFooter(_ handler: @escaping (WillDisplayEvent.EventContext) -> Void) -> Self {
     var copy = self
@@ -113,12 +188,20 @@ extension Section {
     return copy
   }
 
+  /// Registers a callback handler that will be called when the header is removed from the screen.
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler when the header is removed from the screen.
   public func didEndDisplayHeader(_ handler: @escaping (DidEndDisplayingEvent.EventContext) -> Void) -> Self {
     var copy = self
     copy.header = header?.didEndDisplaying(handler)
     return copy
   }
 
+  /// Registers a callback handler that will be called when the footer is removed from the screen.
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler when the footer is removed from the screen.
   public func didEndDisplayFooter(_ handler: @escaping (DidEndDisplayingEvent.EventContext) -> Void) -> Self {
     var copy = self
     copy.footer = footer?.didEndDisplaying(handler)
@@ -149,7 +232,7 @@ extension Section: DifferentiableSection {
     cells
   }
 
-  public init(source: Section, elements cells: some Collection<Cell>) {
+  public init(source: Section, elements cells: some Swift.Collection<Cell>) {
     self = source
     self.cells = Array(cells)
   }

@@ -16,6 +16,8 @@ import DifferenceKit
 /// you can receive callbacks through modifiers.
 /// Please note, you should never set the delegate and dataSource of the collectionView directly.
 final public class CollectionViewAdapter: NSObject {
+
+  /// The configuration for the CollectionViewAdapter.
   public var configuration: CollectionViewAdapterConfiguration
 
   /// The set of cell reuseIdentifiers that have been registered on the collection view.
