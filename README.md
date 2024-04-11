@@ -28,6 +28,8 @@ Now you're ready to start using the KarrotListKit Framework
 
 ## Getting Started
 
+[API documentation](https://fluffy-couscous-5mql18j.pages.github.io/documentation/karrotlistkit) provides that see detailed description of each type 
+
 ### CollectionViewAdapter
 
 The `CollectionViewAdapter` object serves as an adapter between the `UIColletionView` logic and the KarrotListKit logic, encapsulating the core implementation logic of the framework
@@ -172,6 +174,38 @@ Section(id: "Section1") {
 .withNextBatchTrigger(NextBatchTrigger(threshold: 10) { context in
   // handle trigger 
 })
+```
+
+
+
+### Prefetching
+
+Provides prefetching of resources API to improve scroll performance.
+The CollectionViewAdapter conforms to the `UICollectionViewDataSourcePrefetching`. The framework provides the `ComponentResourcePrefetchable` and `CollectionViewPrefetchingPlugin` protocols for compatibility.
+
+Below is sample code for Image prefetching.
+
+```swift
+let collectionViewAdapter = CollectionViewAdapter(
+  configuration: .init(),
+  collectionView: collectionView,
+  layoutAdapter: CollectionViewLayoutAdapter(),
+  prefetchingPlugins: [
+    RemoteImagePrefetchingPlugin(
+      remoteImagePrefetcher: RemoteImagePrefetcher()
+    )
+  ]
+)
+
+extension ImagePrefetchableComponent: ComponentRemoteImagePrefetchable {
+  var remoteImageURLs: [URL] {
+    [
+      URL(string: "imageURL"),
+      URL(string: "imageURL"),
+      URL(string: "imageURL")
+    ]
+  }
+}
 ```
 
 
