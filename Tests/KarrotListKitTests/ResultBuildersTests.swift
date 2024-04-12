@@ -39,8 +39,10 @@ extension ResultBuildersTests {
   }
 
   func test_build_cells_with_if_condition() {
+    let condition = true
+
     let section = Section(id: UUID()) {
-      if true {
+      if condition {
         Cell(id: UUID(), component: DummyComponent())
         Cell(id: UUID(), component: DummyComponent())
         Cell(id: UUID(), component: DummyComponent())
@@ -53,10 +55,12 @@ extension ResultBuildersTests {
   }
 
   func test_build_cells_with_else_if_condition() {
+    let condition = true
+
     let section = Section(id: UUID()) {
-      if false {
+      if !condition {
         Cell(id: UUID(), component: DummyComponent())
-      } else if true {
+      } else if condition {
         Cell(id: UUID(), component: DummyComponent())
         Cell(id: UUID(), component: DummyComponent())
         Cell(id: UUID(), component: DummyComponent())
@@ -67,8 +71,10 @@ extension ResultBuildersTests {
   }
 
   func test_build_cells_with_else_condition() {
+    let condition = true
+
     let section = Section(id: UUID()) {
-      if false {
+      if !condition {
         Cell(id: UUID(), component: DummyComponent())
       } else {
         Cell(id: UUID(), component: DummyComponent())
@@ -141,8 +147,10 @@ extension ResultBuildersTests {
   }
 
   func test_build_sections_with_if_condition() {
+    let condition = true
+
     let list = List {
-      if true {
+      if condition {
         Section(id: UUID(), cells: [])
         Section(id: UUID(), cells: [])
         Section(id: UUID(), cells: [])
@@ -155,10 +163,12 @@ extension ResultBuildersTests {
   }
 
   func test_build_sections_with_else_if_condition() {
+    let condition = true
+
     let list = List {
-      if false {
+      if !condition {
         Section(id: UUID(), cells: [])
-      } else if true {
+      } else if condition {
         Section(id: UUID(), cells: [])
         Section(id: UUID(), cells: [])
         Section(id: UUID(), cells: [])
@@ -169,8 +179,10 @@ extension ResultBuildersTests {
   }
 
   func test_build_sections_with_else_condition() {
+    let condition = true
+
     let list = List {
-      if false {
+      if !condition {
         Section(id: UUID(), cells: [])
       } else {
         Section(id: UUID(), cells: [])
