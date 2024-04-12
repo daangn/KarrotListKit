@@ -90,9 +90,12 @@ public struct Section: Identifiable, ListingViewEventHandler, Then {
     index: Int,
     environment: NSCollectionLayoutEnvironment,
     sizeStorage: ComponentSizeStorage
-  )
-    -> NSCollectionLayoutSection? {
-    sectionLayout?((self, index, environment, sizeStorage))
+  ) -> NSCollectionLayoutSection? {
+    if sectionLayout == nil {
+      assertionFailure("Please specify a valid section layout")
+    }
+
+    return sectionLayout?((self, index, environment, sizeStorage))
   }
 }
 

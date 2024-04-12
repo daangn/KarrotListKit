@@ -19,6 +19,43 @@ final class CollectionViewLayoutAdapterTests: XCTestCase {
     var traitCollection: UITraitCollection { .init() }
   }
 
+  final class ComponentSizeStorageDummy: ComponentSizeStorage {
+
+    func cellSize(for hash: AnyHashable) -> SizeContext? {
+      nil
+    }
+
+    func headerSize(for hash: AnyHashable) -> SizeContext? {
+      nil
+    }
+
+    func footerSize(for hash: AnyHashable) -> SizeContext? {
+      nil
+    }
+    
+    func setCellSize(_ size: SizeContext, for hash: AnyHashable) {
+    }
+    
+    func setHeaderSize(_ size: SizeContext, for hash: AnyHashable) {
+    }
+    
+    func setFooterSize(_ size: SizeContext, for hash: AnyHashable) {
+    }
+  }
+
+  final class CollectionViewLayoutAdapterDataSourceStub: CollectionViewLayoutAdapterDataSource {
+
+    var section: Section?
+    func sectionItem(at index: Int) -> Section? {
+      section
+    }
+
+    var sizeStorageStub: ComponentSizeStorage!
+    func sizeStorage() -> ComponentSizeStorage {
+      sizeStorageStub
+    }
+  }
+
   func sut() -> CollectionViewLayoutAdapter {
     CollectionViewLayoutAdapter()
   }
@@ -28,37 +65,90 @@ final class CollectionViewLayoutAdapterTests: XCTestCase {
 
 extension CollectionViewLayoutAdapterTests {
 
-  func test_given_applied_list_when_sectionLayout_then_make_with_context() {
-    var layoutContext: CompositionalLayoutSectionFactory.LayoutContext!
-    let environment = NSCollectionLayoutEnvironmentDummy()
+  func test_given_no_setup_when_sectionLayout_then_return_nil() {
+    // given
     let sut = sut()
-    let collectionView = UICollectionView(layoutAdapter: sut)
-    let collectionViewAdapter = CollectionViewAdapter(
-      configuration: .init(),
-      collectionView: collectionView,
-      layoutAdapter: sut
-    ).then {
-      // given: applied list
-      $0.apply(
-        List {
-          Section(
-            id: UUID().uuidString,
-            cells: [Cell(id: UUID().uuidString, component: DummyComponent())]
+    
+    // when
+    let sectionLayout = sut.sectionLayout(index: 0, environment: NSCollectionLayoutEnvironmentDummy())
+
+    // then
+    XCTAssertNil(sectionLayout)
+  }
+
+  func test_given_nil_section_when_sectionLayout_then_return_nil() {
+    let dataSource = CollectionViewLayoutAdapterDataSourceStub()
+    dataSource.section = nil
+
+    let sut = sut()
+    sut.dataSource = dataSource
+
+    // when
+    let sectionLayout = sut.sectionLayout(index: 0, environment: NSCollectionLayoutEnvironmentDummy())
+
+    // then
+    XCTAssertNil(sectionLayout)
+  }
+
+  func test_given_section_without_layout_when_sectionLayout_then_return_nil() {
+    let dataSource = CollectionViewLayoutAdapterDataSourceStub()
+    dataSource.section = Section(id: UUID(), cells: [])
+
+    let sut = sut()
+    sut.dataSource = dataSource
+
+    // when
+    let sectionLayout = sut.sectionLayout(index: 0, environment: NSCollectionLayoutEnvironmentDummy())
+
+    // then
+    XCTAssertNil(sectionLayout)
+  }
+
+  func test_given_section_with_emptyCell_when_sectionLayout_then_return_nil() {
+    let dataSource = CollectionViewLayoutAdapterDataSourceStub()
+    dataSource.section = Section(id: UUID(), cells: []).withSectionLayout { _ in
+      return .init(
+        group: .init(
+          layoutSize: .init(
+            widthDimension: .absolute(44.0),
+            heightDimension: .absolute(44.0)
           )
-          .withSectionLayout { context in
-            layoutContext = context
-            return nil
-          }
-        }
+        )
       )
     }
 
+    let sut = sut()
+    sut.dataSource = dataSource
+
     // when
-    _ = sut.sectionLayout(index: 0, environment: environment)
+    let sectionLayout = sut.sectionLayout(index: 0, environment: NSCollectionLayoutEnvironmentDummy())
 
     // then
-    XCTAssertEqual(layoutContext.index, 0)
-    XCTAssertEqual(layoutContext.section, collectionViewAdapter.snapshot()?.sections[0])
-    XCTAssertIdentical(layoutContext.environment, environment)
+    XCTAssertNil(sectionLayout)
+  }
+
+  func test_given_valid_section_when_sectionLayout_then_return_sectionLayout() {
+    let dataSource = CollectionViewLayoutAdapterDataSourceStub()
+    dataSource.sizeStorageStub = ComponentSizeStorageDummy()
+    dataSource.section = Section(
+      id: UUID(),
+      cells: [Cell(id: UUID(), component: DummyComponent())]
+    ).withSectionLayout { _ in
+      return .init(
+        group: .vertical(
+          layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(0), heightDimension: .absolute(0)),
+          subitems: [.init(layoutSize: .init(widthDimension: .absolute(0), heightDimension: .absolute(0)))]
+        )
+      )
+    }
+
+    let sut = sut()
+    sut.dataSource = dataSource
+
+    // when
+    let sectionLayout = sut.sectionLayout(index: 0, environment: NSCollectionLayoutEnvironmentDummy())
+
+    // then
+    XCTAssertNotNil(sectionLayout)
   }
 }
