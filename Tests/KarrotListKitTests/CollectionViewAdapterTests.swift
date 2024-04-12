@@ -28,6 +28,11 @@ final class CollectionViewAdapterTests: XCTestCase {
       .init()
     }
 
+    var indexPathsForVisibleItemsHandler: (() -> [IndexPath])?
+    override var indexPathsForVisibleItems: [IndexPath] {
+      indexPathsForVisibleItemsHandler?() ?? []
+    }
+
     var performBatchUpdatesCallCount: Int = 0
     var performBatchUpdatesHandler: ((_ updates: (() -> Void)?, _ completion: ((Bool) -> Void)?) -> Void)?
     override func performBatchUpdates(_ updates: (() -> Void)?, completion: ((Bool) -> Void)? = nil) {
@@ -1144,5 +1149,160 @@ extension CollectionViewAdapterTests {
       sut.sizeStorage().footerSize(for: sectionID)?.size,
       CGSize(width: 44.0, height: 44.0)
     )
+  }
+}
+
+// MARK: - Next batch update
+
+extension CollectionViewAdapterTests {
+
+  func test_given_not_triggerable_visibleItem_when_apply_then_not_triggered() {
+    // given
+    let numberOfCells = 100
+    let threshold = 10
+    var nextBatchContext: NextBatchContext!
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter()).then {
+      $0.indexPathsForVisibleItemsHandler = {
+        [IndexPath(item: numberOfCells - threshold - 1, section: 0)]
+      }
+    }
+    let sut = sut(collectionView: collectionView)
+
+    // when
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          (0 ..< numberOfCells).map { _ in
+            Cell(id: UUID(), component: DummyComponent())
+          }
+        }
+        .withNextBatchTrigger(NextBatchTrigger(
+          threshold: threshold,
+          context: .init(),
+          handler: { context in
+            nextBatchContext = context
+          }
+        ))
+      }
+    )
+
+    // then
+    XCTAssertNil(nextBatchContext)
+  }
+
+  func test_given_triggerable_visibleItem_when_apply_then_triggered() {
+    // given
+    let numberOfCells = 100
+    let threshold = 10
+    var nextBatchContext: NextBatchContext!
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter()).then {
+      $0.indexPathsForVisibleItemsHandler = {
+        [IndexPath(item: numberOfCells - threshold, section: 0)]
+      }
+    }
+    let sut = sut(collectionView: collectionView)
+
+    // when
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          (0 ..< numberOfCells).map { _ in
+            Cell(id: UUID(), component: DummyComponent())
+          }
+        }
+        .withNextBatchTrigger(NextBatchTrigger(
+          threshold: threshold,
+          context: .init(),
+          handler: { context in
+            nextBatchContext = context
+          }
+        ))
+      }
+    )
+
+    // then
+    XCTAssertEqual(nextBatchContext.state, .triggered)
+  }
+
+  func test_given_not_triggerable_indexPath_when_willDisplay_then_not_triggered() {
+    // given
+    let numberOfCells = 100
+    let threshold = 10
+    var nextBatchContext: NextBatchContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView).then {
+      $0.apply(
+        List {
+          Section(id: UUID()) {
+            (0 ..< numberOfCells).map { _ in
+              Cell(id: UUID(), component: DummyComponent())
+            }
+          }
+          .withNextBatchTrigger(NextBatchTrigger(
+            threshold: threshold,
+            context: .init(),
+            handler: { context in
+              nextBatchContext = context
+            }
+          ))
+        }
+      )
+    }
+    _ = sut
+
+    // when
+    collectionView
+      .delegate?
+      .collectionView?(
+        collectionView,
+        willDisplay: UICollectionViewCell(
+          frame: .init(origin: .zero, size: .init(width: 44.0, height: 44.0))
+        ),
+        forItemAt: IndexPath(item: numberOfCells - threshold - 1, section: 0)
+      )
+
+    // then
+    XCTAssertNil(nextBatchContext)
+  }
+
+  func test_given_triggerable_indexPath_when_willDisplay_then_triggered() {
+    // given
+    let numberOfCells = 100
+    let threshold = 10
+    var nextBatchContext: NextBatchContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView).then {
+      $0.apply(
+        List {
+          Section(id: UUID()) {
+            (0 ..< numberOfCells).map { _ in
+              Cell(id: UUID(), component: DummyComponent())
+            }
+          }
+          .withNextBatchTrigger(NextBatchTrigger(
+            threshold: threshold,
+            context: .init(),
+            handler: { context in
+              nextBatchContext = context
+            }
+          ))
+        }
+      )
+    }
+    _ = sut
+
+    // when
+    collectionView
+      .delegate?
+      .collectionView?(
+        collectionView,
+        willDisplay: UICollectionViewCell(
+          frame: .init(origin: .zero, size: .init(width: 44.0, height: 44.0))
+        ),
+        forItemAt: IndexPath(item: numberOfCells - threshold, section: 0)
+      )
+
+    // then
+    XCTAssertEqual(nextBatchContext.state, .triggered)
   }
 }

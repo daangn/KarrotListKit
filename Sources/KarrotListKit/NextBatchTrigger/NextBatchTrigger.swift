@@ -4,19 +4,37 @@
 
 import Foundation
 
-/// 마지막 콘텐츠 기준으로 N번째 콘텐츠가 노출되는 경우 트리거를 받을 수 있도록 구현되어 있어요.
+/// Provides a `NextBatchTrigger` for pagination functionality.
+///
+/// This object makes it easy to implement paging functionality with simple code.
+/// Below is a sample code.
+///
+///```swift
+/// Section(id: UUID()) {
+///  ...
+/// }
+/// .withNextBatchTrigger(threshold: 7) {
+///  /// handle next batch trigger
+/// }
+///```
+/// A trigger occurs when the threshold is greater than or equal to the index of the last content minus the index of the currently displayed content.
 public final class NextBatchTrigger {
 
-  /// threshold >= 마지막 콘텐츠의 index - 현재 노출된 콘텐츠의 index
-  /// 위 조건에서 트리거가 발생해요.
+  /// The threshold that occurs trigger event
   public let threshold: Int
 
-  /// 현재 트리거 관련 상태값을 저장
+  /// The current state for next batch trigger
   public var context: NextBatchContext
 
-  /// 트리거된 경우 호출되는 클로저
+  /// A closure that is called when a trigger occurs
   public let handler: (_ context: NextBatchContext) -> Void
 
+  /// The initializer method that creates a NextBatchTrigger.
+  ///
+  /// - Parameters:
+  ///  - threshold: The threshold that occurs trigger event
+  ///  - context: The initial state for next batch trigger
+  ///  - handler: A closure that is called when a trigger occurs
   public init(
     threshold: Int = 7,
     context: NextBatchContext = .init(),
