@@ -25,6 +25,10 @@ struct ComponentRepresented<C: Component>: UIViewRepresentable {
 }
 
 extension Component {
+  /// This helper method allows the Component to be used in SwiftUI.
+  ///
+  /// Component has an API similar to UIViewRepresentable.
+  /// By using this method, you can easily migrate to SwiftUI.
   public func toSwiftUI() -> some View {
     ComponentRepresented(component: self)
   }

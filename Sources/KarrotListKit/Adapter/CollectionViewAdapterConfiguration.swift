@@ -4,19 +4,25 @@
 
 import UIKit
 
+/// The configuration for the CollectionViewAdapter object.
 public struct CollectionViewAdapterConfiguration {
 
-  /// CollectionView 의 RefreshControl 구성
+  /// Configure the RefreshControl of the CollectionView
   ///
-  /// 기본값은 `.disabled()` 입니다.
+  /// The default value is .disabled().
   public let refreshControl: RefreshControl
 
-  /// changeSet 이 `batchUpdateInterruptCount` 수를 넘기면 
-  /// `UICollectionView` 가 animated updates 가 아닌 reloadData 로 동작합니다.
+  /// If the changeSet count exceeds the batchUpdateInterruptCount,
+  /// the UICollectionView operates with reloadData instead of animated updates.
   ///
-  /// 기본값은 `100` 입니다.
+  /// The default value is 100.
   public let batchUpdateInterruptCount: Int
 
+  /// Initialize a new instance of `UICollectionViewAdapter`.
+  ///
+  /// - Parameters:
+  ///   - refreshControl: RefreshControl of the CollectionView
+  ///   - batchUpdateInterruptCount: maximum changeSet count that can be animated updates
   public init(
     refreshControl: RefreshControl = .disabled(),
     batchUpdateInterruptCount: Int = 100
@@ -31,18 +37,21 @@ public struct CollectionViewAdapterConfiguration {
 
 extension CollectionViewAdapterConfiguration {
 
+  /// Represents the information of the RefreshControl.
   public struct RefreshControl {
 
-    /// RefreshControl 적용 여부
+    /// Indicates whether the RefreshControl is applied or not.
     public let isEnabled: Bool
 
-    /// RefreshControl 의 tintColor
+    // The tint color of the RefreshControl.
     public let tintColor: UIColor
 
+    /// Use this function to enable the RefreshControl and set its tint color.
     public static func enabled(tintColor: UIColor) -> RefreshControl {
       .init(isEnabled: true, tintColor: tintColor)
     }
 
+    /// Use this function to disable the RefreshControl.
     public static func disabled() -> RefreshControl {
       .init(isEnabled: false, tintColor: .clear)
     }

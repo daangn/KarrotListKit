@@ -6,19 +6,34 @@ import UIKit
 
 import DifferenceKit
 
+/// The `Cell` that representing a UICollectionViewCell.
 public struct Cell: Identifiable, ListingViewEventHandler {
+
+  /// The identifier for `Cell`
   public let id: AnyHashable
+
+  /// A type-erased component for cell
   public let component: AnyComponent
 
   let eventStorage = ListingViewEventStorage()
 
   // MARK: - Initializer
 
+  /// The initializer method that creates a Cell.
+  ///
+  /// - Parameters:
+  ///  - id: The identifier that identifies the Cell.
+  ///  - component: A type-erased component for cell.
   public init(id: some Hashable, component: some Component) {
     self.id = id
     self.component = AnyComponent(component)
   }
 
+  /// The initializer method that creates a Cell.
+  ///
+  /// - Parameters:
+  ///  - id: The identifier that identifies the Cell.
+  ///  - component: A type-erased component for cell.
   public init(component: some IdentifiableComponent) {
     self.id = component.id
     self.component = AnyComponent(component)
@@ -28,14 +43,27 @@ public struct Cell: Identifiable, ListingViewEventHandler {
 // MARK: - Event Handler
 
 extension Cell {
+
+  /// Register a callback handler that will be called when the cell was selected
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler for select event
   public func didSelect(_ handler: @escaping (DidSelectEvent.EventContext) -> Void) -> Self {
     registerEvent(DidSelectEvent(handler: handler))
   }
 
+  /// Register a callback handler that will be called when the cell being added
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler for will display event
   public func willDisplay(_ handler: @escaping (WillDisplayEvent.EventContext) -> Void) -> Self {
     registerEvent(WillDisplayEvent(handler: handler))
   }
 
+  /// Register a callback handler that will be called when the cell was removed.
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler for did end display event
   public func didEndDisplay(_ handler: @escaping (DidEndDisplayingEvent.EventContext) -> Void) -> Self {
     registerEvent(DidEndDisplayingEvent(handler: handler))
   }
