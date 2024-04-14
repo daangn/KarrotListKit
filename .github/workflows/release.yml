@@ -1,0 +1,24 @@
+name: Release
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    runs-on: macos-14
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: extract_version_info
+        run: echo "version=$(git describe --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_OUTPUT
+        id: extract_version_name
+
+      - name: Deploy to Cocoapods
+        run: |
+          set -eo pipefail
+          pod lib lint --allow-warnings
+          pod trunk push --allow-warnings
+        env:
+          LIB_VERSION: ${{ steps.extract_version_name.outputs.version }}
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
