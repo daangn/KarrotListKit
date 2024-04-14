@@ -6,6 +6,8 @@ Pod::Spec.new do |spec|
   spec.license      = { type: 'Apache 2', file: 'LICENSE' }
   spec.authors = 'Karrot'
   spec.source = { git: 'https://github.com/daangn/KarrotListKit.git', tag: spec.version.to_s }
+  spec.ios.deployment_target = '13.0'
+  spec.swift_version = '5.0'
 
   spec.source_files = 'Sources/**/*.{swift,h,m}'
 
