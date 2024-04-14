@@ -1,0 +1,6 @@
+version: 1
+builder:
+  configs:
+    - platform: ios
+      scheme: KarrotListKit
+    - documentation_targets: [KarrotListKit]
