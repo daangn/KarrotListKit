@@ -15,21 +15,18 @@ concurrency:
 
 jobs:
   build_and_test:
-    runs-on:
-      group: ios-org-runners
+    runs-on: macos-14
 
     env:
       SCHEME: KarrotListKit
-      DESTINATION: platform=iOS Simulator,name=iPhone 15 Pro,OS=latest
+      DESTINATION: platform=iOS Simulator,name=iPhone 15,OS=17.2
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup Xcode Version
+        run: sudo xcode-select --switch /Applications/Xcode_15.2.app
         shell: bash
-        run: |
-          XCODE_VERSION=$(cat .xcode-version)
-          echo "DEVELOPER_DIR=/Applications/Xcode-$XCODE_VERSION.app/Contents/Developer/" >> $GITHUB_ENV
 
       - name: Run `build-for-testing`
         run: |
