@@ -21,10 +21,6 @@ let package = Package(
       url: "https://github.com/devxoul/Then.git",
       .upToNextMajor(from: "3.0.0")
     ),
-    .package(
-      url: "https://github.com/apple/swift-docc-plugin.git",
-      from: "1.3.0"
-    ),
   ],
   targets: [
     .target(
