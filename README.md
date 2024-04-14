@@ -27,8 +27,7 @@ Now you're ready to start using the KarrotListKit Framework
 
 
 ## Getting Started
-
-[API documentation](https://fluffy-couscous-5mql18j.pages.github.io/documentation/karrotlistkit) provides that see detailed description of each type 
+See the [KarrotListKit DocC documentation](https://swiftpackageindex.com/daangn/KarrotListKit/main/documentation/karrotlistkit) hosted on the [Swift Package Index](https://swiftpackageindex.com/).
 
 ### CollectionViewAdapter
 
