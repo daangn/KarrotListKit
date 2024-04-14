@@ -1,8 +1,5 @@
 //
-//  ComponentTestDouble.swift
-//  
-//
-//  Created by Jaxtyn on 2024/04/02.
+//  Copyright (c) 2024 Danggeun Market Inc.
 //
 
 import UIKit
@@ -11,7 +8,7 @@ import UIKit
 
 struct DummyComponent: Component, ComponentResourcePrefetchable {
 
-  struct ViewModel: Equatable { }
+  struct ViewModel: Equatable {}
 
   typealias Content = UIView
   typealias Coordinator = Void
@@ -33,7 +30,7 @@ struct DummyComponent: Component, ComponentResourcePrefetchable {
 
 struct ComponentStub: Component {
 
-  struct ViewModel: Equatable { }
+  struct ViewModel: Equatable {}
 
   typealias Content = UIView
   typealias Coordinator = Void
@@ -61,7 +58,7 @@ struct ComponentStub: Component {
 
 class ComponentSpy: Component {
 
-  struct ViewModel: Equatable { }
+  struct ViewModel: Equatable {}
 
   typealias Content = UIView
   typealias Coordinator = Void
@@ -74,13 +71,13 @@ class ComponentSpy: Component {
     .fitContainer
   }
 
-  var renderContentCallCount: Int = 0
+  var renderContentCallCount = 0
   func renderContent(coordinator: Coordinator) -> UIView {
     renderContentCallCount += 1
     return .init()
   }
 
-  var renderCallCount: Int = 0
+  var renderCallCount = 0
   func render(in content: UIView, coordinator: Coordinator) {
     renderCallCount += 1
   }

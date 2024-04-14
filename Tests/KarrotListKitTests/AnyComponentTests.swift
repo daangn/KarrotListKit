@@ -1,8 +1,5 @@
 //
-//  AnyComponentTests.swift
-//
-//
-//  Created by Jaxtyn on 2024/04/02.
+//  Copyright (c) 2024 Danggeun Market Inc.
 //
 
 import XCTest

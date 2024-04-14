@@ -1,8 +1,5 @@
 //
-//  VerticalGridLayout.swift
-//  
-//
-//  Created by Jaxtyn on 2024/04/04.
+//  Copyright (c) 2024 Danggeun Market Inc.
 //
 
 import UIKit
@@ -21,11 +18,11 @@ public struct VerticalGridLayout: CompositionalLayoutSectionFactory {
   private var footerPinToVisibleBounds: Bool?
   private var visibleItemsInvalidationHandler: NSCollectionLayoutSectionVisibleItemsInvalidationHandler?
 
-   /// Initializes a new vertical grid layout.
-   /// - Parameters:
-   ///   - numberOfItemsInRow: The number of items in a row.
-   ///   - itemSpacing: The spacing between items in the layout.
-   ///   - lineSpacing: The spacing between lines in the layout.
+  /// Initializes a new vertical grid layout.
+  /// - Parameters:
+  ///   - numberOfItemsInRow: The number of items in a row.
+  ///   - itemSpacing: The spacing between items in the layout.
+  ///   - lineSpacing: The spacing between lines in the layout.
   public init(
     numberOfItemsInRow: Int,
     itemSpacing: CGFloat,
@@ -94,12 +91,12 @@ public struct VerticalGridLayout: CompositionalLayoutSectionFactory {
             if let footerPinToVisibleBounds {
               $0.pinToVisibleBounds = footerPinToVisibleBounds
             }
-          }
+          },
         ].compactMap { $0 }
       }
     }
   }
-  
+
   /// Sets the insets for the section.
   ///
   /// - Parameters:

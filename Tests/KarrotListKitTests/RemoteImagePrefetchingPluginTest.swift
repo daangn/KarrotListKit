@@ -1,8 +1,5 @@
 //
-//  File.swift
-//  
-//
-//  Created by Jaxtyn on 2024/03/26.
+//  Copyright (c) 2024 Danggeun Market Inc.
 //
 
 import XCTest
@@ -12,24 +9,24 @@ import XCTest
 final class RemoteImagePrefetchingPluginTest: XCTestCase {
 
   final class RemoteImagePrefetchingSpy: RemoteImagePrefetching {
-    
-    var prefetchImageCallCount: Int = 0
+
+    var prefetchImageCallCount = 0
     func prefetchImage(url: URL) -> UUID? {
       prefetchImageCallCount += 1
       return UUID()
     }
 
-    var cancelTaskCallCount: Int = 0
+    var cancelTaskCallCount = 0
     func cancelTask(uuid: UUID) {
       cancelTaskCallCount += 1
     }
   }
 
   struct ComponentRemoteImagePrefetchableDummy: ComponentRemoteImagePrefetchable {
-    
+
     var remoteImageURLs: [URL] {
       [
-        URL(string: "https://github.com/daangn/KarrotListKit")!
+        URL(string: "https://github.com/daangn/KarrotListKit")!,
       ]
     }
   }

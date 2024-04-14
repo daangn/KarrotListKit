@@ -1,12 +1,9 @@
 //
-//  CollectionViewLayoutAdapterTests.swift
-//
-//
-//  Created by Jaxtyn on 2024/04/05.
+//  Copyright (c) 2024 Danggeun Market Inc.
 //
 
-import UIKit
 import Combine
+import UIKit
 
 import XCTest
 
@@ -32,15 +29,12 @@ final class CollectionViewLayoutAdapterTests: XCTestCase {
     func footerSize(for hash: AnyHashable) -> SizeContext? {
       nil
     }
-    
-    func setCellSize(_ size: SizeContext, for hash: AnyHashable) {
-    }
-    
-    func setHeaderSize(_ size: SizeContext, for hash: AnyHashable) {
-    }
-    
-    func setFooterSize(_ size: SizeContext, for hash: AnyHashable) {
-    }
+
+    func setCellSize(_ size: SizeContext, for hash: AnyHashable) {}
+
+    func setHeaderSize(_ size: SizeContext, for hash: AnyHashable) {}
+
+    func setFooterSize(_ size: SizeContext, for hash: AnyHashable) {}
   }
 
   final class CollectionViewLayoutAdapterDataSourceStub: CollectionViewLayoutAdapterDataSource {
@@ -68,7 +62,7 @@ extension CollectionViewLayoutAdapterTests {
   func test_given_no_setup_when_sectionLayout_then_return_nil() {
     // given
     let sut = sut()
-    
+
     // when
     let sectionLayout = sut.sectionLayout(index: 0, environment: NSCollectionLayoutEnvironmentDummy())
 
@@ -107,7 +101,7 @@ extension CollectionViewLayoutAdapterTests {
   func test_given_section_with_emptyCell_when_sectionLayout_then_return_nil() {
     let dataSource = CollectionViewLayoutAdapterDataSourceStub()
     dataSource.section = Section(id: UUID(), cells: []).withSectionLayout { _ in
-      return .init(
+      .init(
         group: .init(
           layoutSize: .init(
             widthDimension: .absolute(44.0),
@@ -134,7 +128,7 @@ extension CollectionViewLayoutAdapterTests {
       id: UUID(),
       cells: [Cell(id: UUID(), component: DummyComponent())]
     ).withSectionLayout { _ in
-      return .init(
+      .init(
         group: .vertical(
           layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(0), heightDimension: .absolute(0)),
           subitems: [.init(layoutSize: .init(widthDimension: .absolute(0), heightDimension: .absolute(0)))]

@@ -1,8 +1,5 @@
 //
-//  HorizontalLayout.swift
-//
-//
-//  Created by Jaxtyn on 2024/04/04.
+//  Copyright (c) 2024 Danggeun Market Inc.
 //
 
 import UIKit
@@ -66,7 +63,7 @@ public struct HorizontalLayout: CompositionalLayoutSectionFactory {
             if let footerPinToVisibleBounds {
               $0.pinToVisibleBounds = footerPinToVisibleBounds
             }
-          }
+          },
         ].compactMap { $0 }
       }
     }

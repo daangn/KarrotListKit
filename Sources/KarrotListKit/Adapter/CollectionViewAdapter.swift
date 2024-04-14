@@ -190,7 +190,7 @@ final public class CollectionViewAdapter: NSObject {
 
   /// Registers reuse identifiers for cells, headers, and footers in a UICollectionView.
   ///
-  /// It dynamically registers the cells, headers, and footers at runtime. 
+  /// It dynamically registers the cells, headers, and footers at runtime.
   /// This allows for greater flexibility and reduces the need for boilerplate code.
   ///
   /// - Parameter sections: An array of `Section` objects. Each `Section` object contains information about a cell, header, and footer.
@@ -493,7 +493,10 @@ extension CollectionViewAdapter: UICollectionViewDataSource {
     sectionItem(at: section)?.cells.count ?? 0
   }
 
-  public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+  public func collectionView(
+    _ collectionView: UICollectionView,
+    cellForItemAt indexPath: IndexPath
+  ) -> UICollectionViewCell {
     guard let item = item(at: indexPath) else {
       return UICollectionViewCell()
     }

@@ -41,7 +41,8 @@ public protocol CompositionalLayoutSectionFactory {
   ///   - section: The section that contains header
   ///   - sizeStorage: The storage that cached size of the header component.
   /// - Returns: layout item for header
-  func layoutHeaderItem(section: Section, sizeStorage: ComponentSizeStorage) -> NSCollectionLayoutBoundarySupplementaryItem?
+  func layoutHeaderItem(section: Section, sizeStorage: ComponentSizeStorage)
+    -> NSCollectionLayoutBoundarySupplementaryItem?
 
   /// Make layout item for a section footer.
   ///
@@ -49,7 +50,8 @@ public protocol CompositionalLayoutSectionFactory {
   ///   - section: The section that contains footer
   ///   - sizeStorage: The storage that cached size of the footer component.
   /// - Returns: layout item for footer
-  func layoutFooterItem(section: Section, sizeStorage: ComponentSizeStorage) -> NSCollectionLayoutBoundarySupplementaryItem?
+  func layoutFooterItem(section: Section, sizeStorage: ComponentSizeStorage)
+    -> NSCollectionLayoutBoundarySupplementaryItem?
 }
 
 extension CompositionalLayoutSectionFactory {

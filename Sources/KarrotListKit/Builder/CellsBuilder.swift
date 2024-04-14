@@ -42,7 +42,7 @@ public enum CellsBuilder {
   public static func buildExpression(_ expression: Cell...) -> [Cell] {
     expression
   }
-  
+
   public static func buildExpression(_ expression: [Cell]...) -> [Cell] {
     expression.flatMap { $0 }
   }

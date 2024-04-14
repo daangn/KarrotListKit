@@ -8,7 +8,7 @@ import Foundation
 public struct DidSelectEvent: ListingViewEvent {
 
   public struct EventContext {
-    
+
     /// The index path of the cell that was selected.
     public let indexPath: IndexPath
 

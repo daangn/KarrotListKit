@@ -9,14 +9,14 @@ import Foundation
 /// This object makes it easy to implement paging functionality with simple code.
 /// Below is a sample code.
 ///
-///```swift
+/// ```swift
 /// Section(id: UUID()) {
 ///  ...
 /// }
 /// .withNextBatchTrigger(threshold: 7) {
 ///  /// handle next batch trigger
 /// }
-///```
+/// ```
 /// A trigger occurs when the threshold is greater than or equal to the index of the last content minus the index of the currently displayed content.
 public final class NextBatchTrigger {
 

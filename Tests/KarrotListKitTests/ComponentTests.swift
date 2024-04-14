@@ -1,8 +1,5 @@
 //
-//  ComponentTests.swift
-//
-//
-//  Created by Jaxtyn on 2024/04/02.
+//  Copyright (c) 2024 Danggeun Market Inc.
 //
 
 import XCTest
@@ -12,7 +9,7 @@ import XCTest
 final class ComponentTests: XCTestCase {
 
   struct FatalComponent: Component {
-    struct ViewModel: Equatable { }
+    struct ViewModel: Equatable {}
     typealias Content = UIView
     typealias Coordinator = Void
     var layoutMode: ContentLayoutMode { fatalError() }

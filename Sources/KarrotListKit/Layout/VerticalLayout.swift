@@ -1,14 +1,11 @@
 //
-//  VerticalLayout.swift
-//
-//
-//  Created by Jaxtyn on 2024/04/03.
+//  Copyright (c) 2024 Danggeun Market Inc.
 //
 
 import UIKit
 
 /// This layout supports vertical scrolling.
-/// 
+///
 /// If the width of the Cell is the same as the width of the CollectionView and the height is fit to the size of the content, this layout can be used to vertical scrolling style UI.
 /// - Note: when using a vertical layout, the layout mode of the component must be Flexible High.
 public struct VerticalLayout: CompositionalLayoutSectionFactory {
@@ -57,7 +54,7 @@ public struct VerticalLayout: CompositionalLayoutSectionFactory {
             if let footerPinToVisibleBounds {
               $0.pinToVisibleBounds = footerPinToVisibleBounds
             }
-          }
+          },
         ].compactMap { $0 }
       }
     }

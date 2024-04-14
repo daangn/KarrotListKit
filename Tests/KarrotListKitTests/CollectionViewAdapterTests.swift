@@ -1,13 +1,9 @@
 //
-//  CollectionViewAdapterTests.swift
-//
-//
-//  Created by Jaxtyn on 3/14/24.
-//
+//  Copyright (c) 2024 Danggeun Market Inc.
 //
 
-import UIKit
 import Combine
+import UIKit
 
 import XCTest
 
@@ -23,7 +19,7 @@ final class CollectionViewAdapterTests: XCTestCase {
   }
 
   final class CollectionViewMock: UICollectionView {
-    
+
     override var window: UIWindow? {
       .init()
     }
@@ -33,7 +29,7 @@ final class CollectionViewAdapterTests: XCTestCase {
       indexPathsForVisibleItemsHandler?() ?? []
     }
 
-    var performBatchUpdatesCallCount: Int = 0
+    var performBatchUpdatesCallCount = 0
     var performBatchUpdatesHandler: ((_ updates: (() -> Void)?, _ completion: ((Bool) -> Void)?) -> Void)?
     override func performBatchUpdates(_ updates: (() -> Void)?, completion: ((Bool) -> Void)? = nil) {
       performBatchUpdatesCallCount += 1
@@ -42,15 +38,15 @@ final class CollectionViewAdapterTests: XCTestCase {
       }
     }
 
-    override func reloadData() { }
-    override func deleteSections(_ sections: IndexSet) { }
-    override func insertSections(_ sections: IndexSet) { }
-    override func reloadSections(_ sections: IndexSet) { }
-    override func moveSection(_ section: Int, toSection newSection: Int) { }
-    override func deleteItems(at indexPaths: [IndexPath]) { }
-    override func insertItems(at indexPaths: [IndexPath]) { }
-    override func reloadItems(at indexPaths: [IndexPath]) { }
-    override func moveItem(at indexPath: IndexPath, to newIndexPath: IndexPath) { }
+    override func reloadData() {}
+    override func deleteSections(_ sections: IndexSet) {}
+    override func insertSections(_ sections: IndexSet) {}
+    override func reloadSections(_ sections: IndexSet) {}
+    override func moveSection(_ section: Int, toSection newSection: Int) {}
+    override func deleteItems(at indexPaths: [IndexPath]) {}
+    override func insertItems(at indexPaths: [IndexPath]) {}
+    override func reloadItems(at indexPaths: [IndexPath]) {}
+    override func moveItem(at indexPath: IndexPath, to newIndexPath: IndexPath) {}
   }
 
   final class ViewStub: UIView {
@@ -75,7 +71,7 @@ final class CollectionViewAdapterTests: XCTestCase {
 
   final class CancellableSpy: Cancellable {
 
-    var cancelCallCount: Int = 0
+    var cancelCallCount = 0
     func cancel() {
       cancelCallCount += 1
     }
@@ -202,7 +198,7 @@ extension CollectionViewAdapterTests {
 // MARK: - Applying list
 
 extension CollectionViewAdapterTests {
-  
+
   func test_when_first_apply_then_setup_list() {
     // given
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
@@ -230,7 +226,7 @@ extension CollectionViewAdapterTests {
             id: "Cell",
             component: DummyComponent()
           )
-        }
+        },
       ]
     )
   }
@@ -281,7 +277,7 @@ extension CollectionViewAdapterTests {
             id: "Cell",
             component: DummyComponent()
           )
-        }
+        },
       ]
     )
   }
@@ -324,9 +320,9 @@ extension CollectionViewAdapterTests {
                     Cell(
                       id: "Cell-\(i)",
                       component: DummyComponent()
-                    )
+                    ),
                   ]
-                )
+                ),
               ]
             )
             XCTAssertTrue(areEqual)
@@ -773,11 +769,11 @@ extension CollectionViewAdapterTests {
 
   func test_given_prefetchable_when_prefetch_then_added() {
     // given: prefetchingPlugin and prefetchable component
-    let cancellable = AnyCancellable { }
+    let cancellable = AnyCancellable {}
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let prefetchingPlugin = CollectionViewPrefetchingPluginMock()
     prefetchingPlugin.prefetchHandler = { _ in
-      return cancellable
+      cancellable
     }
     let sut = sut(
       collectionView: collectionView,
@@ -817,7 +813,7 @@ extension CollectionViewAdapterTests {
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let prefetchingPlugin = CollectionViewPrefetchingPluginMock()
     prefetchingPlugin.prefetchHandler = { _ in
-      return AnyCancellable(cancellable)
+      AnyCancellable(cancellable)
     }
     let sut = sut(
       collectionView: collectionView,
@@ -857,10 +853,10 @@ extension CollectionViewAdapterTests {
 
   func test_given_prefetchingOperation_when_setUpCell_then_pass_operation() {
     // given: mocking prefetchingPlugin
-    let cancellable = AnyCancellable { }
+    let cancellable = AnyCancellable {}
     let prefetchingPlugin = CollectionViewPrefetchingPluginMock()
     prefetchingPlugin.prefetchHandler = { _ in
-      return cancellable
+      cancellable
     }
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let sut = sut(
