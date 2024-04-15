@@ -44,8 +44,8 @@ final class UICollectionComponentReusableView: UICollectionReusableView, Compone
       onSizeChanged?(size)
     }
 
-    return attributes.with {
-      $0.frame.size = size
-    }
+    attributes.frame.size = size
+
+    return attributes
   }
 }

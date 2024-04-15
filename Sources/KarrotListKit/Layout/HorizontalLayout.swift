@@ -38,34 +38,37 @@ public struct HorizontalLayout: CompositionalLayoutSectionFactory {
           heightDimension: .estimated(context.environment.container.contentSize.height)
         ),
         subitems: layoutCellItems(cells: context.section.cells, sizeStorage: context.sizeStorage)
-      ).then {
-        $0.interItemSpacing = .fixed(spacing)
+      )
+      group.interItemSpacing = .fixed(spacing)
+
+
+      let section = NSCollectionLayoutSection(group: group)
+      if let sectionInsets {
+        section.contentInsets = sectionInsets
       }
 
-      return NSCollectionLayoutSection(group: group).then {
-        if let sectionInsets = sectionInsets {
-          $0.contentInsets = sectionInsets
-        }
-
-        if let visibleItemsInvalidationHandler {
-          $0.visibleItemsInvalidationHandler = visibleItemsInvalidationHandler
-        }
-
-        $0.orthogonalScrollingBehavior = scrollingBehavior
-
-        $0.boundarySupplementaryItems = [
-          layoutHeaderItem(section: context.section, sizeStorage: context.sizeStorage)?.then {
-            if let headerPinToVisibleBounds {
-              $0.pinToVisibleBounds = headerPinToVisibleBounds
-            }
-          },
-          layoutFooterItem(section: context.section, sizeStorage: context.sizeStorage)?.then {
-            if let footerPinToVisibleBounds {
-              $0.pinToVisibleBounds = footerPinToVisibleBounds
-            }
-          },
-        ].compactMap { $0 }
+      if let visibleItemsInvalidationHandler {
+        section.visibleItemsInvalidationHandler = visibleItemsInvalidationHandler
       }
+
+      section.orthogonalScrollingBehavior = scrollingBehavior
+
+      let headerItem = layoutHeaderItem(section: context.section, sizeStorage: context.sizeStorage)
+      if let headerPinToVisibleBounds {
+        headerItem?.pinToVisibleBounds = headerPinToVisibleBounds
+      }
+
+      let footerItem = layoutFooterItem(section: context.section, sizeStorage: context.sizeStorage)
+      if let footerPinToVisibleBounds {
+        footerItem?.pinToVisibleBounds = footerPinToVisibleBounds
+      }
+
+      section.boundarySupplementaryItems = [
+        headerItem,
+        footerItem,
+      ].compactMap { $0 }
+
+      return section
     }
   }
 

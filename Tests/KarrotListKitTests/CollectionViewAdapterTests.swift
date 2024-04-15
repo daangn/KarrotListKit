@@ -234,20 +234,18 @@ extension CollectionViewAdapterTests {
   @MainActor
   func test_given_applied_list_when_apply_then_update() async {
     // given
-    let expectation = XCTestExpectation().then {
-      $0.expectedFulfillmentCount = 1
+    let expectation = XCTestExpectation()
+    expectation.expectedFulfillmentCount = 1
+
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    collectionView.performBatchUpdatesHandler = { updates, completion in
+      updates?()
+      completion?(true)
     }
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter()).then {
-      $0.performBatchUpdatesHandler = { updates, completion in
-        updates?()
-        completion?(true)
-      }
-    }
-    let sut = sut(collectionView: collectionView).then {
-      $0.list = List {
-        Section(id: UUID()) {
-          Cell(id: UUID(), component: DummyComponent())
-        }
+    let sut = sut(collectionView: collectionView)
+    sut.list = List {
+      Section(id: UUID()) {
+        Cell(id: UUID(), component: DummyComponent())
       }
     }
 
@@ -285,17 +283,17 @@ extension CollectionViewAdapterTests {
   @MainActor
   func test_when_multiple_async_apply_then_safe_update() async {
     // given
-    let expectation = XCTestExpectation().then {
-      $0.expectedFulfillmentCount = 1
-    }
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter()).then {
-      $0.performBatchUpdatesHandler = { updates, completion in
-        updates?()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-          completion?(true)
-        }
+    let expectation = XCTestExpectation()
+    expectation.expectedFulfillmentCount = 1
+
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    collectionView.performBatchUpdatesHandler = { updates, completion in
+      updates?()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+        completion?(true)
       }
     }
+
     let sut = sut(collectionView: collectionView)
 
     // when
@@ -428,17 +426,15 @@ extension CollectionViewAdapterTests {
     var eventContext: DidSelectEvent.EventContext!
     let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView).then {
-      $0.list = List {
-        Section(id: UUID()) {
-          Cell(id: UUID(), component: component)
-            .didSelect { context in
-              eventContext = context
-            }
-        }
+    let sut = sut(collectionView: collectionView)
+    sut.list = List {
+      Section(id: UUID()) {
+        Cell(id: UUID(), component: component)
+          .didSelect { context in
+            eventContext = context
+          }
       }
     }
-    _ = sut
 
     // when
     collectionView
@@ -457,17 +453,15 @@ extension CollectionViewAdapterTests {
     var eventContext: WillDisplayEvent.EventContext!
     let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView).then {
-      $0.list = List {
-        Section(id: UUID()) {
-          Cell(id: UUID(), component: component)
-            .willDisplay { context in
-              eventContext = context
-            }
-        }
+    let sut = sut(collectionView: collectionView)
+    sut.list = List {
+      Section(id: UUID()) {
+        Cell(id: UUID(), component: component)
+          .willDisplay { context in
+            eventContext = context
+          }
       }
     }
-    _ = sut
 
     // when
     collectionView
@@ -489,17 +483,15 @@ extension CollectionViewAdapterTests {
     var eventContext: DidEndDisplayingEvent.EventContext!
     let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView).then {
-      $0.list = List {
-        Section(id: UUID()) {
-          Cell(id: UUID(), component: component)
-            .didEndDisplay { context in
-              eventContext = context
-            }
-        }
+    let sut = sut(collectionView: collectionView)
+    sut.list = List {
+      Section(id: UUID()) {
+        Cell(id: UUID(), component: component)
+          .didEndDisplay { context in
+            eventContext = context
+          }
       }
     }
-    _ = sut
 
     // when
     collectionView
@@ -521,16 +513,14 @@ extension CollectionViewAdapterTests {
     var eventContext: WillDisplayEvent.EventContext!
     let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView).then {
-      $0.list = List {
-        Section(id: UUID(), cells: [])
-          .withHeader(component)
-          .willDisplayHeader { context in
-            eventContext = context
-          }
-      }
+    let sut = sut(collectionView: collectionView)
+    sut.list = List {
+      Section(id: UUID(), cells: [])
+        .withHeader(component)
+        .willDisplayHeader { context in
+          eventContext = context
+        }
     }
-    _ = sut
 
     // when
     collectionView
@@ -553,16 +543,14 @@ extension CollectionViewAdapterTests {
     var eventContext: WillDisplayEvent.EventContext!
     let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView).then {
-      $0.list = List {
-        Section(id: UUID(), cells: [])
-          .withFooter(component)
-          .willDisplayFooter { context in
-            eventContext = context
-          }
-      }
+    let sut = sut(collectionView: collectionView)
+    sut.list = List {
+      Section(id: UUID(), cells: [])
+        .withFooter(component)
+        .willDisplayFooter { context in
+          eventContext = context
+        }
     }
-    _ = sut
 
     // when
     collectionView
@@ -585,16 +573,14 @@ extension CollectionViewAdapterTests {
     var eventContext: DidEndDisplayingEvent.EventContext!
     let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView).then {
-      $0.list = List {
-        Section(id: UUID(), cells: [])
-          .withHeader(component)
-          .didEndDisplayHeader { context in
-            eventContext = context
-          }
-      }
+    let sut = sut(collectionView: collectionView)
+    sut.list = List {
+      Section(id: UUID(), cells: [])
+        .withHeader(component)
+        .didEndDisplayHeader { context in
+          eventContext = context
+        }
     }
-    _ = sut
 
     // when
     collectionView
@@ -617,16 +603,14 @@ extension CollectionViewAdapterTests {
     var eventContext: DidEndDisplayingEvent.EventContext!
     let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView).then {
-      $0.list = List {
-        Section(id: UUID(), cells: [])
-          .withFooter(component)
-          .didEndDisplayFooter { context in
-            eventContext = context
-          }
-      }
+    let sut = sut(collectionView: collectionView)
+    sut.list = List {
+      Section(id: UUID(), cells: [])
+        .withFooter(component)
+        .didEndDisplayFooter { context in
+          eventContext = context
+        }
     }
-    _ = sut
 
     // when
     collectionView
@@ -653,14 +637,12 @@ extension CollectionViewAdapterTests {
     // given
     var eventContext: DidScrollEvent.EventContext!
     let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView).then {
-      $0.list = List(
-        sections: []
-      ).didScroll { context in
-        eventContext = context
-      }
+    let sut = sut(collectionView: collectionView)
+    sut.list = List(
+      sections: []
+    ).didScroll { context in
+      eventContext = context
     }
-    _ = sut
 
     // when
     collectionView
@@ -677,14 +659,12 @@ extension CollectionViewAdapterTests {
     // given
     var eventContext: WillBeginDraggingEvent.EventContext!
     let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView).then {
-      $0.list = List(
-        sections: []
-      ).willBeginDragging { context in
-        eventContext = context
-      }
+    let sut = sut(collectionView: collectionView)
+    sut.list = List(
+      sections: []
+    ).willBeginDragging { context in
+      eventContext = context
     }
-    _ = sut
 
     // when
     collectionView
@@ -701,14 +681,12 @@ extension CollectionViewAdapterTests {
     // given
     var eventContext: WillEndDraggingEvent.EventContext!
     let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView).then {
-      $0.list = List(
-        sections: []
-      ).willEndDragging { context in
-        eventContext = context
-      }
+    let sut = sut(collectionView: collectionView)
+    sut.list = List(
+      sections: []
+    ).willEndDragging { context in
+      eventContext = context
     }
-    _ = sut
 
     // when
     let velocity = CGPoint(x: 0, y: 100)
@@ -734,14 +712,12 @@ extension CollectionViewAdapterTests {
     let sut = sut(
       configuration: .init(refreshControl: .enabled(tintColor: .clear)),
       collectionView: collectionView
-    ).then {
-      $0.list = List(
-        sections: []
-      ).onRefresh { context in
-        eventContext = context
-      }
+    )
+    sut.list = List(
+      sections: []
+    ).onRefresh { context in
+      eventContext = context
     }
-    _ = sut
 
     // when
     collectionView
@@ -778,18 +754,17 @@ extension CollectionViewAdapterTests {
     let sut = sut(
       collectionView: collectionView,
       prefetchingPlugins: [prefetchingPlugin]
-    ).then {
-      // given: applied list
-      $0.apply(
-        List {
-          Section(id: UUID()) {
-            Cell(
-              id: UUID(), component: DummyComponent()
-            )
-          }
+    )
+    // given: applied list
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          Cell(
+            id: UUID(), component: DummyComponent()
+          )
         }
-      )
-    }
+      }
+    )
 
     // when
     collectionView
@@ -818,18 +793,18 @@ extension CollectionViewAdapterTests {
     let sut = sut(
       collectionView: collectionView,
       prefetchingPlugins: [prefetchingPlugin]
-    ).then {
-      // given: applied list
-      $0.apply(
-        List {
-          Section(id: UUID()) {
-            Cell(
-              id: UUID(), component: DummyComponent()
-            )
-          }
+    )
+    // given: applied list
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          Cell(
+            id: UUID(), component: DummyComponent()
+          )
         }
-      )
-    }
+      }
+    )
+
     // given: creating prefetchingOperation
     collectionView
       .prefetchDataSource?
@@ -862,16 +837,16 @@ extension CollectionViewAdapterTests {
     let sut = sut(
       collectionView: collectionView,
       prefetchingPlugins: [prefetchingPlugin]
-    ).then {
-      // given: applied list
-      $0.apply(List {
-        Section(id: UUID()) {
-          Cell(
-            id: UUID(), component: DummyComponent()
-          )
-        }
-      })
-    }
+    )
+    // given: applied list
+    sut.apply(List {
+      Section(id: UUID()) {
+        Cell(
+          id: UUID(), component: DummyComponent()
+        )
+      }
+    })
+
     // given: creating prefetchingOperation
     collectionView
       .prefetchDataSource?
@@ -903,16 +878,14 @@ extension CollectionViewAdapterTests {
     // given
     let cellCount = 100
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView).then {
-      $0.list = List {
-        Section(id: UUID()) {
-          (0 ..< cellCount).map {
-            Cell(id: "\($0)", component: DummyComponent())
-          }
+    let sut = sut(collectionView: collectionView)
+    sut.list = List {
+      Section(id: UUID()) {
+        (0 ..< cellCount).map {
+          Cell(id: "\($0)", component: DummyComponent())
         }
       }
     }
-    _ = sut
 
     // when
     let numberOfItems = collectionView
@@ -930,14 +903,12 @@ extension CollectionViewAdapterTests {
     // given
     let sectionCount = 100
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView).then {
-      $0.list = List {
-        (0 ..< 100).map {
-          Section(id: "\($0)", cells: [])
-        }
+    let sut = sut(collectionView: collectionView)
+    sut.list = List {
+      (0 ..< 100).map {
+        Section(id: "\($0)", cells: [])
       }
     }
-    _ = sut
 
     // when
     let numberOfSections = collectionView
@@ -952,16 +923,14 @@ extension CollectionViewAdapterTests {
     // given
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let component = ComponentSpy()
-    let sut = sut(collectionView: collectionView).then {
-      $0.apply(
-        List {
-          Section(id: UUID()) {
-            [Cell(id: UUID(), component: component)]
-          }
+    let sut = sut(collectionView: collectionView)
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          [Cell(id: UUID(), component: component)]
         }
-      )
-    }
-    _ = sut
+      }
+    )
 
     // when
     _ = collectionView
@@ -979,15 +948,13 @@ extension CollectionViewAdapterTests {
     // given
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let component = ComponentSpy()
-    let sut = sut(collectionView: collectionView).then {
-      $0.apply(
-        List {
-          Section(id: UUID(), cells: [])
-            .withHeader(component)
-        }
-      )
-    }
-    _ = sut
+    let sut = sut(collectionView: collectionView)
+    sut.apply(
+      List {
+        Section(id: UUID(), cells: [])
+          .withHeader(component)
+      }
+    )
 
     // when
     _ = collectionView
@@ -1006,15 +973,13 @@ extension CollectionViewAdapterTests {
     // given
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let component = ComponentSpy()
-    let sut = sut(collectionView: collectionView).then {
-      $0.apply(
-        List {
-          Section(id: UUID(), cells: [])
-            .withFooter(component)
-        }
-      )
-    }
-    _ = sut
+    let sut = sut(collectionView: collectionView)
+    sut.apply(
+      List {
+        Section(id: UUID(), cells: [])
+          .withFooter(component)
+      }
+    )
 
     // when
     _ = collectionView
@@ -1040,18 +1005,17 @@ extension CollectionViewAdapterTests {
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     var component = ComponentStub()
     component.viewModelStub = .init()
-    component.contentStub = ViewStub().then {
-      $0.sizeThatFitsStub = CGSize(width: 44.0, height: 44.0)
-    }
-    let sut = sut(collectionView: collectionView).then {
-      $0.apply(
-        List {
-          Section(id: UUID()) {
-            Cell(id: cellID, component: component)
-          }
+    let viewStub = ViewStub()
+    viewStub.sizeThatFitsStub = CGSize(width: 44.0, height: 44.0)
+    component.contentStub = viewStub
+    let sut = sut(collectionView: collectionView)
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          Cell(id: cellID, component: component)
         }
-      )
-    }
+      }
+    )
 
     let cell = collectionView
       .dataSource?
@@ -1078,17 +1042,16 @@ extension CollectionViewAdapterTests {
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     var component = ComponentStub()
     component.viewModelStub = .init()
-    component.contentStub = ViewStub().then {
-      $0.sizeThatFitsStub = CGSize(width: 44.0, height: 44.0)
-    }
-    let sut = sut(collectionView: collectionView).then {
-      $0.apply(
-        List {
-          Section(id: sectionID, cells: [])
-            .withHeader(component)
-        }
-      )
-    }
+    let viewStub = ViewStub()
+    viewStub.sizeThatFitsStub = CGSize(width: 44.0, height: 44.0)
+    component.contentStub = viewStub
+    let sut = sut(collectionView: collectionView)
+    sut.apply(
+      List {
+        Section(id: sectionID, cells: [])
+          .withHeader(component)
+      }
+    )
 
     let header = collectionView
       .dataSource?
@@ -1116,17 +1079,16 @@ extension CollectionViewAdapterTests {
     let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     var component = ComponentStub()
     component.viewModelStub = .init()
-    component.contentStub = ViewStub().then {
-      $0.sizeThatFitsStub = CGSize(width: 44.0, height: 44.0)
-    }
-    let sut = sut(collectionView: collectionView).then {
-      $0.apply(
-        List {
-          Section(id: sectionID, cells: [])
-            .withFooter(component)
-        }
-      )
-    }
+    let viewStub = ViewStub()
+    viewStub.sizeThatFitsStub = CGSize(width: 44.0, height: 44.0)
+    component.contentStub = viewStub
+    let sut = sut(collectionView: collectionView)
+    sut.apply(
+      List {
+        Section(id: sectionID, cells: [])
+          .withFooter(component)
+      }
+    )
     let header = collectionView
       .dataSource?
       .collectionView?(
@@ -1157,10 +1119,9 @@ extension CollectionViewAdapterTests {
     let numberOfCells = 100
     let threshold = 10
     var nextBatchContext: NextBatchContext!
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter()).then {
-      $0.indexPathsForVisibleItemsHandler = {
-        [IndexPath(item: numberOfCells - threshold - 1, section: 0)]
-      }
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    collectionView.indexPathsForVisibleItemsHandler = {
+      [IndexPath(item: numberOfCells - threshold - 1, section: 0)]
     }
     let sut = sut(collectionView: collectionView)
 
@@ -1191,10 +1152,9 @@ extension CollectionViewAdapterTests {
     let numberOfCells = 100
     let threshold = 10
     var nextBatchContext: NextBatchContext!
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter()).then {
-      $0.indexPathsForVisibleItemsHandler = {
-        [IndexPath(item: numberOfCells - threshold, section: 0)]
-      }
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    collectionView.indexPathsForVisibleItemsHandler = {
+      [IndexPath(item: numberOfCells - threshold, section: 0)]
     }
     let sut = sut(collectionView: collectionView)
 
@@ -1226,25 +1186,23 @@ extension CollectionViewAdapterTests {
     let threshold = 10
     var nextBatchContext: NextBatchContext!
     let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView).then {
-      $0.apply(
-        List {
-          Section(id: UUID()) {
-            (0 ..< numberOfCells).map { _ in
-              Cell(id: UUID(), component: DummyComponent())
-            }
+    let sut = sut(collectionView: collectionView)
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          (0 ..< numberOfCells).map { _ in
+            Cell(id: UUID(), component: DummyComponent())
           }
-          .withNextBatchTrigger(NextBatchTrigger(
-            threshold: threshold,
-            context: .init(),
-            handler: { context in
-              nextBatchContext = context
-            }
-          ))
         }
-      )
-    }
-    _ = sut
+        .withNextBatchTrigger(NextBatchTrigger(
+          threshold: threshold,
+          context: .init(),
+          handler: { context in
+            nextBatchContext = context
+          }
+        ))
+      }
+    )
 
     // when
     collectionView
@@ -1267,25 +1225,23 @@ extension CollectionViewAdapterTests {
     let threshold = 10
     var nextBatchContext: NextBatchContext!
     let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView).then {
-      $0.apply(
-        List {
-          Section(id: UUID()) {
-            (0 ..< numberOfCells).map { _ in
-              Cell(id: UUID(), component: DummyComponent())
-            }
+    let sut = sut(collectionView: collectionView)
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          (0 ..< numberOfCells).map { _ in
+            Cell(id: UUID(), component: DummyComponent())
           }
-          .withNextBatchTrigger(NextBatchTrigger(
-            threshold: threshold,
-            context: .init(),
-            handler: { context in
-              nextBatchContext = context
-            }
-          ))
         }
-      )
-    }
-    _ = sut
+        .withNextBatchTrigger(NextBatchTrigger(
+          threshold: threshold,
+          context: .init(),
+          handler: { context in
+            nextBatchContext = context
+          }
+        ))
+      }
+    )
 
     // when
     collectionView
