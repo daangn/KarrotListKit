@@ -58,8 +58,8 @@ public final class UICollectionViewComponentCell: UICollectionViewCell, Componen
       onSizeChanged?(size)
     }
 
-    return attributes.with {
-      $0.frame.size = size
-    }
+    attributes.frame.size = size
+
+    return attributes
   }
 }

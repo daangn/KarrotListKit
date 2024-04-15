@@ -12,5 +12,4 @@ Pod::Spec.new do |spec|
   spec.source_files = 'Sources/**/*.{swift,h,m}'
 
   spec.dependency 'DifferenceKit', '~> 1.0'
-  spec.dependency 'Then', '~> 3.0'
 end

@@ -45,14 +45,16 @@ final public class CollectionViewAdapter: NSObject {
 
   var list: List?
 
-  private lazy var pullToRefreshControl = UIRefreshControl().then {
-    $0.tintColor = configuration.refreshControl.tintColor
-    $0.addTarget(
+  private lazy var pullToRefreshControl: UIRefreshControl = {
+    let refreshControl = UIRefreshControl()
+    refreshControl.tintColor = configuration.refreshControl.tintColor
+    refreshControl.addTarget(
       self,
       action: #selector(pullToRefresh),
       for: .valueChanged
     )
-  }
+    return refreshControl
+  }()
 
   // MARK: - Initializer
 

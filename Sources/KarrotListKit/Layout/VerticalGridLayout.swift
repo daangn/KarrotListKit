@@ -45,7 +45,7 @@ public struct VerticalGridLayout: CompositionalLayoutSectionFactory {
 
         verticalGroupHeight += horizontalGroupHeight.dimension
 
-        return NSCollectionLayoutGroup.horizontal(
+        let layoutGroup = NSCollectionLayoutGroup.horizontal(
           layoutSize: .init(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: horizontalGroupHeight
@@ -57,9 +57,10 @@ public struct VerticalGridLayout: CompositionalLayoutSectionFactory {
             )
           ),
           count: numberOfItemsInRow
-        ).then {
-          $0.interItemSpacing = .fixed(itemSpacing)
-        }
+        )
+        layoutGroup.interItemSpacing = .fixed(itemSpacing)
+
+        return layoutGroup
       }
 
       let group = NSCollectionLayoutGroup.vertical(
@@ -68,32 +69,34 @@ public struct VerticalGridLayout: CompositionalLayoutSectionFactory {
           heightDimension: .estimated(verticalGroupHeight)
         ),
         subitems: horizontalGroups
-      ).then {
-        $0.interItemSpacing = .fixed(lineSpacing)
+      )
+      group.interItemSpacing = .fixed(lineSpacing)
+
+      let section = NSCollectionLayoutSection(group: group)
+      if let sectionInsets {
+        section.contentInsets = sectionInsets
       }
 
-      return NSCollectionLayoutSection(group: group).then {
-        if let sectionInsets = sectionInsets {
-          $0.contentInsets = sectionInsets
-        }
-
-        if let visibleItemsInvalidationHandler {
-          $0.visibleItemsInvalidationHandler = visibleItemsInvalidationHandler
-        }
-
-        $0.boundarySupplementaryItems = [
-          layoutHeaderItem(section: context.section, sizeStorage: context.sizeStorage)?.then {
-            if let headerPinToVisibleBounds {
-              $0.pinToVisibleBounds = headerPinToVisibleBounds
-            }
-          },
-          layoutFooterItem(section: context.section, sizeStorage: context.sizeStorage)?.then {
-            if let footerPinToVisibleBounds {
-              $0.pinToVisibleBounds = footerPinToVisibleBounds
-            }
-          },
-        ].compactMap { $0 }
+      if let visibleItemsInvalidationHandler {
+        section.visibleItemsInvalidationHandler = visibleItemsInvalidationHandler
       }
+
+      let headerItem = layoutHeaderItem(section: context.section, sizeStorage: context.sizeStorage)
+      if let headerPinToVisibleBounds {
+        headerItem?.pinToVisibleBounds = headerPinToVisibleBounds
+      }
+
+      let footerItem = layoutFooterItem(section: context.section, sizeStorage: context.sizeStorage)
+      if let footerPinToVisibleBounds {
+        footerItem?.pinToVisibleBounds = footerPinToVisibleBounds
+      }
+
+      section.boundarySupplementaryItems = [
+        headerItem,
+        footerItem,
+      ].compactMap { $0 }
+
+      return section
     }
   }
 

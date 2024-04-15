@@ -17,17 +17,12 @@ let package = Package(
       url: "https://github.com/ra1028/DifferenceKit.git",
       .upToNextMajor(from: "1.0.0")
     ),
-    .package(
-      url: "https://github.com/devxoul/Then.git",
-      .upToNextMajor(from: "3.0.0")
-    ),
   ],
   targets: [
     .target(
       name: "KarrotListKit",
       dependencies: [
         "DifferenceKit",
-        "Then",
       ]
     ),
     .testTarget(

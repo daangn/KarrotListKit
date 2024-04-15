@@ -5,7 +5,6 @@
 import UIKit
 
 import DifferenceKit
-import Then
 
 /// The `Section` that representing a UICollectionView Section.
 ///
@@ -14,7 +13,7 @@ import Then
 ///
 /// - Note: The layout depends on NSCollectionLayoutSection and
 /// you must set the layout through the withSectionLayout modifier.
-public struct Section: Identifiable, ListingViewEventHandler, Then {
+public struct Section: Identifiable, ListingViewEventHandler {
 
   /// The identifier for `Section`
   public let id: AnyHashable
