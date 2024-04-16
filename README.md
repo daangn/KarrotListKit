@@ -1,6 +1,7 @@
 # KarrotListKit
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fdaangn%2FKarrotListKit%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/daangn/KarrotListKit)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fdaangn%2FKarrotListKit%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/daangn/KarrotListKit)
+
 Welcome to our Karrot Listing Framework. This powerful tool is developed with UIKit, but it is designed to be used like a declarative UI API, providing a seamless transition to SwiftUI and reducing migration costs.
 
 Our framework is built with an optimized diffing algorithm, thanks to its dependency on [DifferenceKit](https://github.com/ra1028/DifferenceKit). This ensures high performance and swift rendering of your lists, allowing your application to run smoothly, even when handling large changes of data.
