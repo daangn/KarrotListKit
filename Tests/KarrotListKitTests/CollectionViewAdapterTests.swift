@@ -705,6 +705,30 @@ extension CollectionViewAdapterTests {
     XCTAssertEqual(eventContext.targetContentOffset.pointee, targetContentOffset)
   }
 
+  func test_given_didEndDraggingHandler_when_didEndDragging_then_handleEvent() {
+    // given
+    var eventContext: DidEndDraggingEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView)
+    sut.list = List(
+      sections: []
+    ).didEndDragging { context in
+      eventContext = context
+    }
+
+    // when
+    let decelerate = true
+    collectionView
+      .delegate?
+      .scrollViewDidEndDragging?(
+        collectionView,
+        willDecelerate: decelerate
+      )
+
+    // then
+    XCTAssertIdentical(eventContext.collectionView, collectionView)
+    XCTAssertEqual(eventContext.decelerate, decelerate)
+  }
   func test_given_refreshControlEnabled_and_handler_when_pullToRefresh_then_handleEvent() {
     // given
     var eventContext: PullToRefreshEvent.EventContext!

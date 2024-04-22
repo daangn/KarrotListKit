@@ -70,4 +70,12 @@ extension List {
   public func willEndDragging(_ handler: @escaping (WillEndDraggingEvent.EventContext) -> Void) -> Self {
     registerEvent(WillEndDraggingEvent(handler: handler))
   }
+
+  /// Register a callback handler that will be called when the user finished scrolling the content.
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler for did end dragging event
+  public func didEndDragging(_ handler: @escaping (DidEndDraggingEvent.EventContext) -> Void) -> Self {
+    registerEvent(DidEndDraggingEvent(handler: handler))
+  }
 }
