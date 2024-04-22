@@ -751,6 +751,28 @@ extension CollectionViewAdapterTests {
     // then
     XCTAssertIdentical(eventContext.collectionView, collectionView)
   }
+
+  func test_given_willBeginDeceleratingHandler_when_willBeginDecelerating_then_handleEvent() {
+    // given
+    var eventContext: WillBeginDeceleratingEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView)
+    sut.list = List(
+      sections: []
+    ).willBeginDecelerating { context in
+      eventContext = context
+    }
+
+    // when
+    collectionView
+      .delegate?
+      .scrollViewWillBeginDecelerating?(
+        collectionView
+      )
+
+    // then
+    XCTAssertIdentical(eventContext.collectionView, collectionView)
+  }
   func test_given_refreshControlEnabled_and_handler_when_pullToRefresh_then_handleEvent() {
     // given
     var eventContext: PullToRefreshEvent.EventContext!

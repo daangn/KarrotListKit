@@ -86,4 +86,12 @@ extension List {
   public func didScrollToTop(_ handler: @escaping (DidScrollToTopEvent.EventContext) -> Void) -> Self {
     registerEvent(DidScrollToTopEvent(handler: handler))
   }
+
+  /// Register a callback handler that will be called when the scroll view is starting to decelerate the scrolling movement.
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler for will begin decelerating event
+  public func willBeginDecelerating(_ handler: @escaping (WillBeginDeceleratingEvent.EventContext) -> Void) -> Self {
+    registerEvent(WillBeginDeceleratingEvent(handler: handler))
+  }
 }
