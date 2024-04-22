@@ -70,4 +70,36 @@ extension List {
   public func willEndDragging(_ handler: @escaping (WillEndDraggingEvent.EventContext) -> Void) -> Self {
     registerEvent(WillEndDraggingEvent(handler: handler))
   }
+
+  /// Register a callback handler that will be called when the user finished scrolling the content.
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler for did end dragging event
+  public func didEndDragging(_ handler: @escaping (DidEndDraggingEvent.EventContext) -> Void) -> Self {
+    registerEvent(DidEndDraggingEvent(handler: handler))
+  }
+
+  /// Register a callback handler that will be called when the scroll view scrolled to the top of the content.
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler for did scroll to top event
+  public func didScrollToTop(_ handler: @escaping (DidScrollToTopEvent.EventContext) -> Void) -> Self {
+    registerEvent(DidScrollToTopEvent(handler: handler))
+  }
+
+  /// Register a callback handler that will be called when the scroll view is starting to decelerate the scrolling movement.
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler for will begin decelerating event
+  public func willBeginDecelerating(_ handler: @escaping (WillBeginDeceleratingEvent.EventContext) -> Void) -> Self {
+    registerEvent(WillBeginDeceleratingEvent(handler: handler))
+  }
+
+  /// Register a callback handler that will be called when the scroll view ended decelerating the scrolling movement.
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler for did end decelerating event
+  public func didEndDecelerating(_ handler: @escaping (DidEndDeceleratingEvent.EventContext) -> Void) -> Self {
+    registerEvent(DidEndDeceleratingEvent(handler: handler))
+  }
 }

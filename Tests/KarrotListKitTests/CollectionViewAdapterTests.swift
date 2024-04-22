@@ -705,6 +705,97 @@ extension CollectionViewAdapterTests {
     XCTAssertEqual(eventContext.targetContentOffset.pointee, targetContentOffset)
   }
 
+  func test_given_didEndDraggingHandler_when_didEndDragging_then_handleEvent() {
+    // given
+    var eventContext: DidEndDraggingEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView)
+    sut.list = List(
+      sections: []
+    ).didEndDragging { context in
+      eventContext = context
+    }
+
+    // when
+    let decelerate = true
+    collectionView
+      .delegate?
+      .scrollViewDidEndDragging?(
+        collectionView,
+        willDecelerate: decelerate
+      )
+
+    // then
+    XCTAssertIdentical(eventContext.collectionView, collectionView)
+    XCTAssertEqual(eventContext.decelerate, decelerate)
+  }
+
+  func test_given_didScrollToTopHandler_when_didScrollToTop_then_handleEvent() {
+    // given
+    var eventContext: DidScrollToTopEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView)
+    sut.list = List(
+      sections: []
+    ).didScrollToTop { context in
+      eventContext = context
+    }
+
+    // when
+    collectionView
+      .delegate?
+      .scrollViewDidScrollToTop?(
+        collectionView
+      )
+
+    // then
+    XCTAssertIdentical(eventContext.collectionView, collectionView)
+  }
+
+  func test_given_willBeginDeceleratingHandler_when_willBeginDecelerating_then_handleEvent() {
+    // given
+    var eventContext: WillBeginDeceleratingEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView)
+    sut.list = List(
+      sections: []
+    ).willBeginDecelerating { context in
+      eventContext = context
+    }
+
+    // when
+    collectionView
+      .delegate?
+      .scrollViewWillBeginDecelerating?(
+        collectionView
+      )
+
+    // then
+    XCTAssertIdentical(eventContext.collectionView, collectionView)
+  }
+
+  func test_given_didEndDeceleratingHandler_when_didEndDecelerating_then_handleEvent() {
+    // given
+    var eventContext: DidEndDeceleratingEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView)
+    sut.list = List(
+      sections: []
+    ).didEndDecelerating { context in
+      eventContext = context
+    }
+
+    // when
+    collectionView
+      .delegate?
+      .scrollViewDidEndDecelerating?(
+        collectionView
+      )
+
+    // then
+    XCTAssertIdentical(eventContext.collectionView, collectionView)
+  }
+
   func test_given_refreshControlEnabled_and_handler_when_pullToRefresh_then_handleEvent() {
     // given
     var eventContext: PullToRefreshEvent.EventContext!
