@@ -94,4 +94,12 @@ extension List {
   public func willBeginDecelerating(_ handler: @escaping (WillBeginDeceleratingEvent.EventContext) -> Void) -> Self {
     registerEvent(WillBeginDeceleratingEvent(handler: handler))
   }
+
+  /// Register a callback handler that will be called when the scroll view ended decelerating the scrolling movement.
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler for did end decelerating event
+  public func didEndDecelerating(_ handler: @escaping (DidEndDeceleratingEvent.EventContext) -> Void) -> Self {
+    registerEvent(DidEndDeceleratingEvent(handler: handler))
+  }
 }
