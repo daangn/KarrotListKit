@@ -729,6 +729,28 @@ extension CollectionViewAdapterTests {
     XCTAssertIdentical(eventContext.collectionView, collectionView)
     XCTAssertEqual(eventContext.decelerate, decelerate)
   }
+
+  func test_given_didScrollToTopHandler_when_didScrollToTop_then_handleEvent() {
+    // given
+    var eventContext: DidScrollToTopEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(collectionView: collectionView)
+    sut.list = List(
+      sections: []
+    ).didScrollToTop { context in
+      eventContext = context
+    }
+
+    // when
+    collectionView
+      .delegate?
+      .scrollViewDidScrollToTop?(
+        collectionView
+      )
+
+    // then
+    XCTAssertIdentical(eventContext.collectionView, collectionView)
+  }
   func test_given_refreshControlEnabled_and_handler_when_pullToRefresh_then_handleEvent() {
     // given
     var eventContext: PullToRefreshEvent.EventContext!

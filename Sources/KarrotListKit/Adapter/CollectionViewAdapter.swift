@@ -462,6 +462,18 @@ extension CollectionViewAdapter {
       )
     )
   }
+
+  public func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
+    guard let collectionView else {
+      return
+    }
+
+    list?.event(for: DidScrollToTopEvent.self)?.handler(
+      .init(
+        collectionView: collectionView
+      )
+    )
+  }
 }
 
 // MARK: - UICollectionViewDataSourcePrefetching

@@ -78,4 +78,12 @@ extension List {
   public func didEndDragging(_ handler: @escaping (DidEndDraggingEvent.EventContext) -> Void) -> Self {
     registerEvent(DidEndDraggingEvent(handler: handler))
   }
+
+  /// Register a callback handler that will be called when the scroll view scrolled to the top of the content.
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler for did scroll to top event
+  public func didScrollToTop(_ handler: @escaping (DidScrollToTopEvent.EventContext) -> Void) -> Self {
+    registerEvent(DidScrollToTopEvent(handler: handler))
+  }
 }
