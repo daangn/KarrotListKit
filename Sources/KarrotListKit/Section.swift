@@ -175,6 +175,9 @@ extension Section {
   @discardableResult
   public func willDisplayHeader(_ handler: @escaping (WillDisplayEvent.EventContext) -> Void) -> Self {
     var copy = self
+    if header == nil {
+      assertionFailure("Please declare the header first using [withHeader]")
+    }
     copy.header = header?.willDisplay(handler)
     return copy
   }
@@ -186,6 +189,9 @@ extension Section {
   @discardableResult
   public func willDisplayFooter(_ handler: @escaping (WillDisplayEvent.EventContext) -> Void) -> Self {
     var copy = self
+    if footer == nil {
+      assertionFailure("Please declare the footer first using [withFooter]")
+    }
     copy.footer = footer?.willDisplay(handler)
     return copy
   }
@@ -196,6 +202,9 @@ extension Section {
   ///  - handler: The callback handler when the header is removed from the screen.
   public func didEndDisplayHeader(_ handler: @escaping (DidEndDisplayingEvent.EventContext) -> Void) -> Self {
     var copy = self
+    if header == nil {
+      assertionFailure("Please declare the header first using [withHeader]")
+    }
     copy.header = header?.didEndDisplaying(handler)
     return copy
   }
@@ -206,6 +215,9 @@ extension Section {
   ///  - handler: The callback handler when the footer is removed from the screen.
   public func didEndDisplayFooter(_ handler: @escaping (DidEndDisplayingEvent.EventContext) -> Void) -> Self {
     var copy = self
+    if footer == nil {
+      assertionFailure("Please declare the footer first using [withFooter]")
+    }
     copy.footer = footer?.didEndDisplaying(handler)
     return copy
   }
