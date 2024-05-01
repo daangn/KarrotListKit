@@ -22,6 +22,46 @@ struct ComponentRepresented<C: Component>: UIViewRepresentable {
   func makeCoordinator() -> C.Coordinator {
     component.makeCoordinator()
   }
+
+  func _overrideSizeThatFits(
+    _ size: inout CGSize,
+    in proposedSize: _ProposedSize,
+    uiView: C.Content
+  ) {
+    size = uiView.sizeThatFits(
+      CGSize(
+        width: proposedSize.width ?? UIView.noIntrinsicMetric,
+        height: proposedSize.height ?? UIView.noIntrinsicMetric
+      )
+    )
+  }
+
+#if swift(>=5.7)
+  @available(iOS 16.0, *)
+  func sizeThatFits(
+    _ proposal: ProposedViewSize,
+    uiView: C.Content,
+    context: Context
+  ) -> CGSize? {
+    uiView.sizeThatFits(
+      CGSize(
+        width: proposal.width ?? UIView.noIntrinsicMetric,
+        height: proposal.height ?? UIView.noIntrinsicMetric
+      )
+    )
+  }
+#endif
+}
+
+private extension SwiftUI._ProposedSize {
+
+  var width: CGFloat? {
+    Mirror(reflecting: self).children.first(where: { $0.label == "width" })?.value as? CGFloat
+  }
+
+  var height: CGFloat? {
+    Mirror(reflecting: self).children.first(where: { $0.label == "height" })?.value as? CGFloat
+  }
 }
 
 extension Component {
