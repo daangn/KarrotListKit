@@ -163,20 +163,66 @@ Section(id: "Section1") {
 
 ### Pagination
 
-We often implement pagination functionality.
-KarrotListKit provides an convenience API that makes it easy to implement pagination functionality.
+KarrotListKit’s Next Batch Fetching API makes it easy to add fetching chunks of new data. Usually this would be done in a `scrollViewDidScroll` method, but KarrotListKit provides a more structured mechanism.
 
-NextBatchTrigger belongs to Section, and the trigger logic is very simple: threshold >= index of last Cell - index of Cell to will display
+By default, as a user is scrolling, when they approach the point in the list where they are 2 “screens” away from the end of the current content, the KarrotListKit will try to fetch more data.
 
-```swift
-Section(id: "Section1") {
-  // ...
-}
-.withNextBatchTrigger(NextBatchTrigger(threshold: 10) { context in
-  // handle trigger 
-})
-```
+Here's how to set up pagination:
 
+1. Configure how far away from the end you should be, just set the `leadingScreensForBatching` property on an `CollectionViewAdapterConfiguration`.
+
+    ```swift
+    let configuration = CollectionViewAdapterConfiguration(
+      leadingScreensForNextBatching: 1.0 // default is 2.0
+    )
+    let adapter = CollectionViewAdapter(
+      configuration: configuration
+      ...
+    )
+    ```
+
+2. Implement `NextBatchFetchDecisionProvider` protocol that decides if trigger next batch event or not.
+    ```swift
+    class SomeNextBatchFetchDecisionProvider: NextBatchFetchDecisionProvider {
+
+      func shouldBeginNextBatchFetch() -> Bool {
+        // return a boolean value indicating whether the next batch fetch should start.
+        return true // or false
+      }
+    }
+
+    // or using type-erased wrapper for `NextBatchFetchDecisionProvider` using `AnyNextBatchFetchDecisionProvider`
+
+    let decisionProvider = AnyNextBatchFetchDecisionProvider {
+        // return a boolean value indicating whether the next batch fetch should start.
+        return true // or false
+    }
+    ```
+
+3. Set up trigger Event on `List`.
+    ```swift
+    List(sections: [])
+      .onNextBatchTrigger(
+        decisionProvider: decisionProvider,
+        handler: { _ in
+          // Closure Trigger when reached bottom of list.
+        }
+      )
+    ```
+
+4. Once you’ve finished fetching your data, it is very important to let KarrotListKit know that you have finished the process. To do that, you need to call `completeBatchFetching()` method of `NextBatchContext`. This assures that the whole batch fetching mechanism stays in sync and the next batch fetching cycle can happen.
+    ```swift
+    List(sections: [])
+      .onNextBatchTrigger(
+        decisionProvider: decisionProvider,
+        handler: { event in
+          let nextBatchContext = event.context
+          fetchNextPage() {
+            nextBatchContext.completeBatchFetching()
+          }
+        }
+      )
+    ```
 
 
 ### Prefetching
