@@ -55,6 +55,37 @@ extension List {
     registerEvent(PullToRefreshEvent(handler: handler))
   }
 
+  /// Register a callback handler that will be called when the next batch fetch triggered by scrolling the content.
+  ///
+  /// Below is a sample code.
+  ///
+  /// ```swift
+  /// List {
+  /// ...
+  /// }
+  /// .onNextBatchTrigger(
+  ///   decisionProvider: .any {
+  ///     return true // or false when do not want callback handler
+  ///   },
+  ///   handler: { [weak self] context in
+  ///     self?.context = context
+  ///     self?.fetchNextPage {
+  ///       self?.context.completeBatchFetching()
+  ///     }
+  ///   }
+  ///)
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - decisionProvider: A provider that decides whether the next batch should be fetched
+  ///   - handler: The callback handler that will be called when the condition for fetching the next batch is met
+  public func onNextBatchTrigger(
+    decisionProvider: NextBatchFetchDecisionProvider,
+    handler: @escaping (NextBatchTriggerEvent.EventContext) -> Void
+  ) -> Self {
+    registerEvent(NextBatchTriggerEvent(decisionProvider: decisionProvider, handler: handler))
+  }
+
   /// Register a callback handler that will be called when the scrollView is about to start scrolling the content.
   ///
   /// - Parameters:
