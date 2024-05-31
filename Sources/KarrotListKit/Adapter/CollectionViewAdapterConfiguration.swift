@@ -18,17 +18,25 @@ public struct CollectionViewAdapterConfiguration {
   /// The default value is 100.
   public let batchUpdateInterruptCount: Int
 
+  /// The number of screens left to scroll before the next batch triggering.
+  ///
+  /// The default value is 2.0.
+  public let leadingScreensForNextBatching: Double
+
   /// Initialize a new instance of `UICollectionViewAdapter`.
   ///
   /// - Parameters:
   ///   - refreshControl: RefreshControl of the CollectionView
   ///   - batchUpdateInterruptCount: maximum changeSet count that can be animated updates
+  ///   - leadingScreensForNextBatching: number of screens left to scroll before the next batch triggering
   public init(
     refreshControl: RefreshControl = .disabled(),
-    batchUpdateInterruptCount: Int = 100
+    batchUpdateInterruptCount: Int = 100,
+    leadingScreensForNextBatching: Double = 2.0
   ) {
     self.refreshControl = refreshControl
     self.batchUpdateInterruptCount = batchUpdateInterruptCount
+    self.leadingScreensForNextBatching = leadingScreensForNextBatching
   }
 }
 

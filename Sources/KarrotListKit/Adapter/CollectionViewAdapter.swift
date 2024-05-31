@@ -41,6 +41,8 @@ final public class CollectionViewAdapter: NSObject {
     completion: (() -> Void)?
   )?
 
+  private let nextBatchContext = NextBatchContext()
+
   private var componentSizeStorage: ComponentSizeStorage = ComponentSizeStorageImpl()
 
   var list: List?
@@ -239,6 +241,100 @@ final public class CollectionViewAdapter: NSObject {
   }
 }
 
+
+// MARK: - Next Batch Trigger
+
+extension CollectionViewAdapter {
+
+  private var scrollDirection: UICollectionView.ScrollDirection {
+    let layout = collectionView?.collectionViewLayout as? UICollectionViewCompositionalLayout
+    return layout?.configuration.scrollDirection ?? .vertical
+  }
+
+  /// Checks if the next batch of data needs to be fetched based on the current scroll position.
+  ///
+  /// This method is triggered manually to ensure that the next batch update is initiated if needed.\
+  /// It checks if the collection view is not being dragged or tracked before calling the function to\
+  /// trigger the next batch update.
+  ///
+  /// - NOTE: Basically, the Next Batch Update Trigger check is handled in the `scrollViewWillEndDragging` function.
+  private func manuallyCheckNextBatchUpdateIfNeeded() {
+    guard
+      let collectionView,
+      collectionView.isDragging == false,
+      collectionView.isTracking == false
+    else {
+      return
+    }
+    triggerNextBatchUpdateIfNeeded(contentOffset: collectionView.contentOffset)
+  }
+
+  /// Determines whether to trigger the next batch update based on the content offset.
+  ///
+  /// This method calculates the remaining distance to the end of the content and compares it\
+  /// with a predefined trigger distance. If the remaining distance is less than or equal to the\
+  /// trigger distance, the next batch fetching is initiated.
+  ///
+  /// - Parameter contentOffset: The current content offset of the collection view.
+  private func triggerNextBatchUpdateIfNeeded(contentOffset: CGPoint) {
+    guard
+      let collectionView, nextBatchContext.state != .fetching,
+      collectionView.bounds.isEmpty == false
+    else {
+      return
+    }
+
+    let viewLength: CGFloat
+    let contentLength: CGFloat
+    let offset: CGFloat
+
+    switch scrollDirection {
+    case .vertical:
+      viewLength = collectionView.bounds.size.height
+      contentLength = collectionView.contentSize.height
+      offset = contentOffset.y
+
+    default:
+      viewLength = collectionView.bounds.size.width
+      contentLength = collectionView.contentSize.width
+      offset = contentOffset.x
+    }
+
+    if contentLength < viewLength {
+      beginNextBatchFetching()
+      return
+    }
+
+    let triggerDistance = viewLength * configuration.leadingScreensForNextBatching
+    let remainingDistance = contentLength - viewLength - offset
+    if remainingDistance <= triggerDistance {
+      beginNextBatchFetching()
+    }
+  }
+
+  /// Initiates the fetching of the next batch triggering.
+  ///
+  /// This method checks if the decisions for starting the next batch fetch are met,\
+  /// and if so, it triggers the fetch by calling the handler associated with the `NextBatchTriggerEvent`.
+  private func beginNextBatchFetching() {
+    guard
+      let decisionProvider = list?.event(for: NextBatchTriggerEvent.self)?.decisionProvider,
+      decisionProvider.shouldBeginNextBatchFetch() == true
+    else {
+      return
+    }
+
+    nextBatchContext.beginBatchFetching()
+
+    list?.event(for: NextBatchTriggerEvent.self)?.handler(
+      .init(
+        context: nextBatchContext
+      )
+    )
+  }
+}
+
+
 // MARK: - CollectionViewLayoutAdapterDataSource
 
 extension CollectionViewAdapter: CollectionViewLayoutAdapterDataSource {
@@ -393,6 +489,8 @@ extension CollectionViewAdapter {
         collectionView: collectionView
       )
     )
+
+    manuallyCheckNextBatchUpdateIfNeeded()
   }
 
   public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
@@ -423,6 +521,8 @@ extension CollectionViewAdapter {
         targetContentOffset: targetContentOffset
       )
     )
+
+    triggerNextBatchUpdateIfNeeded(contentOffset: targetContentOffset.pointee)
   }
 
   public func scrollViewDidEndDragging(

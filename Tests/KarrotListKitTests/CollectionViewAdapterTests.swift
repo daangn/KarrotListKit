@@ -24,6 +24,13 @@ final class CollectionViewAdapterTests: XCTestCase {
       .init()
     }
 
+    var contentSizeHandler: (() -> CGSize)?
+
+    override var contentSize: CGSize {
+      get { contentSizeHandler?() ?? super.contentSize }
+      set {  }
+    }
+
     var indexPathsForVisibleItemsHandler: (() -> [IndexPath])?
     override var indexPathsForVisibleItems: [IndexPath] {
       indexPathsForVisibleItemsHandler?() ?? []
@@ -1198,5 +1205,217 @@ extension CollectionViewAdapterTests {
       sut.sizeStorage().footerSize(for: sectionID)?.size,
       CGSize(width: 44.0, height: 44.0)
     )
+  }
+}
+
+// MARK: - Next batch update
+
+extension CollectionViewAdapterTests {
+
+  func test_given_not_triggerable_offset_when_willDisplayItem_then_not_triggered() {
+    // given
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
+    collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
+
+    let sut = sut(
+      configuration: .init(
+        leadingScreensForNextBatching: 2.0
+      ),
+      collectionView: collectionView
+    )
+    var nextBatchContext: NextBatchContext!
+
+    var point = CGPoint(x: 0.0, y: 0.0)
+    let targetContentOffset = withUnsafeMutablePointer(to: &point) { $0 }
+
+    sut.apply(
+      List(sections: [])
+        .onNextBatchTrigger(
+          decisionProvider: .any {
+            return true
+          },
+          handler: { eventContext in
+            nextBatchContext = eventContext.context
+          }
+        )
+    )
+
+    // when
+    collectionView.delegate?.scrollViewWillEndDragging?(
+      collectionView,
+      withVelocity: .zero,
+      targetContentOffset: targetContentOffset
+    )
+
+    // then
+    XCTAssertNil(nextBatchContext)
+  }
+
+  func test_given_not_triggerable_offset_when_willDisplayItem_then_not_triggered2() {
+    // given
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
+    collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
+
+    let sut = sut(
+      configuration: .init(
+        leadingScreensForNextBatching: 2.0
+      ),
+      collectionView: collectionView
+    )
+    var nextBatchContext: NextBatchContext!
+
+    var point = CGPoint(x: 0.0, y: 99.0)
+    let targetContentOffset = withUnsafeMutablePointer(to: &point) { $0 }
+
+    sut.apply(
+      List(sections: [])
+        .onNextBatchTrigger(
+          decisionProvider: .any {
+            return true
+          },
+          handler: { eventContext in
+            nextBatchContext = eventContext.context
+          }
+        )
+    )
+
+    // when
+    collectionView.delegate?.scrollViewWillEndDragging?(
+      collectionView,
+      withVelocity: .zero,
+      targetContentOffset: targetContentOffset
+    )
+
+    // then
+    XCTAssertNil(nextBatchContext)
+  }
+
+  func test_given_triggerable_offset_when_willDisplayItem_then_triggered() {
+    // given
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
+    collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
+
+    let sut = sut(
+      configuration: .init(
+        leadingScreensForNextBatching: 2.0
+      ),
+      collectionView: collectionView
+    )
+    var nextBatchContext: NextBatchContext!
+
+    var point = CGPoint(x: 0.0, y: 100.0)
+    let targetContentOffset = withUnsafeMutablePointer(to: &point) { $0 }
+
+    sut.apply(
+      List(sections: [])
+        .onNextBatchTrigger(
+          decisionProvider: .any {
+            return true
+          },
+          handler: { eventContext in
+            nextBatchContext = eventContext.context
+          }
+        )
+    )
+
+    // when
+    collectionView.delegate?.scrollViewWillEndDragging?(
+      collectionView,
+      withVelocity: .zero,
+      targetContentOffset: targetContentOffset
+    )
+
+    // then
+    XCTAssertNotNil(nextBatchContext)
+  }
+
+  func test_given_condition_returns_false_when_willDisplayItem_then_not_triggered() {
+    // given
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
+    collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
+
+    let sut = sut(
+      configuration: .init(
+        leadingScreensForNextBatching: 2.0
+      ),
+      collectionView: collectionView
+    )
+    var nextBatchContext: NextBatchContext!
+
+    var point = CGPoint(x: 0.0, y: 100.0)
+    let targetContentOffset = withUnsafeMutablePointer(to: &point) { $0 }
+
+    sut.apply(
+      List(sections: [])
+        .onNextBatchTrigger(
+          decisionProvider: .any {
+            return false
+          },
+          handler: { eventContext in
+            nextBatchContext = eventContext.context
+          }
+        )
+    )
+
+    // when
+    collectionView.delegate?.scrollViewWillEndDragging?(
+      collectionView,
+      withVelocity: .zero,
+      targetContentOffset: targetContentOffset
+    )
+
+    // then
+    XCTAssertNil(nextBatchContext)
+  }
+
+  func test_given_context_is_fetching_when_willDisplayItem_then_not_triggered() {
+    // given
+    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
+    collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
+
+    let sut = sut(
+      configuration: .init(
+        leadingScreensForNextBatching: 2.0
+      ),
+      collectionView: collectionView
+    )
+
+    var handlerCallCount = 0
+
+    var point = CGPoint(x: 0.0, y: 100.0)
+    let targetContentOffset = withUnsafeMutablePointer(to: &point) { $0 }
+
+    sut.apply(
+      List(sections: [])
+        .onNextBatchTrigger(
+          decisionProvider: .any {
+            return true
+          },
+          handler: { _ in
+            handlerCallCount += 1
+          }
+        )
+    )
+
+    collectionView.delegate?.scrollViewWillEndDragging?(
+      collectionView,
+      withVelocity: .zero,
+      targetContentOffset: targetContentOffset
+    )
+
+    // when
+    collectionView.delegate?.scrollViewWillEndDragging?(
+      collectionView,
+      withVelocity: .zero,
+      targetContentOffset: targetContentOffset
+    )
+
+    // then
+    XCTAssertEqual(handlerCallCount, 1)
   }
 }
