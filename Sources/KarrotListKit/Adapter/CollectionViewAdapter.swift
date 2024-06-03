@@ -278,6 +278,8 @@ extension CollectionViewAdapter {
   /// - Parameter contentOffset: The current content offset of the collection view.
   private func triggerNextBatchUpdateIfNeeded(contentOffset: CGPoint) {
     guard
+      let event = list?.event(for: NextBatchTriggerEvent.self),
+      event.decisionProvider.shouldBeginNextBatchFetch() == true,
       let collectionView, nextBatchContext.state != .fetching,
       collectionView.bounds.isEmpty == false
     else {
@@ -301,32 +303,24 @@ extension CollectionViewAdapter {
     }
 
     if contentLength < viewLength {
-      beginNextBatchFetching()
+      beginNextBatchFetching(event: event)
       return
     }
 
     let triggerDistance = viewLength * configuration.leadingScreensForNextBatching
     let remainingDistance = contentLength - viewLength - offset
     if remainingDistance <= triggerDistance {
-      beginNextBatchFetching()
+      beginNextBatchFetching(event: event)
     }
   }
 
   /// Initiates the fetching of the next batch triggering.
   ///
-  /// This method checks if the decisions for starting the next batch fetch are met,\
-  /// and if so, it triggers the fetch by calling the handler associated with the `NextBatchTriggerEvent`.
-  private func beginNextBatchFetching() {
-    guard
-      let decisionProvider = list?.event(for: NextBatchTriggerEvent.self)?.decisionProvider,
-      decisionProvider.shouldBeginNextBatchFetch() == true
-    else {
-      return
-    }
-
+  /// This method triggers the fetch by calling the handler associated with the `NextBatchTriggerEvent`.
+  private func beginNextBatchFetching(event: NextBatchTriggerEvent) {
     nextBatchContext.beginBatchFetching()
 
-    list?.event(for: NextBatchTriggerEvent.self)?.handler(
+    event.handler(
       .init(
         context: nextBatchContext
       )
