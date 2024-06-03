@@ -64,7 +64,7 @@ extension List {
   /// ...
   /// }
   /// .onNextBatchTrigger(
-  ///   decisionProvider: .any {
+  ///   decisionProvider: .default {
   ///     return true // or false when do not want callback handler
   ///   },
   ///   handler: { [weak self] context in

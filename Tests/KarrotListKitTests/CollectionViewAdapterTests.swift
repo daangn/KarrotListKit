@@ -1232,7 +1232,7 @@ extension CollectionViewAdapterTests {
     sut.apply(
       List(sections: [])
         .onNextBatchTrigger(
-          decisionProvider: .any {
+          decisionProvider: .default {
             return true
           },
           handler: { eventContext in
@@ -1272,7 +1272,7 @@ extension CollectionViewAdapterTests {
     sut.apply(
       List(sections: [])
         .onNextBatchTrigger(
-          decisionProvider: .any {
+          decisionProvider: .default {
             return true
           },
           handler: { eventContext in
@@ -1312,7 +1312,7 @@ extension CollectionViewAdapterTests {
     sut.apply(
       List(sections: [])
         .onNextBatchTrigger(
-          decisionProvider: .any {
+          decisionProvider: .default {
             return true
           },
           handler: { eventContext in
@@ -1352,7 +1352,7 @@ extension CollectionViewAdapterTests {
     sut.apply(
       List(sections: [])
         .onNextBatchTrigger(
-          decisionProvider: .any {
+          decisionProvider: .default {
             return false
           },
           handler: { eventContext in
@@ -1393,7 +1393,7 @@ extension CollectionViewAdapterTests {
     sut.apply(
       List(sections: [])
         .onNextBatchTrigger(
-          decisionProvider: .any {
+          decisionProvider: .default {
             return true
           },
           handler: { _ in

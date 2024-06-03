@@ -32,7 +32,7 @@ extension NextBatchFetchDecisionProvider where Self == AnyNextBatchFetchDecision
   ///
   /// - Parameter decision: A closure that returns a Boolean indicating whether the next batch fetch should start.
   /// - Returns: An instance of `AnyNextBatchFetchDecisionProvider`.
-  static func `any`(decision: @escaping () -> Bool) -> Self {
+  static func `default`(decision: @escaping () -> Bool) -> Self {
     .init(decision: decision)
   }
 }
