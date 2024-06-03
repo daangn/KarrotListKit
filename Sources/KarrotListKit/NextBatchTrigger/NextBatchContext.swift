@@ -18,18 +18,15 @@ public class NextBatchContext {
   /// The current state of the batch fetching process.
   private(set) var state: State = .completed
 
-  /// A lock to ensure thread safety when updating the state.
-  private let lock = NSLock()
-
   /// Begins the batch fetching process by setting the state to `fetching`.
   func beginBatchFetching() {
-    lock.lock(); defer { self.lock.unlock() }
     state = .fetching
   }
 
   /// Completes the batch fetching process by setting the state to `completed`.
+  ///
+  /// - Important: Call this function on **Main Thread** for avoid data race.
   public func completeBatchFetching() {
-    lock.lock(); defer { self.lock.unlock() }
     state = .completed
   }
 }

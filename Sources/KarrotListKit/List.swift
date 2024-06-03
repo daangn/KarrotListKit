@@ -70,7 +70,9 @@ extension List {
   ///   handler: { [weak self] context in
   ///     self?.context = context
   ///     self?.fetchNextPage {
-  ///       self?.context.completeBatchFetching()
+  ///       DispatchQueue.main.async {
+  ///         self?.context.completeBatchFetching()
+  ///       }
   ///     }
   ///   }
   ///)

@@ -210,7 +210,7 @@ Here's how to set up pagination:
       )
     ```
 
-4. Once you’ve finished fetching your data, it is very important to let KarrotListKit know that you have finished the process. To do that, you need to call `completeBatchFetching()` method of `NextBatchContext`. This assures that the whole batch fetching mechanism stays in sync and the next batch fetching cycle can happen.
+4. Once you’ve finished fetching your data, it is very important to let KarrotListKit know that you have finished the process. To do that, you need to call `completeBatchFetching()` method of `NextBatchContext` on Main-Thread(for avoid data race.). This assures that the whole batch fetching mechanism stays in sync and the next batch fetching cycle can happen.
     ```swift
     List(sections: [])
       .onNextBatchTrigger(
@@ -218,7 +218,9 @@ Here's how to set up pagination:
         handler: { event in
           let nextBatchContext = event.context
           fetchNextPage() {
-            nextBatchContext.completeBatchFetching()
+            DispatchQueue.main.async {
+              nextBatchContext.completeBatchFetching()
+            }
           }
         }
       )
