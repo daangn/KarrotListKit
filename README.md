@@ -110,7 +110,7 @@ let list = List {
     }
     .willDisplay { context in
       // handle displaying
-    }	
+    }
   }
   .withHeader(ButtonComponent(viewModel: .init(title: "Header")))
   .withFooter(ButtonComponent(viewModel: .init(title: "Footer")))
@@ -162,20 +162,31 @@ Section(id: "Section1") {
 
 
 ### Pagination
+`KarrotListKit` provides an easy-to-use interface for handling pagination when loading the next page of data. 
+While traditionally, this might be implemented within a `scrollViewDidScroll` method, `KarrotListKit` offers a more structured mechanism for this purpose.
 
-We often implement pagination functionality.
-KarrotListKit provides an convenience API that makes it easy to implement pagination functionality.
-
-NextBatchTrigger belongs to Section, and the trigger logic is very simple: threshold >= index of last Cell - index of Cell to will display
+`List` provides an `onReachEnd` modifier, which is called when the end of the list is reached. This modifier can be attached to a `List`.
 
 ```swift
-Section(id: "Section1") {
-  // ...
-}
-.withNextBatchTrigger(NextBatchTrigger(threshold: 10) { context in
-  // handle trigger 
-})
+List(sections: [])
+  .onReachEnd(
+    offset: .absolute(100.0),
+    handler: { _ in
+      // Closure Trigger when reached end of list.
+    }
+  )
 ```
+
+The first parameter, `offset`, is an enum of type `ReachedEndEvent.OffsetFromEnd`, allowing users to set the trigger condition.
+
+Two options are provided:
+
+- `case relativeToContainerSize(multiplier: CGFloat)`: Triggers the event when the user scrolls within a multiple of the height of the content view.
+- `case absolute(CGFloat)`: Triggers the event when the user scrolls within an absolute point value from the end.
+
+By default, the value is set to `.relativeToContainerSize(multiplier: 2.0)`, which triggers the event when the scroll position is within twice the height of the list view from the end of the list.
+
+The second parameter, `handler`, is the callback handler that performs an asynchronous action when reached end of the list.
 
 
 

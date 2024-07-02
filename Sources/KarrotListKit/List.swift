@@ -55,6 +55,24 @@ extension List {
     registerEvent(PullToRefreshEvent(handler: handler))
   }
 
+  /// Register a callback handler that will be called when the user scrolls near the end of the content view.
+  ///
+  /// - Parameters:
+  ///   - offset: The offset from the end of the content view that triggers the event. Default is two times the height of the content view.
+  ///   - handler: The callback handler for on reached end event.
+  /// - Returns: An updated `List` with the registered event handler.
+  public func onReachEnd(
+    offsetFromEnd offset: ReachedEndEvent.OffsetFromEnd = .relativeToContainerSize(multiplier: 2.0),
+    _ handler: @escaping (ReachedEndEvent.EventContext) -> Void
+  ) -> Self {
+    registerEvent(
+      ReachedEndEvent(
+        offset: offset,
+        handler: handler
+      )
+    )
+  }
+
   /// Register a callback handler that will be called when the scrollView is about to start scrolling the content.
   ///
   /// - Parameters:
