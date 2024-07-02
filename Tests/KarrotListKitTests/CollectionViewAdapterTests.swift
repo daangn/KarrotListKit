@@ -1209,7 +1209,7 @@ extension CollectionViewAdapterTests {
 }
 
 
-// MARK: - Reached Bottom Event Trigger
+// MARK: - Reached End Event Trigger
 
 extension CollectionViewAdapterTests {
 
@@ -1224,8 +1224,8 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedBottom(
-          offsetFromBottom: .absolute(100.0),
+        .onReachedEnd(
+          offsetFromEnd: .absolute(100.0),
           perform: { _ in
             performCallCount += 1
           }
@@ -1257,8 +1257,8 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedBottom(
-          offsetFromBottom: .absolute(100.0),
+        .onReachedEnd(
+          offsetFromEnd: .absolute(100.0),
           perform: { _ in
             performCallCount += 1
           }
@@ -1290,8 +1290,8 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedBottom(
-          offsetFromBottom: .multipleHeight(1.0),
+        .onReachedEnd(
+          offsetFromEnd: .multipleHeight(1.0),
           perform: { _ in
             performCallCount += 1
           }
@@ -1323,8 +1323,8 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedBottom(
-          offsetFromBottom: .multipleHeight(2.0),
+        .onReachedEnd(
+          offsetFromEnd: .multipleHeight(2.0),
           perform: { _ in
             performCallCount += 1
           }
@@ -1356,8 +1356,8 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedBottom(
-          offsetFromBottom: .absolute(100.0),
+        .onReachedEnd(
+          offsetFromEnd: .absolute(100.0),
           perform: { _ in
             performCallCount += 1
           }
@@ -1389,8 +1389,8 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedBottom(
-          offsetFromBottom: .absolute(100.0),
+        .onReachedEnd(
+          offsetFromEnd: .absolute(100.0),
           perform: { _ in
             performCallCount += 1
           }
@@ -1422,8 +1422,8 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedBottom(
-          offsetFromBottom: .multipleHeight(1.0),
+        .onReachedEnd(
+          offsetFromEnd: .multipleHeight(1.0),
           perform: { _ in
             performCallCount += 1
           }
@@ -1455,8 +1455,8 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedBottom(
-          offsetFromBottom: .multipleHeight(2.0),
+        .onReachedEnd(
+          offsetFromEnd: .multipleHeight(2.0),
           perform: { _ in
             performCallCount += 1
           }
@@ -1488,8 +1488,8 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedBottom(
-          offsetFromBottom: .multipleHeight(2.0),
+        .onReachedEnd(
+          offsetFromEnd: .multipleHeight(2.0),
           perform: { _ in
             performCallCount += 1
           }

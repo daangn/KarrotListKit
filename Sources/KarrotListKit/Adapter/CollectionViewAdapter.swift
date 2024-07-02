@@ -249,11 +249,11 @@ extension CollectionViewAdapter {
     return layout?.configuration.scrollDirection ?? .vertical
   }
 
-  /// Checks if the collection view has reached the bottom, and triggers the `ReachedBottomEvent` if needed.
+  /// Checks if the collection view has reached the end, and triggers the `ReachedEndEvent` if needed.
   ///
-  /// This method manually evaluates if the collection view is near the bottom, based on the current content offset and view bounds.\
+  /// This method manually evaluates if the collection view is near the end, based on the current content offset and view bounds.\
   /// Should call this method on `scrollViewDidScroll(_:)` function of `UIScrollViewDelegate`.\
-  /// Basically, the `ReachedBottomEvent` check is handled in the `scrollViewWillEndDragging` method.
+  /// Basically, the `ReachedEndEvent` check is handled in the `scrollViewWillEndDragging` method.
   private func manuallyCheckReachedBottomEventIfNeeded() {
     guard
       let collectionView,
@@ -265,17 +265,17 @@ extension CollectionViewAdapter {
     triggerReachedBottomEventIfNeeded(contentOffset: collectionView.contentOffset)
   }
 
-  /// Evaluates the position of the content offset and triggers the `ReachedBottomEvent` if the end of the content is near.
+  /// Evaluates the position of the content offset and triggers the `ReachedEndEvent` if the end of the content is near.
   ///
   /// - Parameter contentOffset: The current offset of the content view.
   ///
-  /// This method calculates the distance to the bottom of the content, considering the current scroll direction (vertical or horizontal).\
+  /// This method calculates the distance to the end of the content, considering the current scroll direction (vertical or horizontal).\
   /// It computes the view length, content length, and offset based on the scroll direction. If the content length is smaller than the view length,\
-  /// it immediately triggers the `ReachedBottomEvent`. Otherwise, it calculates the remaining distance and compares it to the trigger distance.\
-  /// If the remaining distance is less than or equal to the trigger distance, the `ReachedBottomEvent` is triggered.\
+  /// it immediately triggers the `ReachedEndEvent`. Otherwise, it calculates the remaining distance and compares it to the trigger distance.\
+  /// If the remaining distance is less than or equal to the trigger distance, the `ReachedEndEvent` is triggered.\
   private func triggerReachedBottomEventIfNeeded(contentOffset: CGPoint) {
     guard
-      let event = list?.event(for: ReachedBottomEvent.self),
+      let event = list?.event(for: ReachedEndEvent.self),
       let collectionView, collectionView.bounds.isEmpty == false
     else {
       return

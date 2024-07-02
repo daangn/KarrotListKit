@@ -4,22 +4,22 @@
 
 import Foundation
 
-/// An event that triggers when the user scrolls to the bottom of a list view.
-public struct ReachedBottomEvent: ListingViewEvent {
+/// An event that triggers when the user scrolls to the end of a list view.
+public struct ReachedEndEvent: ListingViewEvent {
 
-  /// Context for the `ReachedBottomEvent`.
+  /// Context for the `ReachedEndEvent`.
   public struct EventContext {}
 
-  /// Defines the offset from the bottom of the list view that will trigger the event.
-  public enum OffsetFromBottom {
+  /// Defines the offset from the end of the list view that will trigger the event.
+  public enum OffsetFromEnd {
     /// Triggers the event when the user scrolls within a multiple of the height of the content view.
     case multipleHeight(CGFloat)
-    /// Triggers the event when the user scrolls within an absolute point value from the bottom.
+    /// Triggers the event when the user scrolls within an absolute point value from the end.
     case absolute(CGFloat)
   }
 
-  /// The offset from the bottom of the list view that will trigger the event.
-  let offset: OffsetFromBottom
+  /// The offset from the end of the list view that will trigger the event.
+  let offset: OffsetFromEnd
   /// The handler that will be called when the event is triggered.
   let handler: (EventContext) -> Void
 }

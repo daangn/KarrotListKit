@@ -165,28 +165,28 @@ Section(id: "Section1") {
 `KarrotListKit` provides an easy-to-use interface for handling pagination when loading the next page of data. 
 While traditionally, this might be implemented within a `scrollViewDidScroll` method, `KarrotListKit` offers a more structured mechanism for this purpose.
 
-`List` provides an `onReachedBottom` modifier, which is called when the end of the list is reached. This modifier can be attached to a `List`.
+`List` provides an `onReachedEnd` modifier, which is called when the end of the list is reached. This modifier can be attached to a `List`.
 
 ```swift
 List(sections: [])
-  .onReachedBottom(
+  .onReachedEnd(
     offset: .absolute(100.0),
     perform: { _ in
-      // Closure Trigger when reached bottom of list.
+      // Closure Trigger when reached end of list.
     }
   )
 ```
 
-The first parameter, `offset`, is an enum of type `ReachedBottomEvent.OffsetFromBottom`, allowing users to set the trigger condition.
+The first parameter, `offset`, is an enum of type `ReachedEndEvent.OffsetFromBottom`, allowing users to set the trigger condition.
 
 Two options are provided:
 
 - case multipleHeight(CGFloat): Triggers the event when the user scrolls within a multiple of the height of the content view.
-- case absolute(CGFloat): Triggers the event when the user scrolls within an absolute point value from the bottom.
+- case absolute(CGFloat): Triggers the event when the user scrolls within an absolute point value from the end.
 
 By default, the value is set to `.multipleHeight(2.0)`, which triggers the event when the scroll position is within twice the height of the list view from the end of the list.
 
-The Second parameter, `perform`, is the callback handler that performs an asynchronous action when the bottom is reached.
+The Second parameter, `perform`, is the callback handler that performs an asynchronous action when reached end of the list.
 
 
 
