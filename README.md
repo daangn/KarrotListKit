@@ -165,11 +165,11 @@ Section(id: "Section1") {
 `KarrotListKit` provides an easy-to-use interface for handling pagination when loading the next page of data. 
 While traditionally, this might be implemented within a `scrollViewDidScroll` method, `KarrotListKit` offers a more structured mechanism for this purpose.
 
-`List` provides an `onReachedEnd` modifier, which is called when the end of the list is reached. This modifier can be attached to a `List`.
+`List` provides an `onReachEnd` modifier, which is called when the end of the list is reached. This modifier can be attached to a `List`.
 
 ```swift
 List(sections: [])
-  .onReachedEnd(
+  .onReachEnd(
     offset: .absolute(100.0),
     handler: { _ in
       // Closure Trigger when reached end of list.

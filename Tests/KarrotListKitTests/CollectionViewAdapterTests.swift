@@ -1224,7 +1224,7 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(offsetFromEnd: .absolute(100.0)) { _ in
+        .onReachEnd(offsetFromEnd: .absolute(100.0)) { _ in
           handlerCallCount += 1
         }
     )
@@ -1254,7 +1254,7 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(offsetFromEnd: .absolute(100.0)) { _ in
+        .onReachEnd(offsetFromEnd: .absolute(100.0)) { _ in
           handlerCallCount += 1
         }
     )
@@ -1284,7 +1284,7 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 1.0)) { _ in
+        .onReachEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 1.0)) { _ in
           handlerCallCount += 1
         }
     )
@@ -1314,7 +1314,7 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 2.0)) { _ in
+        .onReachEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 2.0)) { _ in
           handlerCallCount += 1
         }
     )
@@ -1344,7 +1344,7 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(offsetFromEnd: .absolute(100.0)) { _ in
+        .onReachEnd(offsetFromEnd: .absolute(100.0)) { _ in
           handlerCallCount += 1
         }
     )
@@ -1374,7 +1374,7 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(offsetFromEnd: .absolute(100.0)) { _ in
+        .onReachEnd(offsetFromEnd: .absolute(100.0)) { _ in
           handlerCallCount += 1
         }
     )
@@ -1404,7 +1404,7 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 1.0)) { _ in
+        .onReachEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 1.0)) { _ in
           handlerCallCount += 1
         }
     )
@@ -1434,7 +1434,7 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 2.0)) { _ in
+        .onReachEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 2.0)) { _ in
           handlerCallCount += 1
         }
     )
@@ -1464,7 +1464,7 @@ extension CollectionViewAdapterTests {
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 2.0)) { _ in
+        .onReachEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 2.0)) { _ in
           handlerCallCount += 1
         }
     )
