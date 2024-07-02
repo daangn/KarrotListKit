@@ -177,7 +177,7 @@ List(sections: [])
   )
 ```
 
-The first parameter, `offset`, is an enum of type `ReachedEndEvent.OffsetFromBottom`, allowing users to set the trigger condition.
+The first parameter, `offset`, is an enum of type `ReachedEndEvent.OffsetFromEnd`, allowing users to set the trigger condition.
 
 Two options are provided:
 

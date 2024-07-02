@@ -254,7 +254,7 @@ extension CollectionViewAdapter {
   /// This method manually evaluates if the collection view is near the end, based on the current content offset and view bounds.\
   /// Should call this method on `scrollViewDidScroll(_:)` function of `UIScrollViewDelegate`.\
   /// Basically, the `ReachedEndEvent` check is handled in the `scrollViewWillEndDragging` method.
-  private func manuallyCheckReachedBottomEventIfNeeded() {
+  private func manuallyCheckReachedEndEventIfNeeded() {
     guard
       let collectionView,
       collectionView.isDragging == false,
@@ -262,7 +262,7 @@ extension CollectionViewAdapter {
     else {
       return
     }
-    triggerReachedBottomEventIfNeeded(contentOffset: collectionView.contentOffset)
+    triggerReachedEndEventIfNeeded(contentOffset: collectionView.contentOffset)
   }
 
   /// Evaluates the position of the content offset and triggers the `ReachedEndEvent` if the end of the content is near.
@@ -273,7 +273,7 @@ extension CollectionViewAdapter {
   /// It computes the view length, content length, and offset based on the scroll direction. If the content length is smaller than the view length,\
   /// it immediately triggers the `ReachedEndEvent`. Otherwise, it calculates the remaining distance and compares it to the trigger distance.\
   /// If the remaining distance is less than or equal to the trigger distance, the `ReachedEndEvent` is triggered.\
-  private func triggerReachedBottomEventIfNeeded(contentOffset: CGPoint) {
+  private func triggerReachedEndEventIfNeeded(contentOffset: CGPoint) {
     guard
       let event = list?.event(for: ReachedEndEvent.self),
       let collectionView, collectionView.bounds.isEmpty == false
@@ -474,7 +474,7 @@ extension CollectionViewAdapter {
       )
     )
 
-    manuallyCheckReachedBottomEventIfNeeded()
+    manuallyCheckReachedEndEventIfNeeded()
   }
 
   public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
@@ -506,7 +506,7 @@ extension CollectionViewAdapter {
       )
     )
 
-    triggerReachedBottomEventIfNeeded(contentOffset: targetContentOffset.pointee)
+    triggerReachedEndEventIfNeeded(contentOffset: targetContentOffset.pointee)
   }
 
   public func scrollViewDidEndDragging(
