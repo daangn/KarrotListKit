@@ -110,7 +110,7 @@ let list = List {
     }
     .willDisplay { context in
       // handle displaying
-    }  
+    }
   }
   .withHeader(ButtonComponent(viewModel: .init(title: "Header")))
   .withFooter(ButtonComponent(viewModel: .init(title: "Footer")))
