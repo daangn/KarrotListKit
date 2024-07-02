@@ -13,7 +13,7 @@ public struct ReachedEndEvent: ListingViewEvent {
   /// Defines the offset from the end of the list view that will trigger the event.
   public enum OffsetFromEnd {
     /// Triggers the event when the user scrolls within a multiple of the height of the content view.
-    case multipleHeight(CGFloat)
+    case relativeToContainerSize(multiplier: CGFloat)
     /// Triggers the event when the user scrolls within an absolute point value from the end.
     case absolute(CGFloat)
   }

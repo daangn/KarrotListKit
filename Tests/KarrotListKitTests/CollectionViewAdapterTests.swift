@@ -1291,7 +1291,7 @@ extension CollectionViewAdapterTests {
     sut.apply(
       List(sections: [])
         .onReachedEnd(
-          offsetFromEnd: .multipleHeight(1.0),
+          offsetFromEnd: .relativeToContainerSize(multiplier: 1.0),
           perform: { _ in
             performCallCount += 1
           }
@@ -1324,7 +1324,7 @@ extension CollectionViewAdapterTests {
     sut.apply(
       List(sections: [])
         .onReachedEnd(
-          offsetFromEnd: .multipleHeight(2.0),
+          offsetFromEnd: .relativeToContainerSize(multiplier: 2.0),
           perform: { _ in
             performCallCount += 1
           }
@@ -1423,7 +1423,7 @@ extension CollectionViewAdapterTests {
     sut.apply(
       List(sections: [])
         .onReachedEnd(
-          offsetFromEnd: .multipleHeight(1.0),
+          offsetFromEnd: .relativeToContainerSize(multiplier: 1.0),
           perform: { _ in
             performCallCount += 1
           }
@@ -1456,7 +1456,7 @@ extension CollectionViewAdapterTests {
     sut.apply(
       List(sections: [])
         .onReachedEnd(
-          offsetFromEnd: .multipleHeight(2.0),
+          offsetFromEnd: .relativeToContainerSize(multiplier: 2.0),
           perform: { _ in
             performCallCount += 1
           }
@@ -1489,7 +1489,7 @@ extension CollectionViewAdapterTests {
     sut.apply(
       List(sections: [])
         .onReachedEnd(
-          offsetFromEnd: .multipleHeight(2.0),
+          offsetFromEnd: .relativeToContainerSize(multiplier: 2.0),
           perform: { _ in
             performCallCount += 1
           }

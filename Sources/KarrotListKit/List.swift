@@ -62,7 +62,7 @@ extension List {
   ///   - asyncAction: The callback handler that performs an asynchronous action when the end is reached.
   /// - Returns: An updated `List` with the registered event handler.
   public func onReachedEnd(
-    offsetFromEnd offset: ReachedEndEvent.OffsetFromEnd = .multipleHeight(2.0),
+    offsetFromEnd offset: ReachedEndEvent.OffsetFromEnd = .relativeToContainerSize(multiplier: 2.0),
     perform asyncAction: @escaping (ReachedEndEvent.EventContext) -> Void
   ) -> Self {
     registerEvent(

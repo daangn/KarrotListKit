@@ -306,8 +306,8 @@ extension CollectionViewAdapter {
       switch event.offset {
       case .absolute(let offset):
         return offset
-      case .multipleHeight(let multipleHeight):
-        return viewLength * multipleHeight
+      case .relativeToContainerSize(let multiplier):
+        return viewLength * multiplier
       }
     }()
 
