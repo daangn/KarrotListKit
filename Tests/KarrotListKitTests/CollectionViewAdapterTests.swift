@@ -1219,17 +1219,14 @@ extension CollectionViewAdapterTests {
     collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
-    var performCallCount = 0
+    var handlerCallCount = 0
 
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(
-          offsetFromEnd: .absolute(100.0),
-          perform: { _ in
-            performCallCount += 1
-          }
-        )
+        .onReachedEnd(offsetFromEnd: .absolute(100.0)) { _ in
+          handlerCallCount += 1
+        }
     )
 
     var point = CGPoint(x: 0.0, y: 0.0)
@@ -1243,7 +1240,7 @@ extension CollectionViewAdapterTests {
     )
 
     // then
-    XCTAssertEqual(performCallCount, 0)
+    XCTAssertEqual(handlerCallCount, 0)
   }
 
   func test_given_not_triggerable_offset_when_scrollViewWillEndDragging_then_not_triggered_2() {
@@ -1252,17 +1249,14 @@ extension CollectionViewAdapterTests {
     collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
-    var performCallCount = 0
+    var handlerCallCount = 0
 
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(
-          offsetFromEnd: .absolute(100.0),
-          perform: { _ in
-            performCallCount += 1
-          }
-        )
+        .onReachedEnd(offsetFromEnd: .absolute(100.0)) { _ in
+          handlerCallCount += 1
+        }
     )
 
     var point = CGPoint(x: 0.0, y: 199.0)
@@ -1276,7 +1270,7 @@ extension CollectionViewAdapterTests {
     )
 
     // then
-    XCTAssertEqual(performCallCount, 0)
+    XCTAssertEqual(handlerCallCount, 0)
   }
 
   func test_given_not_triggerable_offset_when_scrollViewWillEndDragging_then_not_triggered_3() {
@@ -1285,17 +1279,14 @@ extension CollectionViewAdapterTests {
     collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
-    var performCallCount = 0
+    var handlerCallCount = 0
 
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(
-          offsetFromEnd: .relativeToContainerSize(multiplier: 1.0),
-          perform: { _ in
-            performCallCount += 1
-          }
-        )
+        .onReachedEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 1.0)) { _ in
+          handlerCallCount += 1
+        }
     )
 
     var point = CGPoint(x: 0.0, y: 199.0)
@@ -1309,7 +1300,7 @@ extension CollectionViewAdapterTests {
     )
 
     // then
-    XCTAssertEqual(performCallCount, 0)
+    XCTAssertEqual(handlerCallCount, 0)
   }
 
   func test_given_not_triggerable_offset_when_scrollViewWillEndDragging_then_not_triggered_4() {
@@ -1318,17 +1309,14 @@ extension CollectionViewAdapterTests {
     collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
-    var performCallCount = 0
+    var handlerCallCount = 0
 
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(
-          offsetFromEnd: .relativeToContainerSize(multiplier: 2.0),
-          perform: { _ in
-            performCallCount += 1
-          }
-        )
+        .onReachedEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 2.0)) { _ in
+          handlerCallCount += 1
+        }
     )
 
     var point = CGPoint(x: 0.0, y: 99.0)
@@ -1342,7 +1330,7 @@ extension CollectionViewAdapterTests {
     )
 
     // then
-    XCTAssertEqual(performCallCount, 0)
+    XCTAssertEqual(handlerCallCount, 0)
   }
 
   func test_given_triggerable_offset_when_scrollViewWillEndDragging_then_triggered() {
@@ -1351,17 +1339,14 @@ extension CollectionViewAdapterTests {
     collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
-    var performCallCount = 0
+    var handlerCallCount = 0
 
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(
-          offsetFromEnd: .absolute(100.0),
-          perform: { _ in
-            performCallCount += 1
-          }
-        )
+        .onReachedEnd(offsetFromEnd: .absolute(100.0)) { _ in
+          handlerCallCount += 1
+        }
     )
 
     var point = CGPoint(x: 0.0, y: 200.0)
@@ -1375,7 +1360,7 @@ extension CollectionViewAdapterTests {
     )
 
     // then
-    XCTAssertEqual(performCallCount, 1)
+    XCTAssertEqual(handlerCallCount, 1)
   }
 
   func test_given_triggerable_offset_when_scrollViewWillEndDragging_then_triggered_2() {
@@ -1384,17 +1369,14 @@ extension CollectionViewAdapterTests {
     collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
-    var performCallCount = 0
+    var handlerCallCount = 0
 
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(
-          offsetFromEnd: .absolute(100.0),
-          perform: { _ in
-            performCallCount += 1
-          }
-        )
+        .onReachedEnd(offsetFromEnd: .absolute(100.0)) { _ in
+          handlerCallCount += 1
+        }
     )
 
     var point = CGPoint(x: 0.0, y: 201.0)
@@ -1408,7 +1390,7 @@ extension CollectionViewAdapterTests {
     )
 
     // then
-    XCTAssertEqual(performCallCount, 1)
+    XCTAssertEqual(handlerCallCount, 1)
   }
 
   func test_given_triggerable_offset_when_scrollViewWillEndDragging_then_triggered_3() {
@@ -1417,17 +1399,14 @@ extension CollectionViewAdapterTests {
     collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
-    var performCallCount = 0
+    var handlerCallCount = 0
 
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(
-          offsetFromEnd: .relativeToContainerSize(multiplier: 1.0),
-          perform: { _ in
-            performCallCount += 1
-          }
-        )
+        .onReachedEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 1.0)) { _ in
+          handlerCallCount += 1
+        }
     )
 
     var point = CGPoint(x: 0.0, y: 200.0)
@@ -1441,7 +1420,7 @@ extension CollectionViewAdapterTests {
     )
 
     // then
-    XCTAssertEqual(performCallCount, 1)
+    XCTAssertEqual(handlerCallCount, 1)
   }
 
   func test_given_triggerable_offset_when_scrollViewWillEndDragging_then_triggered_4() {
@@ -1450,17 +1429,14 @@ extension CollectionViewAdapterTests {
     collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
-    var performCallCount = 0
+    var handlerCallCount = 0
 
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(
-          offsetFromEnd: .relativeToContainerSize(multiplier: 2.0),
-          perform: { _ in
-            performCallCount += 1
-          }
-        )
+        .onReachedEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 2.0)) { _ in
+          handlerCallCount += 1
+        }
     )
 
     var point = CGPoint(x: 0.0, y: 100.0)
@@ -1474,7 +1450,7 @@ extension CollectionViewAdapterTests {
     )
 
     // then
-    XCTAssertEqual(performCallCount, 1)
+    XCTAssertEqual(handlerCallCount, 1)
   }
 
   func test_given_triggerable_offset_when_scrollViewWillEndDragging_then_triggered_5() {
@@ -1483,17 +1459,14 @@ extension CollectionViewAdapterTests {
     collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 99.0) }
 
-    var performCallCount = 0
+    var handlerCallCount = 0
 
     let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
-        .onReachedEnd(
-          offsetFromEnd: .relativeToContainerSize(multiplier: 2.0),
-          perform: { _ in
-            performCallCount += 1
-          }
-        )
+        .onReachedEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 2.0)) { _ in
+          handlerCallCount += 1
+        }
     )
 
     var point = CGPoint(x: 0.0, y: 0.0)
@@ -1507,6 +1480,6 @@ extension CollectionViewAdapterTests {
     )
 
     // then
-    XCTAssertEqual(performCallCount, 1)
+    XCTAssertEqual(handlerCallCount, 1)
   }
 }

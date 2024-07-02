@@ -171,7 +171,7 @@ While traditionally, this might be implemented within a `scrollViewDidScroll` me
 List(sections: [])
   .onReachedEnd(
     offset: .absolute(100.0),
-    perform: { _ in
+    handler: { _ in
       // Closure Trigger when reached end of list.
     }
   )
@@ -186,7 +186,7 @@ Two options are provided:
 
 By default, the value is set to `.relativeToContainerSize(multiplier: 2.0)`, which triggers the event when the scroll position is within twice the height of the list view from the end of the list.
 
-The second parameter, `perform`, is the callback handler that performs an asynchronous action when reached end of the list.
+The second parameter, `handler`, is the callback handler that performs an asynchronous action when reached end of the list.
 
 
 

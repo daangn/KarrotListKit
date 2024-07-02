@@ -59,16 +59,16 @@ extension List {
   ///
   /// - Parameters:
   ///   - offset: The offset from the end of the content view that triggers the event. Default is two times the height of the content view.
-  ///   - asyncAction: The callback handler that performs an asynchronous action when the end is reached.
+  ///   - handler: The callback handler for on reached end event.
   /// - Returns: An updated `List` with the registered event handler.
   public func onReachedEnd(
     offsetFromEnd offset: ReachedEndEvent.OffsetFromEnd = .relativeToContainerSize(multiplier: 2.0),
-    perform asyncAction: @escaping (ReachedEndEvent.EventContext) -> Void
+    _ handler: @escaping (ReachedEndEvent.EventContext) -> Void
   ) -> Self {
     registerEvent(
       ReachedEndEvent(
         offset: offset,
-        handler: asyncAction
+        handler: handler
       )
     )
   }
