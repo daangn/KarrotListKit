@@ -121,8 +121,6 @@ final public class CollectionViewAdapter: NSObject {
 
       completion?()
 
-      collectionView.indexPathsForVisibleItems.forEach(handleNextBatchIfNeeded)
-
       if let nextUpdate = queuedUpdate, collectionView.window != nil {
         queuedUpdate = nil
         isUpdating = false
@@ -233,22 +231,6 @@ final public class CollectionViewAdapter: NSObject {
     sectionItem(at: indexPath.section)?.cells[safe: indexPath.item]
   }
 
-  private func handleNextBatchIfNeeded(indexPath: IndexPath) {
-    guard let section = sectionItem(at: indexPath.section),
-          let trigger = section.nextBatchTrigger,
-          trigger.context.state == .pending
-    else {
-      return
-    }
-
-    guard trigger.threshold >= section.cells.count - indexPath.item else {
-      return
-    }
-
-    trigger.context.state = .triggered
-    trigger.handler(trigger.context)
-  }
-
   // MARK: - Action Methods
 
   @objc
@@ -292,10 +274,6 @@ extension CollectionViewAdapter: UICollectionViewDelegate {
   ) {
     guard let item = item(at: indexPath) else {
       return
-    }
-
-    if !isUpdating {
-      handleNextBatchIfNeeded(indexPath: indexPath)
     }
 
     item.event(for: WillDisplayEvent.self)?.handler(

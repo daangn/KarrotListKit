@@ -161,24 +161,6 @@ Section(id: "Section1") {
 
 
 
-### Pagination
-
-We often implement pagination functionality.
-KarrotListKit provides an convenience API that makes it easy to implement pagination functionality.
-
-NextBatchTrigger belongs to Section, and the trigger logic is very simple: threshold >= index of last Cell - index of Cell to will display
-
-```swift
-Section(id: "Section1") {
-  // ...
-}
-.withNextBatchTrigger(NextBatchTrigger(threshold: 10) { context in
-  // handle trigger 
-})
-```
-
-
-
 ### Prefetching
 
 Provides prefetching of resources API to improve scroll performance.
