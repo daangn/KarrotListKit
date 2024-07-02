@@ -27,9 +27,6 @@ public struct Section: Identifiable, ListingViewEventHandler {
   /// The footer that representing footer view
   public var footer: SupplementaryView?
 
-  /// The object that encapsulates information about the next batch of updates.
-  public var nextBatchTrigger: NextBatchTrigger?
-
   private var sectionLayout: CompositionalLayoutSectionFactory.SectionLayout?
 
   let eventStorage: ListingViewEventStorage
@@ -127,28 +124,6 @@ public struct Section: Identifiable, ListingViewEventHandler {
       component: footerComponent,
       alignment: alignment
     )
-    return copy
-  }
-
-  /// The modifier that sets the NextBatchTrigger for the Section.
-  ///
-  /// The Section supports Pagination.
-  /// It allows us to create and receive callbacks for the timing of the next batch update.
-  /// Below is a sample code.
-  ///
-  /// ```swift
-  /// Section(id: UUID()) {
-  ///  ...
-  /// }
-  /// .withNextBatchTrigger(threshold: 7) {
-  ///  /// handle next batch trigger
-  /// }
-  /// ```
-  /// - Parameters:
-  ///  - trigger: A trigger object that stores the timing and handler for the next batch update.
-  public func withNextBatchTrigger(_ trigger: NextBatchTrigger?) -> Self {
-    var copy = self
-    copy.nextBatchTrigger = trigger
     return copy
   }
 

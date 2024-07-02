@@ -121,8 +121,6 @@ final public class CollectionViewAdapter: NSObject {
 
       completion?()
 
-      collectionView.indexPathsForVisibleItems.forEach(handleNextBatchIfNeeded)
-
       if let nextUpdate = queuedUpdate, collectionView.window != nil {
         queuedUpdate = nil
         isUpdating = false
@@ -233,22 +231,6 @@ final public class CollectionViewAdapter: NSObject {
     sectionItem(at: indexPath.section)?.cells[safe: indexPath.item]
   }
 
-  private func handleNextBatchIfNeeded(indexPath: IndexPath) {
-    guard let section = sectionItem(at: indexPath.section),
-          let trigger = section.nextBatchTrigger,
-          trigger.context.state == .pending
-    else {
-      return
-    }
-
-    guard trigger.threshold >= section.cells.count - indexPath.item else {
-      return
-    }
-
-    trigger.context.state = .triggered
-    trigger.handler(trigger.context)
-  }
-
   // MARK: - Action Methods
 
   @objc
@@ -256,6 +238,86 @@ final public class CollectionViewAdapter: NSObject {
     list?.event(for: PullToRefreshEvent.self)?.handler(.init())
   }
 }
+
+
+// MARK: - Next Batch Trigger
+
+extension CollectionViewAdapter {
+
+  private var scrollDirection: UICollectionView.ScrollDirection {
+    let layout = collectionView?.collectionViewLayout as? UICollectionViewCompositionalLayout
+    return layout?.configuration.scrollDirection ?? .vertical
+  }
+
+  /// Checks if the collection view has reached the bottom, and triggers the `ReachedBottomEvent` if needed.
+  ///
+  /// This method manually evaluates if the collection view is near the bottom, based on the current content offset and view bounds.\
+  /// Should call this method on `scrollViewDidScroll(_:)` function of `UIScrollViewDelegate`.\
+  /// Basically, the `ReachedBottomEvent` check is handled in the `scrollViewWillEndDragging` method.
+  private func manuallyCheckReachedBottomEventIfNeeded() {
+    guard
+      let collectionView,
+      collectionView.isDragging == false,
+      collectionView.isTracking == false
+    else {
+      return
+    }
+    triggerReachedBottomEventIfNeeded(contentOffset: collectionView.contentOffset)
+  }
+
+  /// Evaluates the position of the content offset and triggers the `ReachedBottomEvent` if the end of the content is near.
+  ///
+  /// - Parameter contentOffset: The current offset of the content view.
+  ///
+  /// This method calculates the distance to the bottom of the content, considering the current scroll direction (vertical or horizontal).\
+  /// It computes the view length, content length, and offset based on the scroll direction. If the content length is smaller than the view length,\
+  /// it immediately triggers the `ReachedBottomEvent`. Otherwise, it calculates the remaining distance and compares it to the trigger distance.\
+  /// If the remaining distance is less than or equal to the trigger distance, the `ReachedBottomEvent` is triggered.\
+  private func triggerReachedBottomEventIfNeeded(contentOffset: CGPoint) {
+    guard
+      let event = list?.event(for: ReachedBottomEvent.self),
+      let collectionView, collectionView.bounds.isEmpty == false
+    else {
+      return
+    }
+
+    let viewLength: CGFloat
+    let contentLength: CGFloat
+    let offset: CGFloat
+
+    switch scrollDirection {
+    case .vertical:
+      viewLength = collectionView.bounds.size.height
+      contentLength = collectionView.contentSize.height
+      offset = contentOffset.y
+
+    default:
+      viewLength = collectionView.bounds.size.width
+      contentLength = collectionView.contentSize.width
+      offset = contentOffset.x
+    }
+
+    if contentLength < viewLength {
+      event.handler(.init())
+      return
+    }
+
+    let triggerDistance: CGFloat = {
+      switch event.offset {
+      case .absolute(let offset):
+        return offset
+      case .multipleHeight(let multipleHeight):
+        return viewLength * multipleHeight
+      }
+    }()
+
+    let remainingDistance = contentLength - viewLength - offset
+    if remainingDistance <= triggerDistance {
+      event.handler(.init())
+    }
+  }
+}
+
 
 // MARK: - CollectionViewLayoutAdapterDataSource
 
@@ -292,10 +354,6 @@ extension CollectionViewAdapter: UICollectionViewDelegate {
   ) {
     guard let item = item(at: indexPath) else {
       return
-    }
-
-    if !isUpdating {
-      handleNextBatchIfNeeded(indexPath: indexPath)
     }
 
     item.event(for: WillDisplayEvent.self)?.handler(
@@ -415,6 +473,8 @@ extension CollectionViewAdapter {
         collectionView: collectionView
       )
     )
+
+    manuallyCheckReachedBottomEventIfNeeded()
   }
 
   public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
@@ -445,6 +505,8 @@ extension CollectionViewAdapter {
         targetContentOffset: targetContentOffset
       )
     )
+
+    triggerReachedBottomEventIfNeeded(contentOffset: targetContentOffset.pointee)
   }
 
   public func scrollViewDidEndDragging(
