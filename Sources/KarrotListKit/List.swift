@@ -55,6 +55,24 @@ extension List {
     registerEvent(PullToRefreshEvent(handler: handler))
   }
 
+  /// Register a callback handler that will be called when the user scrolls near the bottom of the content view.
+  ///
+  /// - Parameters:
+  ///   - offset: The offset from the bottom of the content view that triggers the event. Default is two times the height of the content view.
+  ///   - asyncAction: The callback handler that performs an asynchronous action when the bottom is reached.
+  /// - Returns: An updated `List` with the registered event handler.
+  public func onReachedBottom(
+    offsetFromBottom offset: ReachedBottomEvent.OffsetFromBottom = .multipleHeight(2.0),
+    perform asyncAction: @escaping (ReachedBottomEvent.EventContext) -> Void
+  ) -> Self {
+    registerEvent(
+      ReachedBottomEvent(
+        offset: offset,
+        handler: asyncAction
+      )
+    )
+  }
+
   /// Register a callback handler that will be called when the scrollView is about to start scrolling the content.
   ///
   /// - Parameters:
