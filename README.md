@@ -181,12 +181,12 @@ The first parameter, `offset`, is an enum of type `ReachedEndEvent.OffsetFromBot
 
 Two options are provided:
 
-- case relativeToContainerSize(multiplier: CGFloat): Triggers the event when the user scrolls within a multiple of the height of the content view.
-- case absolute(CGFloat): Triggers the event when the user scrolls within an absolute point value from the end.
+- `case relativeToContainerSize(multiplier: CGFloat)`: Triggers the event when the user scrolls within a multiple of the height of the content view.
+- `case absolute(CGFloat)`: Triggers the event when the user scrolls within an absolute point value from the end.
 
 By default, the value is set to `.relativeToContainerSize(multiplier: 2.0)`, which triggers the event when the scroll position is within twice the height of the list view from the end of the list.
 
-The Second parameter, `perform`, is the callback handler that performs an asynchronous action when reached end of the list.
+The second parameter, `perform`, is the callback handler that performs an asynchronous action when reached end of the list.
 
 
 
