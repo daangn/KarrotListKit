@@ -37,7 +37,7 @@ final public class CollectionViewAdapter: NSObject {
   private var isUpdating = false
   private var queuedUpdate: (
     list: List,
-    animatingDifferences: Bool,
+    updateStrategy: CollectionViewAdapterUpdateStrategy,
     completion: (() -> Void)?
   )?
 
@@ -96,11 +96,11 @@ final public class CollectionViewAdapter: NSObject {
   ///
   /// - Parameters:
   ///   - list: The list that reflects the new state of the data in the collection view.
-  ///   - animatingDifferences: If true, the framework animates the updates to the collection view. If false, the framework doesn’t animate the updates to the collection view.
+  ///   - updateStrategy: The approaches for updating the content of a `UICollectionView`.
   ///   - completion: A closure to execute when the updates are complete. This closure has no return value and takes no parameters. The framework calls this closure from the main queue.
   public func apply(
     _ list: List,
-    animatingDifferences: Bool = true,
+    updateStrategy: CollectionViewAdapterUpdateStrategy = .animatedBatchUpdates,
     completion: (() -> Void)? = nil
   ) {
     guard let collectionView else {
@@ -108,7 +108,7 @@ final public class CollectionViewAdapter: NSObject {
     }
 
     guard isUpdating == false else {
-      queuedUpdate = (list, animatingDifferences, completion)
+      queuedUpdate = (list, updateStrategy, completion)
       return
     }
 
@@ -126,7 +126,7 @@ final public class CollectionViewAdapter: NSObject {
         isUpdating = false
         apply(
           nextUpdate.list,
-          animatingDifferences: nextUpdate.animatingDifferences,
+          updateStrategy: nextUpdate.updateStrategy,
           completion: nextUpdate.completion
         )
       } else {
@@ -144,13 +144,14 @@ final public class CollectionViewAdapter: NSObject {
       return
     }
 
-    if animatingDifferences {
+    switch updateStrategy {
+    case .animatedBatchUpdates:
       performDifferentialUpdates(
         old: self.list, new: list, completion: { flag in
           overridedCompletion(flag)
         }
       )
-    } else {
+    case .nonanimatedBatchUpdates:
       UIView.performWithoutAnimation {
         performDifferentialUpdates(
           old: self.list, new: list, completion: { flag in
@@ -158,7 +159,32 @@ final public class CollectionViewAdapter: NSObject {
           }
         )
       }
+    case .reloadData:
+      self.list = list
+      collectionView.reloadData()
+      collectionView.layoutIfNeeded()
+      overridedCompletion(true)
     }
+  }
+
+  /// Updates the UI to reflect the state of the data in the list, optionally animating the UI changes and executing a completion handler.
+  ///
+  /// - Parameters:
+  ///   - list: The list that reflects the new state of the data in the collection view.
+  ///   - animatingDifferences: If true, the framework animates the updates to the collection view. If false, the framework doesn’t animate the updates to the collection view.
+  ///   - completion: A closure to execute when the updates are complete. This closure has no return value and takes no parameters. The framework calls this closure from the main queue.
+  @_disfavoredOverload
+  @available(*, deprecated, renamed: "apply(_:updateStrategy:completion:)", message: "")
+  public func apply(
+    _ list: List,
+    animatingDifferences: Bool = true,
+    completion: (() -> Void)? = nil
+  ) {
+    apply(
+      list,
+      updateStrategy: animatingDifferences ? .animatedBatchUpdates : .nonanimatedBatchUpdates,
+      completion: completion
+    )
   }
 
   /// Representation of the current state of the data in the collection view.
