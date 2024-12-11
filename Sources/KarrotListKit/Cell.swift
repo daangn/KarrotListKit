@@ -67,6 +67,22 @@ extension Cell {
   public func didEndDisplay(_ handler: @escaping (DidEndDisplayingEvent.EventContext) -> Void) -> Self {
     registerEvent(DidEndDisplayingEvent(handler: handler))
   }
+
+  /// Register a callback handler that will be called when the cell was highlighted.
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler for highlight event
+  public func onHighlight(_ handler: @escaping (HighlightEvent.EventContext) -> Void) -> Self {
+    registerEvent(HighlightEvent(handler: handler))
+  }
+
+  /// Register a callback handler that will be called when the cell was unhighlighted.
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler for unhighlight event
+  public func onUnhighlight(_ handler: @escaping (UnhighlightEvent.EventContext) -> Void) -> Self {
+    registerEvent(UnhighlightEvent(handler: handler))
+  }
 }
 
 // MARK: - Hashable

@@ -484,6 +484,40 @@ extension CollectionViewAdapter: UICollectionViewDelegate {
       return
     }
   }
+
+  public func collectionView(
+    _ collectionView: UICollectionView,
+    didHighlightItemAt indexPath: IndexPath
+  ) {
+    guard let item = item(at: indexPath) else {
+      return
+    }
+
+    item.event(for: HighlightEvent.self)?.handler(
+      .init(
+        indexPath: indexPath,
+        anyComponent: item.component,
+        content: (collectionView.cellForItem(at: indexPath) as? ComponentRenderable)?.renderedContent
+      )
+    )
+  }
+
+  public func collectionView(
+    _ collectionView: UICollectionView,
+    didUnhighlightItemAt indexPath: IndexPath
+  ) {
+    guard let item = item(at: indexPath) else {
+      return
+    }
+
+    item.event(for: UnhighlightEvent.self)?.handler(
+      .init(
+        indexPath: indexPath,
+        anyComponent: item.component,
+        content: (collectionView.cellForItem(at: indexPath) as? ComponentRenderable)?.renderedContent
+      )
+    )
+  }
 }
 
 // MARK: - UIScrollViewDelegate

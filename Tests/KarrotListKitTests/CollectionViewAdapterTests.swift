@@ -634,6 +634,60 @@ extension CollectionViewAdapterTests {
     // then
     XCTAssertEqual(eventContext.indexPath, IndexPath(item: 0, section: 0))
   }
+
+  func test_given_highlightHandler_when_highlightCell_then_handleEvent() {
+    // given
+    var eventContext: HighlightEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let component = DummyComponent()
+    let sut = sut(collectionView: collectionView)
+    sut.list = List {
+      Section(id: UUID()) {
+        Cell(id: UUID(), component: component)
+          .onHighlight { context in
+            eventContext = context
+          }
+      }
+    }
+
+    // when
+    collectionView
+      .delegate?
+      .collectionView?(
+        collectionView,
+        didHighlightItemAt: IndexPath(item: 0, section: 0)
+      )
+
+    // then
+    XCTAssertEqual(eventContext.indexPath, IndexPath(item: 0, section: 0))
+  }
+
+  func test_given_unhighlightHandler_when_unhighlightCell_then_handleEvent() {
+    // given
+    var eventContext: UnhighlightEvent.EventContext!
+    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let component = DummyComponent()
+    let sut = sut(collectionView: collectionView)
+    sut.list = List {
+      Section(id: UUID()) {
+        Cell(id: UUID(), component: component)
+          .onUnhighlight { context in
+            eventContext = context
+          }
+      }
+    }
+
+    // when
+    collectionView
+      .delegate?
+      .collectionView?(
+        collectionView,
+        didUnhighlightItemAt: IndexPath(item: 0, section: 0)
+      )
+
+    // then
+    XCTAssertEqual(eventContext.indexPath, IndexPath(item: 0, section: 0))
+  }
 }
 
 // MARK: - UIScrollViewDelegate
