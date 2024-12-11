@@ -76,7 +76,7 @@ extension Cell {
     registerEvent(HighlightEvent(handler: handler))
   }
 
-  /// Register a callback handler that will be called when the cell was unhighlight.
+  /// Register a callback handler that will be called when the cell was unhighlighted.
   ///
   /// - Parameters:
   ///  - handler: The callback handler for unhighlight event
