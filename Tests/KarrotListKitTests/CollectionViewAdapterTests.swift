@@ -889,6 +889,32 @@ extension CollectionViewAdapterTests {
     // then
     XCTAssertNotNil(eventContext)
   }
+
+  func test_given_scrollToTopValue_when_try_scrollToTop_then_handleShouldScrollToTopEvent() {
+    [true, false].forEach { value in
+      // given
+      var eventContext: ShouldScrollToTopEvent.EventContext!
+      let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+      let sut = sut(
+        configuration: .init(),
+        collectionView: collectionView
+      )
+      sut.list = List(
+        sections: []
+      ).shouldScrollToTop { context in
+        eventContext = context
+        return value
+      }
+
+      // when
+      let shouldScrollToTop = collectionView
+        .delegate?.scrollViewShouldScrollToTop?(collectionView)
+
+      // then
+      XCTAssertEqual(shouldScrollToTop, value)
+      XCTAssertNotNil(eventContext)
+    }
+  }
 }
 
 // MARK: - UICollectionViewDataSourcePrefetching
