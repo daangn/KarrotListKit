@@ -620,6 +620,18 @@ extension CollectionViewAdapter {
       )
     )
   }
+
+  public func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+    guard let collectionView else {
+      return true
+    }
+
+    return list?.event(for: ShouldScrollToTopEvent.self)?.handler(
+      .init(
+        collectionView: collectionView
+      )
+    ) ?? true
+  }
 }
 
 // MARK: - UICollectionViewDataSourcePrefetching

@@ -120,4 +120,12 @@ extension List {
   public func didEndDecelerating(_ handler: @escaping (DidEndDeceleratingEvent.EventContext) -> Void) -> Self {
     registerEvent(DidEndDeceleratingEvent(handler: handler))
   }
+
+  /// Register a callback handler that will be called when the scroll view should scroll to the top of the content
+  ///
+  /// - Parameters:
+  ///  - handler: The callback handler for shouldScrollToTop event
+  public func shouldScrollToTop(_ handler: @escaping (ShouldScrollToTopEvent.EventContext) -> Bool) -> Self {
+    registerEvent(ShouldScrollToTopEvent(handler: handler))
+  }
 }
