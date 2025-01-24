@@ -17,6 +17,8 @@ public final class UICollectionViewComponentCell: UICollectionViewCell, Componen
 
   var onSizeChanged: ((CGSize) -> Void)?
 
+  private var previousBounds: CGSize = .zero
+
   // MARK: - Initializing
 
   @available(*, unavailable)
@@ -37,10 +39,29 @@ public final class UICollectionViewComponentCell: UICollectionViewCell, Componen
 
   // MARK: - Override Methods
 
+  public override func traitCollectionDidChange(
+    _ previousTraitCollection: UITraitCollection?
+  ) {
+    super.traitCollectionDidChange(previousTraitCollection)
+
+    if shouldInvalidateContentSize(
+      previousTraitCollection: previousTraitCollection
+    ) {
+      previousBounds = .zero
+    }
+  }
+
   public override func prepareForReuse() {
     super.prepareForReuse()
 
+    previousBounds = .zero
     cancellables?.forEach { $0.cancel() }
+  }
+
+  public override func layoutSubviews() {
+    super.layoutSubviews()
+
+    previousBounds = bounds.size
   }
 
   public override func preferredLayoutAttributesFitting(
@@ -49,6 +70,11 @@ public final class UICollectionViewComponentCell: UICollectionViewCell, Componen
     let attributes = super.preferredLayoutAttributesFitting(layoutAttributes)
 
     guard let renderedContent else {
+      return attributes
+    }
+
+    if KarrotListKitFeatureFlag.provider.isEnabled(for: .usesCachedViewSize),
+       previousBounds == attributes.size {
       return attributes
     }
 
