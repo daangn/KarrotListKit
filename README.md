@@ -119,12 +119,24 @@ let list = List {
 
 collectionViewAdapter.apply(
   list,
-  animatingDifferences: true
+  updateStrategy: .animatedBatchUpdates  // default is animatedBatchUpdates
 ) {
   // after completion
 }
 ```
 
+The first parameter, `list`, represents the new List structure that defines the sections, cells, and their components to be displayed in the UICollectionView.
+
+The second parameter, `updateStrategy`, is an enum of type `CollectionViewAdapterUpdateStrategy`, allowing users to control how the collection view updates its contents.
+
+Three options are provided:
+ - `case animatedBatchUpdates:` Performs animated batch updates by calling `performBatchUpdates(…)` with the new content. This approach animates the insertions, deletions, and moves of cells, creating a smooth user experience.
+ - `case nonanimatedBatchUpdates:` Performs the batch updates without animation by wrapping them in a `UIView.performWithoutAnimation(…)` block. This is more performant than reloadData() as it avoids full reconfiguration of all visible cells.
+ - `case reloadData:` Performs a full reload of the data using `reloadData()`. This reconfigures all visible cells and is generally discouraged for updating data due to performance implications. UIKit engineers recommend preferring batch updates over full reloads.
+
+By default, the value is set to `.animatedBatchUpdates`, which provides a visually smooth and performant way to update the collection view when the data changes.
+
+The third parameter is a trailing closure that acts as a completion handler. This block is executed after the collection view has finished applying the changes.
 
 
 ### Sizing
