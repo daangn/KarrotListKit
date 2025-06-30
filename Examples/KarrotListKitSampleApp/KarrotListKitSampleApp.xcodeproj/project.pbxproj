@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6C1530AE2E12A160000B37A2 /* KarrotListKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6C1530AD2E12A160000B37A2 /* KarrotListKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		6C1530882E12966F000B37A2 /* KarrotListKitSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KarrotListKitSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6C1530A52E12A0CF000B37A2 /* KarrotListKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = KarrotListKit; path = ../..; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -23,6 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C1530AE2E12A160000B37A2 /* KarrotListKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -32,6 +38,7 @@
 		6C15307F2E12966F000B37A2 = {
 			isa = PBXGroup;
 			children = (
+				6C1530A52E12A0CF000B37A2 /* KarrotListKit */,
 				6C15308A2E12966F000B37A2 /* KarrotListKitSampleApp */,
 				6C1530892E12966F000B37A2 /* Products */,
 			);
@@ -67,6 +74,7 @@
 			);
 			name = KarrotListKitSampleApp;
 			packageProductDependencies = (
+				6C1530AD2E12A160000B37A2 /* KarrotListKit */,
 			);
 			productName = KarrotListKitSampleApp;
 			productReference = 6C1530882E12966F000B37A2 /* KarrotListKitSampleApp.app */;
@@ -97,6 +105,9 @@
 			);
 			mainGroup = 6C15307F2E12966F000B37A2;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				6C1530AC2E12A160000B37A2 /* XCLocalSwiftPackageReference "../.." */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6C1530892E12966F000B37A2 /* Products */;
 			projectDirPath = "";
@@ -321,6 +332,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		6C1530AC2E12A160000B37A2 /* XCLocalSwiftPackageReference "../.." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../..;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6C1530AD2E12A160000B37A2 /* KarrotListKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = KarrotListKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6C1530802E12966F000B37A2 /* Project object */;
 }
