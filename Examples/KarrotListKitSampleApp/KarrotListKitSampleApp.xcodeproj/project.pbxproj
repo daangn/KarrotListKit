@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		6C1530AE2E12A160000B37A2 /* KarrotListKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6C1530AD2E12A160000B37A2 /* KarrotListKit */; };
+		6C682E3D2E14C7DB00F816C0 /* PinLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 6C682E3C2E14C7DB00F816C0 /* PinLayout */; };
+		6C682E402E14C7F800F816C0 /* FlexLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 6C682E3F2E14C7F800F816C0 /* FlexLayout */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +30,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C682E402E14C7F800F816C0 /* FlexLayout in Frameworks */,
+				6C682E3D2E14C7DB00F816C0 /* PinLayout in Frameworks */,
 				6C1530AE2E12A160000B37A2 /* KarrotListKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -75,6 +79,8 @@
 			name = KarrotListKitSampleApp;
 			packageProductDependencies = (
 				6C1530AD2E12A160000B37A2 /* KarrotListKit */,
+				6C682E3C2E14C7DB00F816C0 /* PinLayout */,
+				6C682E3F2E14C7F800F816C0 /* FlexLayout */,
 			);
 			productName = KarrotListKitSampleApp;
 			productReference = 6C1530882E12966F000B37A2 /* KarrotListKitSampleApp.app */;
@@ -107,6 +113,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				6C1530AC2E12A160000B37A2 /* XCLocalSwiftPackageReference "../.." */,
+				6C682E3B2E14C7DB00F816C0 /* XCRemoteSwiftPackageReference "PinLayout" */,
+				6C682E3E2E14C7F800F816C0 /* XCRemoteSwiftPackageReference "FlexLayout" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6C1530892E12966F000B37A2 /* Products */;
@@ -340,10 +348,39 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		6C682E3B2E14C7DB00F816C0 /* XCRemoteSwiftPackageReference "PinLayout" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/layoutBox/PinLayout.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		6C682E3E2E14C7F800F816C0 /* XCRemoteSwiftPackageReference "FlexLayout" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/layoutBox/FlexLayout.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		6C1530AD2E12A160000B37A2 /* KarrotListKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = KarrotListKit;
+		};
+		6C682E3C2E14C7DB00F816C0 /* PinLayout */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6C682E3B2E14C7DB00F816C0 /* XCRemoteSwiftPackageReference "PinLayout" */;
+			productName = PinLayout;
+		};
+		6C682E3F2E14C7F800F816C0 /* FlexLayout */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6C682E3E2E14C7F800F816C0 /* XCRemoteSwiftPackageReference "FlexLayout" */;
+			productName = FlexLayout;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
