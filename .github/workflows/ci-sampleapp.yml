@@ -1,0 +1,39 @@
+name: CI (SampleApp)
+
+on:
+  pull_request:
+    paths:
+      - "Package.swift"
+      - "Package.resolved"
+      - "Sources/**"
+      - "Tests/**"
+      - "Examples/KarrotListKitSampleApp/**"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-15
+
+    env:
+      SCHEME: KarrotListKitSampleApp
+      DESTINATION: platform=iOS Simulator,name=iPhone 16,OS=18.1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Xcode Version
+        run: sudo xcode-select --switch /Applications/Xcode_16.1.0.app
+        shell: bash
+
+      - name: Run `build-for-testing`
+        working-directory: ./Examples/KarrotListKitSampleApp
+        run: |
+          set -o pipefail && xcodebuild build-for-testing \
+            -scheme "$SCHEME" \
+            -destination "$DESTINATION" \
+            -configuration Debug \
+            | xcbeautify --renderer github-actions
