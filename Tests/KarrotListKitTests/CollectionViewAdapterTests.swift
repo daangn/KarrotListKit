@@ -20,8 +20,9 @@ final class CollectionViewAdapterTests: XCTestCase {
 
   final class CollectionViewMock: UICollectionView {
 
+    private var windowView = UIWindow()
     override var window: UIWindow? {
-      .init()
+      windowView
     }
 
     var contentSizeHandler: (() -> CGSize)?
