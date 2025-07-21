@@ -76,7 +76,21 @@ final class VerticalLayoutListView: UIView {
             )
           }
         }
-        .withSectionLayout(.vertical)
+        .withSectionLayout { context in
+          let size = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(44.0)
+          )
+          let item = NSCollectionLayoutItem(
+            layoutSize: size
+          )
+          let group = NSCollectionLayoutGroup.vertical(
+            layoutSize: size,
+            subitems: [item]
+          )
+
+          return NSCollectionLayoutSection(group: group)
+        }
       }.onRefresh { [weak self] _ in
         self?.resetViewModels()
       }.onReachEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 1.0)) { [weak self] _ in
