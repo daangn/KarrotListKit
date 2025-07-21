@@ -81,16 +81,6 @@ public struct Section: Identifiable, ListingViewEventHandler {
     return copy
   }
 
-  /// The modifier that sets the layout for the Section.
-  ///
-  /// - Parameters:
-  ///  - defaultLayoutMaker: The basic layout factory provided by the framework.
-  public func withSectionLayout(_ defaultLayoutMaker: DefaultCompositionalLayoutSectionFactory) -> Self {
-    var copy = self
-    copy.sectionLayout = defaultLayoutMaker.makeSectionLayout()
-    return copy
-  }
-
   /// The modifier that sets the Header for the Section.
   ///
   /// - Parameters:
