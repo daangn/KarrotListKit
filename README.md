@@ -81,10 +81,6 @@ struct ButtonComponent: Component {
   func render(in content: Button, coordinator: Coordinator) {
     content.configure(viewModel: viewModel)
   }
-
-  var layoutMode: ContentLayoutMode {
-    .flexibleHeight(estimatedHeight: 44.0)
-  }
 }
 ```
 
@@ -114,7 +110,20 @@ let list = List {
   }
   .withHeader(ButtonComponent(viewModel: .init(title: "Header")))
   .withFooter(ButtonComponent(viewModel: .init(title: "Footer")))
-  .withSectionLayout(.vertical(spacing: 12.0))
+  .withSectionLayout { context in
+    let size = NSCollectionLayoutSize(
+      widthDimension: .fractionalWidth(1.0),
+      heightDimension: .estimated(44.0)
+    )
+    let item = NSCollectionLayoutItem(
+      layoutSize: size
+    )
+    let group = NSCollectionLayoutGroup.vertical(
+      layoutSize: size,
+      subitems: [item]
+    )
+    return NSCollectionLayoutSection(group: group)
+  }
 }
 
 collectionViewAdapter.apply(
@@ -147,9 +156,6 @@ The size of a View is actually adjusted when the View is displayed on the screen
 struct ButtonComponent: Component {
   typealias Content = Button
   // ...
-  var layoutMode: ContentLayoutMode {
-    .flexibleHeight(estimatedHeight: 44.0)
-  }
 }
 
 final class Button: UIControl {
