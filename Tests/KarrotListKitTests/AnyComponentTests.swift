@@ -14,7 +14,6 @@ final class AnyComponentTests: XCTestCase {
     let anyComponent = AnyComponent(component)
 
     // when & then
-    XCTAssertEqual(component.layoutMode, anyComponent.layoutMode)
     XCTAssertEqual(component.reuseIdentifier, anyComponent.reuseIdentifier)
   }
 

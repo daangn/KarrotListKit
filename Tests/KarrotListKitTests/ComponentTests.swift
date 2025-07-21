@@ -12,7 +12,6 @@ final class ComponentTests: XCTestCase {
     struct ViewModel: Equatable {}
     typealias Content = UIView
     typealias Coordinator = Void
-    var layoutMode: ContentLayoutMode { fatalError() }
     var viewModel: ViewModel = .init()
     func renderContent(coordinator: Coordinator) -> UIView { fatalError() }
     func render(in content: UIView, coordinator: Coordinator) { fatalError() }
