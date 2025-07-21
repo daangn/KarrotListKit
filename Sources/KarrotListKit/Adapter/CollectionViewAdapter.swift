@@ -41,8 +41,6 @@ final public class CollectionViewAdapter: NSObject {
     completion: (() -> Void)?
   )?
 
-  private var componentSizeStorage: ComponentSizeStorage = ComponentSizeStorageImpl()
-
   var list: List?
 
   private lazy var pullToRefreshControl: UIRefreshControl = {
@@ -350,10 +348,6 @@ extension CollectionViewAdapter {
 extension CollectionViewAdapter: CollectionViewLayoutAdapterDataSource {
   public func sectionItem(at index: Int) -> Section? {
     list?.sections[safe: index]
-  }
-
-  public func sizeStorage() -> ComponentSizeStorage {
-    componentSizeStorage
   }
 }
 
@@ -697,12 +691,6 @@ extension CollectionViewAdapter: UICollectionViewDataSource {
       return UICollectionViewCell()
     }
 
-    cell.onSizeChanged = { [weak self] size in
-      self?.componentSizeStorage.setCellSize(
-        (size, item.component.viewModel),
-        for: item.id
-      )
-    }
     cell.cancellables = prefetchingIndexPathOperations.removeValue(forKey: indexPath)
     cell.render(component: item.component)
 
@@ -731,12 +719,6 @@ extension CollectionViewAdapter: UICollectionViewDataSource {
         return UICollectionReusableView()
       }
 
-      headerView.onSizeChanged = { [weak self] size in
-        self?.componentSizeStorage.setHeaderSize(
-          (size, header.component.viewModel),
-          for: section.id
-        )
-      }
       headerView.render(component: header.component)
 
       return headerView
@@ -757,12 +739,6 @@ extension CollectionViewAdapter: UICollectionViewDataSource {
         return UICollectionReusableView()
       }
 
-      footerView.onSizeChanged = { [weak self] size in
-        self?.componentSizeStorage.setFooterSize(
-          (size, footer.component.viewModel),
-          for: section.id
-        )
-      }
       footerView.render(component: footer.component)
 
       return footerView

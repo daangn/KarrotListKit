@@ -129,14 +129,13 @@ public struct Section: Identifiable, ListingViewEventHandler {
 
   func layout(
     index: Int,
-    environment: NSCollectionLayoutEnvironment,
-    sizeStorage: ComponentSizeStorage
+    environment: NSCollectionLayoutEnvironment
   ) -> NSCollectionLayoutSection? {
     if sectionLayout == nil {
       assertionFailure("Please specify a valid section layout")
     }
 
-    return sectionLayout?((self, index, environment, sizeStorage))
+    return sectionLayout?((self, index, environment))
   }
 }
 
