@@ -25,6 +25,15 @@ struct RootView: View {
           .navigationTitle("HorizontalLayout")
           .navigationBarTitleDisplayMode(.inline)
         }
+        
+        NavigationLink("VerticalGridLayout") {
+          UIViewRepresentation { _ in
+            VerticalGridLayoutListView()
+          }
+          .ignoresSafeArea()
+          .navigationTitle("VerticalGridLayout")
+          .navigationBarTitleDisplayMode(.inline)
+        }
       }
       .navigationTitle("KarrotListKit")
       .navigationBarTitleDisplayMode(.inline)
