@@ -16,37 +16,11 @@ final class CollectionViewLayoutAdapterTests: XCTestCase {
     var traitCollection: UITraitCollection { .init() }
   }
 
-  final class ComponentSizeStorageDummy: ComponentSizeStorage {
-
-    func cellSize(for hash: AnyHashable) -> SizeContext? {
-      nil
-    }
-
-    func headerSize(for hash: AnyHashable) -> SizeContext? {
-      nil
-    }
-
-    func footerSize(for hash: AnyHashable) -> SizeContext? {
-      nil
-    }
-
-    func setCellSize(_ size: SizeContext, for hash: AnyHashable) {}
-
-    func setHeaderSize(_ size: SizeContext, for hash: AnyHashable) {}
-
-    func setFooterSize(_ size: SizeContext, for hash: AnyHashable) {}
-  }
-
   final class CollectionViewLayoutAdapterDataSourceStub: CollectionViewLayoutAdapterDataSource {
 
     var section: Section?
     func sectionItem(at index: Int) -> Section? {
       section
-    }
-
-    var sizeStorageStub: ComponentSizeStorage!
-    func sizeStorage() -> ComponentSizeStorage {
-      sizeStorageStub
     }
   }
 
@@ -123,7 +97,6 @@ extension CollectionViewLayoutAdapterTests {
 
   func test_given_valid_section_when_sectionLayout_then_return_sectionLayout() {
     let dataSource = CollectionViewLayoutAdapterDataSourceStub()
-    dataSource.sizeStorageStub = ComponentSizeStorageDummy()
     dataSource.section = Section(
       id: UUID(),
       cells: [Cell(id: UUID(), component: DummyComponent())]

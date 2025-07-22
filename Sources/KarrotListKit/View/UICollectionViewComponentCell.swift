@@ -15,8 +15,6 @@ public final class UICollectionViewComponentCell: UICollectionViewCell, Componen
 
   var cancellables: [AnyCancellable]?
 
-  var onSizeChanged: ((CGSize) -> Void)?
-
   private var previousBounds: CGSize = .zero
 
   // MARK: - Initializing
@@ -79,10 +77,6 @@ public final class UICollectionViewComponentCell: UICollectionViewCell, Componen
     }
 
     let size = renderedContent.sizeThatFits(contentView.bounds.size)
-
-    if renderedComponent != nil {
-      onSizeChanged?(size)
-    }
 
     attributes.frame.size = size
 

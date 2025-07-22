@@ -23,8 +23,4 @@ struct VerticalLayoutItemComponent: Component {
   func render(in content: VerticalLayoutItemView, coordinator: ()) {
     content.viewModel = viewModel
   }
-
-  var layoutMode: ContentLayoutMode {
-    .flexibleHeight(estimatedHeight: 54.0)
-  }
 }

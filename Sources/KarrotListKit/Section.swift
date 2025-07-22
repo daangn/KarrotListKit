@@ -81,16 +81,6 @@ public struct Section: Identifiable, ListingViewEventHandler {
     return copy
   }
 
-  /// The modifier that sets the layout for the Section.
-  ///
-  /// - Parameters:
-  ///  - defaultLayoutMaker: The basic layout factory provided by the framework.
-  public func withSectionLayout(_ defaultLayoutMaker: DefaultCompositionalLayoutSectionFactory) -> Self {
-    var copy = self
-    copy.sectionLayout = defaultLayoutMaker.makeSectionLayout()
-    return copy
-  }
-
   /// The modifier that sets the Header for the Section.
   ///
   /// - Parameters:
@@ -129,14 +119,13 @@ public struct Section: Identifiable, ListingViewEventHandler {
 
   func layout(
     index: Int,
-    environment: NSCollectionLayoutEnvironment,
-    sizeStorage: ComponentSizeStorage
+    environment: NSCollectionLayoutEnvironment
   ) -> NSCollectionLayoutSection? {
     if sectionLayout == nil {
       assertionFailure("Please specify a valid section layout")
     }
 
-    return sectionLayout?((self, index, environment, sizeStorage))
+    return sectionLayout?((self, index, environment))
   }
 }
 

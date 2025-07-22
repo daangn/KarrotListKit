@@ -26,9 +26,6 @@ public protocol Component {
   /// A reuse identifier for the component.
   var reuseIdentifier: String { get }
 
-  /// The layout mode of the component's content.
-  var layoutMode: ContentLayoutMode { get }
-
   /// Creates the content object and configures its initial state.
   ///
   /// - Parameter coordinator: The coordinator to use for rendering the content.

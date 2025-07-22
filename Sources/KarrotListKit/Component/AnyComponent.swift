@@ -36,11 +36,6 @@ public struct AnyComponent: Component, Equatable {
     box.base
   }
 
-  /// The layout mode of the component's content.
-  public var layoutMode: ContentLayoutMode {
-    box.layoutMode
-  }
-
   /// A reuse identifier for the component.
   public var reuseIdentifier: String {
     box.reuseIdentifier
@@ -116,7 +111,6 @@ private protocol ComponentBox {
 
   var base: Base { get }
   var reuseIdentifier: String { get }
-  var layoutMode: ContentLayoutMode { get }
   var viewModel: Base.ViewModel { get }
 
   func renderContent(coordinator: Any) -> UIView
@@ -133,10 +127,6 @@ private struct AnyComponentBox<Base: Component>: ComponentBox {
 
   var viewModel: Base.ViewModel {
     baseComponent.viewModel
-  }
-
-  var layoutMode: ContentLayoutMode {
-    baseComponent.layoutMode
   }
 
   var baseComponent: Base

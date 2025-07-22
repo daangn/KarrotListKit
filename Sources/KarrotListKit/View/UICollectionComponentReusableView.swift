@@ -12,8 +12,6 @@ final class UICollectionComponentReusableView: UICollectionReusableView, Compone
 
   var renderedComponent: AnyComponent?
 
-  var onSizeChanged: ((CGSize) -> Void)?
-
   private var previousBounds: CGSize = .zero
 
   // MARK: - Initializing
@@ -70,10 +68,6 @@ final class UICollectionComponentReusableView: UICollectionReusableView, Compone
     }
 
     let size = renderedContent.sizeThatFits(bounds.size)
-
-    if renderedComponent != nil {
-      onSizeChanged?(size)
-    }
 
     attributes.frame.size = size
 
