@@ -16,6 +16,24 @@ struct RootView: View {
           .navigationTitle("VerticalLayout")
           .navigationBarTitleDisplayMode(.inline)
         }
+        
+        NavigationLink("HorizontalLayout") {
+          UIViewRepresentation { _ in
+            HorizontalLayoutListView()
+          }
+          .ignoresSafeArea()
+          .navigationTitle("HorizontalLayout")
+          .navigationBarTitleDisplayMode(.inline)
+        }
+        
+        NavigationLink("VerticalGridLayout") {
+          UIViewRepresentation { _ in
+            VerticalGridLayoutListView()
+          }
+          .ignoresSafeArea()
+          .navigationTitle("VerticalGridLayout")
+          .navigationBarTitleDisplayMode(.inline)
+        }
       }
       .navigationTitle("KarrotListKit")
       .navigationBarTitleDisplayMode(.inline)
