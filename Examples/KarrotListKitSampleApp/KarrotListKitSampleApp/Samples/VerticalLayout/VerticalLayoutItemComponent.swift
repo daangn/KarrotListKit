@@ -5,7 +5,6 @@
 import KarrotListKit
 
 struct VerticalLayoutItemComponent: Component {
-
   typealias ViewModel = VerticalLayoutItemView.ViewModel
 
   let viewModel: ViewModel

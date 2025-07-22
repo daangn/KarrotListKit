@@ -7,7 +7,6 @@ import UIKit
 import KarrotListKit
 
 final class VerticalLayoutListView: UIView {
-
   // MARK: Const
 
   private enum Const {
@@ -52,6 +51,7 @@ final class VerticalLayoutListView: UIView {
   // MARK: Configuration Methods
 
   private func defineLayout() {
+    backgroundColor = .systemGroupedBackground
     addSubview(collectionView)
   }
 
@@ -62,7 +62,7 @@ final class VerticalLayoutListView: UIView {
 
   private func appendViewModels() {
     guard viewModels.count < Const.maximumViewModelCount else { return }
-    viewModels.append(contentsOf: (0..<Const.pageSize).map { _ in .random() })
+    viewModels.append(contentsOf: (0 ..< Const.pageSize).map { _ in .random() })
   }
 
   private func applyViewModels() {
@@ -76,21 +76,17 @@ final class VerticalLayoutListView: UIView {
             )
           }
         }
-        .withSectionLayout { context in
-          let size = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(44.0)
+        .withHeader(SectionHeaderComponent(id: "header", title: "Vertical Layout"))
+        .withFooter(SectionFooterComponent(id: "footer", text: "This is a vertical layout example with estimated item heights"))
+        .withSectionLayout(
+          VerticalLayout.verticalLayout(
+            itemHeightDimension: .estimated(80),
+            headerHeightDimension: .estimated(56),
+            footerHeightDimension: .estimated(40),
+            spacing: 8
           )
-          let item = NSCollectionLayoutItem(
-            layoutSize: size
-          )
-          let group = NSCollectionLayoutGroup.vertical(
-            layoutSize: size,
-            subitems: [item]
-          )
-
-          return NSCollectionLayoutSection(group: group)
-        }
+          .supplementaryContentInsetsReference(.none)
+        )
       }.onRefresh { [weak self] _ in
         self?.resetViewModels()
       }.onReachEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 1.0)) { [weak self] _ in
