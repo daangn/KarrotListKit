@@ -9,14 +9,15 @@ import KarrotListKit
 final class HorizontalLayoutListView: UIView {
   // MARK: UICollectionView
 
-  private let layoutAdapter = CollectionViewLayoutAdapter()
+  private lazy var collectionView = UICollectionView(
+    frame: .zero,
+    collectionViewLayout: UICollectionViewCompositionalLayout(
+      sectionProvider: collectionViewAdapter.sectionLayout
+    )
+  )
 
-  private lazy var collectionView = UICollectionView(layoutAdapter: layoutAdapter)
-
-  private lazy var collectionViewAdapter = CollectionViewAdapter(
-    configuration: CollectionViewAdapterConfiguration(),
-    collectionView: collectionView,
-    layoutAdapter: layoutAdapter
+  private let collectionViewAdapter = CollectionViewAdapter<CompositionalLayout>(
+    configuration: CollectionViewAdapterConfiguration()
   )
 
   // MARK: ViewModel
@@ -28,6 +29,7 @@ final class HorizontalLayoutListView: UIView {
 
   override init(frame: CGRect) {
     super.init(frame: frame)
+    collectionViewAdapter.register(collectionView: collectionView)
     defineLayout()
     generateViewModels()
   }
@@ -69,7 +71,7 @@ final class HorizontalLayoutListView: UIView {
         .withHeader(SectionHeaderComponent(id: "continuous-header", title: "Continuous Scrolling"))
         .withFooter(SectionFooterComponent(id: "continuous-footer", text: "Smooth continuous horizontal scrolling"))
         .withSectionLayout(
-          HorizontalLayout.horizontalLayout(
+          HorizontalLayout(
             itemSize: NSCollectionLayoutSize(
               widthDimension: .estimated(120),
               heightDimension: .estimated(140)
@@ -86,6 +88,7 @@ final class HorizontalLayoutListView: UIView {
             scrollingBehavior: .continuous
           )
           .supplementaryContentInsetsReference(.none)
+          .makeSectionLayout()
         )
 
         // Group paging section - pages by groups of items
@@ -100,7 +103,7 @@ final class HorizontalLayoutListView: UIView {
         .withHeader(SectionHeaderComponent(id: "group-paging-header", title: "Group Paging"))
         .withFooter(SectionFooterComponent(id: "group-paging-footer", text: "Pages through groups of items that fit the screen"))
         .withSectionLayout(
-          HorizontalLayout.horizontalLayout(
+          HorizontalLayout(
             itemSize: NSCollectionLayoutSize(
               widthDimension: .estimated(110),
               heightDimension: .estimated(140)
@@ -117,6 +120,7 @@ final class HorizontalLayoutListView: UIView {
             scrollingBehavior: .groupPaging
           )
           .supplementaryContentInsetsReference(.none)
+          .makeSectionLayout()
         )
       }
     )

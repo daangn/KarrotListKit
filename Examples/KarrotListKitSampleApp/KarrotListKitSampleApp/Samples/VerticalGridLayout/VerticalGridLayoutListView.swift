@@ -16,14 +16,15 @@ final class VerticalGridLayoutListView: UIView {
 
   // MARK: UICollectionView
 
-  private let layoutAdapter = CollectionViewLayoutAdapter()
+  private lazy var collectionView = UICollectionView(
+    frame: .zero,
+    collectionViewLayout: UICollectionViewCompositionalLayout(
+      sectionProvider: collectionViewAdapter.sectionLayout
+    )
+  )
 
-  private lazy var collectionView = UICollectionView(layoutAdapter: layoutAdapter)
-
-  private lazy var collectionViewAdapter = CollectionViewAdapter(
-    configuration: CollectionViewAdapterConfiguration(),
-    collectionView: collectionView,
-    layoutAdapter: layoutAdapter
+  private let collectionViewAdapter = CollectionViewAdapter<CompositionalLayout>(
+    configuration: CollectionViewAdapterConfiguration()
   )
 
   // MARK: ViewModel
@@ -39,6 +40,7 @@ final class VerticalGridLayoutListView: UIView {
 
   override init(frame: CGRect) {
     super.init(frame: frame)
+    collectionViewAdapter.register(collectionView: collectionView)
     defineLayout()
     resetViewModels()
   }
@@ -80,7 +82,7 @@ final class VerticalGridLayoutListView: UIView {
         .withHeader(SectionHeaderComponent(id: "grid-2-header", title: "2-Column Grid"))
         .withFooter(SectionFooterComponent(id: "grid-2-footer", text: "Grid layout with 2 items per row"))
         .withSectionLayout(
-          VerticalGridLayout.verticalGridLayout(
+          VerticalGridLayout(
             numberOfItemsInRow: 2,
             itemHeightDimension: .estimated(120),
             headerHeightDimension: .estimated(56),
@@ -90,6 +92,7 @@ final class VerticalGridLayoutListView: UIView {
           )
           .insets(NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
           .supplementaryContentInsetsReference(.none)
+          .makeSectionLayout()
         )
 
         // 3-column grid section
@@ -104,7 +107,7 @@ final class VerticalGridLayoutListView: UIView {
         .withHeader(SectionHeaderComponent(id: "grid-3-header", title: "3-Column Grid"))
         .withFooter(SectionFooterComponent(id: "grid-3-footer", text: "Grid layout with 3 items per row"))
         .withSectionLayout(
-          VerticalGridLayout.verticalGridLayout(
+          VerticalGridLayout(
             numberOfItemsInRow: 3,
             itemHeightDimension: .estimated(100),
             headerHeightDimension: .estimated(56),
@@ -114,6 +117,7 @@ final class VerticalGridLayoutListView: UIView {
           )
           .insets(NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
           .supplementaryContentInsetsReference(.none)
+          .makeSectionLayout()
         )
 
         // 4-column grid section
@@ -128,7 +132,7 @@ final class VerticalGridLayoutListView: UIView {
         .withHeader(SectionHeaderComponent(id: "grid-4-header", title: "4-Column Grid"))
         .withFooter(SectionFooterComponent(id: "grid-4-footer", text: "Grid layout with 4 items per row - pull to refresh or scroll to load more"))
         .withSectionLayout(
-          VerticalGridLayout.verticalGridLayout(
+          VerticalGridLayout(
             numberOfItemsInRow: 4,
             itemHeightDimension: .estimated(80),
             headerHeightDimension: .estimated(56),
@@ -138,6 +142,7 @@ final class VerticalGridLayoutListView: UIView {
           )
           .insets(NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
           .supplementaryContentInsetsReference(.none)
+          .makeSectionLayout()
         )
       }.onRefresh { [weak self] _ in
         self?.resetViewModels()

@@ -16,14 +16,15 @@ final class VerticalLayoutListView: UIView {
 
   // MARK: UICollectionView
 
-  private let layoutAdapter = CollectionViewLayoutAdapter()
+  private lazy var collectionView = UICollectionView(
+    frame: .zero,
+    collectionViewLayout: UICollectionViewCompositionalLayout(
+      sectionProvider: collectionViewAdapter.sectionLayout
+    )
+  )
 
-  private lazy var collectionView = UICollectionView(layoutAdapter: layoutAdapter)
-
-  private lazy var collectionViewAdapter = CollectionViewAdapter(
-    configuration: CollectionViewAdapterConfiguration(),
-    collectionView: collectionView,
-    layoutAdapter: layoutAdapter
+  private let collectionViewAdapter = CollectionViewAdapter<CompositionalLayout>(
+    configuration: CollectionViewAdapterConfiguration()
   )
 
   // MARK: ViewModel
@@ -39,6 +40,7 @@ final class VerticalLayoutListView: UIView {
 
   override init(frame: CGRect) {
     super.init(frame: frame)
+    collectionViewAdapter.register(collectionView: collectionView)
     defineLayout()
     resetViewModels()
   }
@@ -79,13 +81,14 @@ final class VerticalLayoutListView: UIView {
         .withHeader(SectionHeaderComponent(id: "header", title: "Vertical Layout"))
         .withFooter(SectionFooterComponent(id: "footer", text: "This is a vertical layout example with estimated item heights"))
         .withSectionLayout(
-          VerticalLayout.verticalLayout(
+          VerticalLayout(
             itemHeightDimension: .estimated(80),
             headerHeightDimension: .estimated(56),
             footerHeightDimension: .estimated(40),
             spacing: 8
           )
           .supplementaryContentInsetsReference(.none)
+          .makeSectionLayout()
         )
       }.onRefresh { [weak self] _ in
         self?.resetViewModels()
