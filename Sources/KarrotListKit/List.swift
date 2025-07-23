@@ -1,14 +1,17 @@
 //
-//  Copyright (c) 2024 Danggeun Market Inc.
+//  File.swift
+//  KarrotListKit
+//
+//  Created by Ben.park on 7/22/25.
 //
 
 import Foundation
 
 /// The `List` that representing a UICollectionView.
-public struct List: ListingViewEventHandler {
+public struct List<Layout: ListLayout>: ListingViewEventHandler {
 
   /// A array of section that representing Section UI.
-  public var sections: [Section]
+  public var sections: [Section<Layout.SectionLayout>]
 
   let eventStorage = ListingViewEventStorage()
 
@@ -19,7 +22,7 @@ public struct List: ListingViewEventHandler {
   /// - Parameters:
   ///  - sections: An array of section to be displayed on the screen.
   public init(
-    sections: [Section]
+    sections: [Section<Layout.SectionLayout>]
   ) {
     self.sections = sections
   }
@@ -29,7 +32,7 @@ public struct List: ListingViewEventHandler {
   /// - Parameters:
   ///  - sections: The Builder that creates an array of section to be displayed on the screen.
   public init(
-    @SectionsBuilder _ sections: () -> [Section]
+    @SectionsBuilder<Layout.SectionLayout> _ sections: () -> [Section<Layout.SectionLayout>]
   ) {
     self.sections = sections()
   }
