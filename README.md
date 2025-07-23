@@ -36,21 +36,23 @@ See the [KarrotListKit DocC documentation](https://swiftpackageindex.com/daangn/
 The `CollectionViewAdapter` object serves as an adapter between the `UIColletionView` logic and the KarrotListKit logic, encapsulating the core implementation logic of the framework
 
 ```swift
-private let configuration = CollectionViewAdapterConfiguration()
-private let layoutAdapter = CollectionViewLayoutAdapter()
-
-private lazy var collectionViewAdapter = CollectionViewAdapter(
-  configuration: configuration,
-  collectionView: collectionView,
-  layoutAdapter: layoutAdapter
-)
-
 private lazy var collectionView = UICollectionView(
   frame: .zero,
   collectionViewLayout: UICollectionViewCompositionalLayout(
-    sectionProvider: layoutAdapter.sectionLayout
+    sectionProvider: collectionViewAdapter.sectionLayout
   )
 )
+
+private let collectionViewAdapter = CollectionViewAdapter<CompositionalLayout>(
+  configuration: CollectionViewAdapterConfiguration()
+)
+
+override func viewDidLoad() {
+  super.viewDidLoad()
+  
+  // Register the adapter with the collection view
+  collectionViewAdapter.register(collectionView: collectionView)
+}
 ```
 
 
@@ -166,18 +168,6 @@ final class Button: UIControl {
 }
 ```
 
-SectionLayout is tightly coupled with `UICollectionViewCompositionalLayout`, providing a custom interface to return an `NSCollectionLayoutSection`.
-
-```swift
-Section(id: "Section1") {
-  // ...
-}
-.withSectionLayout { [weak self] context -> NSCollectionLayoutSection? in
-  // return NSCollectionLayoutSection object
-}
-```
-
-
 
 ### Pagination
 `KarrotListKit` provides an easy-to-use interface for handling pagination when loading the next page of data. 
@@ -216,15 +206,14 @@ The CollectionViewAdapter conforms to the `UICollectionViewDataSourcePrefetching
 Below is sample code for Image prefetching.
 
 ```swift
-let collectionViewAdapter = CollectionViewAdapter(
-  configuration: .init(),
-  collectionView: collectionView,
-  layoutAdapter: CollectionViewLayoutAdapter(),
-  prefetchingPlugins: [
-    RemoteImagePrefetchingPlugin(
-      remoteImagePrefetcher: RemoteImagePrefetcher()
-    )
-  ]
+let collectionViewAdapter = CollectionViewAdapter<CompositionalLayout>(
+  configuration: .init(
+    prefetchingPlugins: [
+      RemoteImagePrefetchingPlugin(
+        remoteImagePrefetcher: RemoteImagePrefetcher()
+      )
+    ]
+  )
 )
 
 extension ImagePrefetchableComponent: ComponentRemoteImagePrefetchable {
