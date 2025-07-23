@@ -13,7 +13,7 @@ import DifferenceKit
 ///
 /// - Note: The layout depends on NSCollectionLayoutSection and
 /// you must set the layout through the withSectionLayout modifier.
-public struct Section: Identifiable, ListingViewEventHandler {
+public struct Section<Layout>: Identifiable, ListingViewEventHandler {
 
   /// The identifier for `Section`
   public let id: AnyHashable
@@ -27,7 +27,8 @@ public struct Section: Identifiable, ListingViewEventHandler {
   /// The footer that representing footer view
   public var footer: SupplementaryView?
 
-  private var sectionLayout: CompositionalLayoutSectionFactory.SectionLayout?
+  /// The layout provider for this section
+  public var layoutProvider: Layout?
 
   let eventStorage: ListingViewEventStorage
 
@@ -59,26 +60,6 @@ public struct Section: Identifiable, ListingViewEventHandler {
     self.id = id
     self.cells = cells()
     self.eventStorage = ListingViewEventStorage()
-  }
-
-  /// The modifier that specifies the layout for the Section.
-  ///
-  /// - Parameters:
-  ///  - sectionLayout: A closure that custom section layout provider.
-  public func withSectionLayout(_ sectionLayout: CompositionalLayoutSectionFactory.SectionLayout?) -> Self {
-    var copy = self
-    copy.sectionLayout = sectionLayout
-    return copy
-  }
-
-  /// The modifier that sets the layout for the Section.
-  ///
-  /// - Parameters:
-  ///  - layoutMaker: A factory object that creates an NSCollectionLayoutSection.
-  public func withSectionLayout(_ layoutMaker: CompositionalLayoutSectionFactory) -> Self {
-    var copy = self
-    copy.sectionLayout = layoutMaker.makeSectionLayout()
-    return copy
   }
 
   /// The modifier that sets the Header for the Section.
@@ -116,16 +97,14 @@ public struct Section: Identifiable, ListingViewEventHandler {
     )
     return copy
   }
+}
 
-  func layout(
-    index: Int,
-    environment: NSCollectionLayoutEnvironment
-  ) -> NSCollectionLayoutSection? {
-    if sectionLayout == nil {
-      assertionFailure("Please specify a valid section layout")
-    }
+extension Section where Layout == CompositionalLayoutSectionProvider {
 
-    return sectionLayout?((self, index, environment))
+  public func withSectionLayout(_ provider: CompositionalLayoutSectionProvider) -> Self {
+    var copy = self
+    copy.layoutProvider = provider
+    return copy
   }
 }
 
