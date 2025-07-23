@@ -6,7 +6,7 @@ import KarrotListKit
 ///
 /// - Description: Uses injected values at initialization for item and header/footer supplementary view heights.
 ///   Configures horizontal scrolling behavior.
-public struct HorizontalLayout: CompositionalLayoutSectionFactory {
+public struct HorizontalLayout {
   /// Size of individual items
   private let itemSize: NSCollectionLayoutSize
 
@@ -59,8 +59,8 @@ public struct HorizontalLayout: CompositionalLayoutSectionFactory {
     self.scrollingBehavior = scrollingBehavior
   }
 
-  public func makeSectionLayout() -> SectionLayout? {
-    { context -> NSCollectionLayoutSection? in
+  public func makeSectionLayout() -> CompositionalLayoutSectionProvider {
+    CompositionalLayoutSectionProvider { context -> NSCollectionLayoutSection? in
       let headerItem = context.section.header.flatMap { header in
         let item = NSCollectionLayoutBoundarySupplementaryItem(
           layoutSize: headerSize ?? NSCollectionLayoutSize(

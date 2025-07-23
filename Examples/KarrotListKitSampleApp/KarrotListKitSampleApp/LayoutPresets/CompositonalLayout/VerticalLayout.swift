@@ -7,7 +7,7 @@ import KarrotListKit
 /// - Description: Uses the container's full width to set item width,
 ///   and uses injected values at initialization for item and header/footer supplementary view heights.
 ///   Vertical spacing between groups (`spacing`) can be specified.
-public struct VerticalLayout: CompositionalLayoutSectionFactory {
+public struct VerticalLayout {
   /// Height of items
   private let itemHeightDimension: NSCollectionLayoutDimension
 
@@ -54,8 +54,8 @@ public struct VerticalLayout: CompositionalLayoutSectionFactory {
     self.spacing = spacing
   }
 
-  public func makeSectionLayout() -> SectionLayout? {
-    { context -> NSCollectionLayoutSection? in
+  public func makeSectionLayout() -> CompositionalLayoutSectionProvider {
+    CompositionalLayoutSectionProvider { context -> NSCollectionLayoutSection? in
       let cellSize = NSCollectionLayoutSize(
         widthDimension: .fractionalWidth(1.0),
         heightDimension: itemHeightDimension
