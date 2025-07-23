@@ -15,7 +15,12 @@ import DifferenceKit
 /// Internally, it uses the collectionView delegate and dataSource. If you want to implement callback methods,
 /// you can receive callbacks through modifiers.
 /// Please note, you should never set the delegate and dataSource of the collectionView directly.
-final public class CollectionViewAdapter: NSObject {
+final public class CollectionViewAdapter<Layout: ListLayout>:
+  NSObject,
+  UICollectionViewDataSource,
+  UICollectionViewDelegate,
+  UICollectionViewDataSourcePrefetching
+{
 
   /// The configuration for the CollectionViewAdapter.
   public var configuration: CollectionViewAdapterConfiguration
@@ -36,12 +41,12 @@ final public class CollectionViewAdapter: NSObject {
 
   private var isUpdating = false
   private var queuedUpdate: (
-    list: List,
+    list: List<Layout>,
     updateStrategy: CollectionViewAdapterUpdateStrategy,
     completion: (() -> Void)?
   )?
 
-  var list: List?
+  var list: List<Layout>?
 
   private lazy var pullToRefreshControl: UIRefreshControl = {
     let refreshControl = UIRefreshControl()
@@ -65,19 +70,21 @@ final public class CollectionViewAdapter: NSObject {
   ///   - prefetchingPlugins: The plugins for prefetching resource
   public init(
     configuration: CollectionViewAdapterConfiguration,
-    collectionView: UICollectionView,
-    layoutAdapter: CollectionViewLayoutAdaptable,
     prefetchingPlugins: [CollectionViewPrefetchingPlugin] = []
   ) {
     self.configuration = configuration
     self.prefetchingPlugins = prefetchingPlugins
 
     super.init()
+  }
 
+  // MARK: - Public Methods
+
+  public func register(collectionView: UICollectionView) {
     self.collectionView = collectionView
+
     collectionView.delegate = self
     collectionView.dataSource = self
-    layoutAdapter.dataSource = self
 
     if prefetchingPlugins.isEmpty == false {
       collectionView.prefetchDataSource = self
@@ -88,8 +95,6 @@ final public class CollectionViewAdapter: NSObject {
     }
   }
 
-  // MARK: - Public Methods
-
   /// Updates the UI to reflect the state of the data in the list, optionally animating the UI changes and executing a completion handler.
   ///
   /// - Parameters:
@@ -97,7 +102,7 @@ final public class CollectionViewAdapter: NSObject {
   ///   - updateStrategy: The approaches for updating the content of a `UICollectionView`.
   ///   - completion: A closure to execute when the updates are complete. This closure has no return value and takes no parameters. The framework calls this closure from the main queue.
   public func apply(
-    _ list: List,
+    _ list: List<Layout>,
     updateStrategy: CollectionViewAdapterUpdateStrategy = .animatedBatchUpdates,
     completion: (() -> Void)? = nil
   ) {
@@ -174,7 +179,7 @@ final public class CollectionViewAdapter: NSObject {
   @_disfavoredOverload
   @available(*, deprecated, renamed: "apply(_:updateStrategy:completion:)", message: "")
   public func apply(
-    _ list: List,
+    _ list: List<Layout>,
     animatingDifferences: Bool = true,
     completion: (() -> Void)? = nil
   ) {
@@ -186,15 +191,15 @@ final public class CollectionViewAdapter: NSObject {
   }
 
   /// Representation of the current state of the data in the collection view.
-  public func snapshot() -> List? {
+  public func snapshot() -> List<Layout>? {
     list
   }
 
   // MARK: - Private Methods
 
   private func performDifferentialUpdates(
-    old: List?,
-    new: List?,
+    old: List<Layout>?,
+    new: List<Layout>?,
     completion: @escaping (Bool) -> Void
   ) {
     let changeset = StagedChangeset(
@@ -218,7 +223,7 @@ final public class CollectionViewAdapter: NSObject {
   /// This allows for greater flexibility and reduces the need for boilerplate code.
   ///
   /// - Parameter sections: An array of `Section` objects. Each `Section` object contains information about a cell, header, and footer.
-  private func registerReuseIdentifiers(with sections: [Section]) {
+  private func registerReuseIdentifiers(with sections: [Section<Layout.SectionLayout>]) {
     sections.forEach { section in
       if let headerReuseIdentifier = section.header?.component.reuseIdentifier,
          !registeredHeaderReuseIdentifiers.contains(headerReuseIdentifier) {
@@ -261,99 +266,7 @@ final public class CollectionViewAdapter: NSObject {
   private func pullToRefresh() {
     list?.event(for: PullToRefreshEvent.self)?.handler(.init())
   }
-}
 
-
-// MARK: - Next Batch Trigger
-
-extension CollectionViewAdapter {
-
-  private var scrollDirection: UICollectionView.ScrollDirection {
-    let layout = collectionView?.collectionViewLayout as? UICollectionViewCompositionalLayout
-    return layout?.configuration.scrollDirection ?? .vertical
-  }
-
-  /// Checks if the collection view has reached the end, and triggers the `ReachedEndEvent` if needed.
-  ///
-  /// This method manually evaluates if the collection view is near the end, based on the current content offset and view bounds.\
-  /// Should call this method on `scrollViewDidScroll(_:)` function of `UIScrollViewDelegate`.\
-  /// Basically, the `ReachedEndEvent` check is handled in the `scrollViewWillEndDragging` method.
-  private func manuallyCheckReachedEndEventIfNeeded() {
-    guard
-      let collectionView,
-      collectionView.isDragging == false,
-      collectionView.isTracking == false
-    else {
-      return
-    }
-    triggerReachedEndEventIfNeeded(contentOffset: collectionView.contentOffset)
-  }
-
-  /// Evaluates the position of the content offset and triggers the `ReachedEndEvent` if the end of the content is near.
-  ///
-  /// - Parameter contentOffset: The current offset of the content view.
-  ///
-  /// This method calculates the distance to the end of the content, considering the current scroll direction (vertical or horizontal).\
-  /// It computes the view length, content length, and offset based on the scroll direction. If the content length is smaller than the view length,\
-  /// it immediately triggers the `ReachedEndEvent`. Otherwise, it calculates the remaining distance and compares it to the trigger distance.\
-  /// If the remaining distance is less than or equal to the trigger distance, the `ReachedEndEvent` is triggered.\
-  private func triggerReachedEndEventIfNeeded(contentOffset: CGPoint) {
-    guard
-      let event = list?.event(for: ReachedEndEvent.self),
-      let collectionView, collectionView.bounds.isEmpty == false
-    else {
-      return
-    }
-
-    let viewLength: CGFloat
-    let contentLength: CGFloat
-    let offset: CGFloat
-
-    switch scrollDirection {
-    case .vertical:
-      viewLength = collectionView.bounds.size.height
-      contentLength = collectionView.contentSize.height
-      offset = contentOffset.y
-
-    default:
-      viewLength = collectionView.bounds.size.width
-      contentLength = collectionView.contentSize.width
-      offset = contentOffset.x
-    }
-
-    if contentLength < viewLength {
-      event.handler(.init())
-      return
-    }
-
-    let triggerDistance: CGFloat = {
-      switch event.offset {
-      case .absolute(let offset):
-        return offset
-      case .relativeToContainerSize(let multiplier):
-        return viewLength * multiplier
-      }
-    }()
-
-    let remainingDistance = contentLength - viewLength - offset
-    if remainingDistance <= triggerDistance {
-      event.handler(.init())
-    }
-  }
-}
-
-
-// MARK: - CollectionViewLayoutAdapterDataSource
-
-extension CollectionViewAdapter: CollectionViewLayoutAdapterDataSource {
-  public func sectionItem(at index: Int) -> Section? {
-    list?.sections[safe: index]
-  }
-}
-
-// MARK: - UICollectionViewDelegate
-
-extension CollectionViewAdapter: UICollectionViewDelegate {
   public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     guard let item = item(at: indexPath) else {
       return
@@ -512,11 +425,7 @@ extension CollectionViewAdapter: UICollectionViewDelegate {
       )
     )
   }
-}
 
-// MARK: - UIScrollViewDelegate
-
-extension CollectionViewAdapter {
   public func scrollViewDidScroll(_ scrollView: UIScrollView) {
     guard let collectionView else {
       return
@@ -626,47 +535,7 @@ extension CollectionViewAdapter {
       )
     ) ?? true
   }
-}
 
-// MARK: - UICollectionViewDataSourcePrefetching
-
-extension CollectionViewAdapter: UICollectionViewDataSourcePrefetching {
-  public func collectionView(
-    _ collectionView: UICollectionView,
-    prefetchItemsAt indexPaths: [IndexPath]
-  ) {
-    for indexPath in indexPaths {
-      guard prefetchingIndexPathOperations[indexPath] == nil else {
-        continue
-      }
-
-      guard let item = item(at: indexPath),
-            let prefetchableComponent = item.component.as(ComponentResourcePrefetchable.self)
-      else {
-        continue
-      }
-
-      prefetchingIndexPathOperations[indexPath] = prefetchingPlugins.compactMap {
-        $0.prefetch(with: prefetchableComponent)
-      }
-    }
-  }
-
-  public func collectionView(
-    _ collectionView: UICollectionView,
-    cancelPrefetchingForItemsAt indexPaths: [IndexPath]
-  ) {
-    for indexPath in indexPaths {
-      prefetchingIndexPathOperations.removeValue(forKey: indexPath)?.forEach {
-        $0.cancel()
-      }
-    }
-  }
-}
-
-// MARK: - UICollectionViewDataSource
-
-extension CollectionViewAdapter: UICollectionViewDataSource {
   public func numberOfSections(in collectionView: UICollectionView) -> Int {
     list?.sections.count ?? 0
   }
@@ -745,5 +614,138 @@ extension CollectionViewAdapter: UICollectionViewDataSource {
     default:
       return UICollectionReusableView()
     }
+  }
+
+  public func collectionView(
+    _ collectionView: UICollectionView,
+    prefetchItemsAt indexPaths: [IndexPath]
+  ) {
+    for indexPath in indexPaths {
+      guard prefetchingIndexPathOperations[indexPath] == nil else {
+        continue
+      }
+
+      guard let item = item(at: indexPath),
+            let prefetchableComponent = item.component.as(ComponentResourcePrefetchable.self)
+      else {
+        continue
+      }
+
+      prefetchingIndexPathOperations[indexPath] = prefetchingPlugins.compactMap {
+        $0.prefetch(with: prefetchableComponent)
+      }
+    }
+  }
+
+  public func collectionView(
+    _ collectionView: UICollectionView,
+    cancelPrefetchingForItemsAt indexPaths: [IndexPath]
+  ) {
+    for indexPath in indexPaths {
+      prefetchingIndexPathOperations.removeValue(forKey: indexPath)?.forEach {
+        $0.cancel()
+      }
+    }
+  }
+
+  public func sectionItem(at index: Int) -> Section<Layout.SectionLayout>? {
+    list?.sections[safe: index]
+  }
+}
+
+
+// MARK: - Next Batch Trigger
+
+extension CollectionViewAdapter {
+
+  private var scrollDirection: UICollectionView.ScrollDirection {
+    let layout = collectionView?.collectionViewLayout as? UICollectionViewCompositionalLayout
+    return layout?.configuration.scrollDirection ?? .vertical
+  }
+
+  /// Checks if the collection view has reached the end, and triggers the `ReachedEndEvent` if needed.
+  ///
+  /// This method manually evaluates if the collection view is near the end, based on the current content offset and view bounds.\
+  /// Should call this method on `scrollViewDidScroll(_:)` function of `UIScrollViewDelegate`.\
+  /// Basically, the `ReachedEndEvent` check is handled in the `scrollViewWillEndDragging` method.
+  private func manuallyCheckReachedEndEventIfNeeded() {
+    guard
+      let collectionView,
+      collectionView.isDragging == false,
+      collectionView.isTracking == false
+    else {
+      return
+    }
+    triggerReachedEndEventIfNeeded(contentOffset: collectionView.contentOffset)
+  }
+
+  /// Evaluates the position of the content offset and triggers the `ReachedEndEvent` if the end of the content is near.
+  ///
+  /// - Parameter contentOffset: The current offset of the content view.
+  ///
+  /// This method calculates the distance to the end of the content, considering the current scroll direction (vertical or horizontal).\
+  /// It computes the view length, content length, and offset based on the scroll direction. If the content length is smaller than the view length,\
+  /// it immediately triggers the `ReachedEndEvent`. Otherwise, it calculates the remaining distance and compares it to the trigger distance.\
+  /// If the remaining distance is less than or equal to the trigger distance, the `ReachedEndEvent` is triggered.\
+  private func triggerReachedEndEventIfNeeded(contentOffset: CGPoint) {
+    guard
+      let event = list?.event(for: ReachedEndEvent.self),
+      let collectionView, collectionView.bounds.isEmpty == false
+    else {
+      return
+    }
+
+    let viewLength: CGFloat
+    let contentLength: CGFloat
+    let offset: CGFloat
+
+    switch scrollDirection {
+    case .vertical:
+      viewLength = collectionView.bounds.size.height
+      contentLength = collectionView.contentSize.height
+      offset = contentOffset.y
+
+    default:
+      viewLength = collectionView.bounds.size.width
+      contentLength = collectionView.contentSize.width
+      offset = contentOffset.x
+    }
+
+    if contentLength < viewLength {
+      event.handler(.init())
+      return
+    }
+
+    let triggerDistance: CGFloat = {
+      switch event.offset {
+      case .absolute(let offset):
+        return offset
+      case .relativeToContainerSize(let multiplier):
+        return viewLength * multiplier
+      }
+    }()
+
+    let remainingDistance = contentLength - viewLength - offset
+    if remainingDistance <= triggerDistance {
+      event.handler(.init())
+    }
+  }
+}
+
+extension CollectionViewAdapter where Layout == CompositionalLayout {
+
+  public func sectionLayout(
+    index: Int,
+    environment: NSCollectionLayoutEnvironment
+  ) -> NSCollectionLayoutSection? {
+    guard let sectionItem = sectionItem(at: index), !sectionItem.cells.isEmpty else {
+      return nil
+    }
+
+    return sectionItem.layoutProvider?.makeSectionLayout(
+      section: sectionItem,
+      index: index,
+      layoutEnvironment: environment
+    )
   }
 }

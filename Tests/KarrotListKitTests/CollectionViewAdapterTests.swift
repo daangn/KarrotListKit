@@ -87,16 +87,13 @@ final class CollectionViewAdapterTests: XCTestCase {
 
   func sut(
     configuration: CollectionViewAdapterConfiguration = .init(),
-    collectionView: UICollectionView,
-    layoutAdapter: CollectionViewLayoutAdaptable = CollectionViewLayoutAdapter(),
     prefetchingPlugins: [CollectionViewPrefetchingPlugin] = []
-  ) -> CollectionViewAdapter {
-    CollectionViewAdapter(
+  ) -> CollectionViewAdapter<CompositionalLayout> {
+    let adapter = CollectionViewAdapter<CompositionalLayout>(
       configuration: configuration,
-      collectionView: collectionView,
-      layoutAdapter: layoutAdapter,
       prefetchingPlugins: prefetchingPlugins
     )
+    return adapter
   }
 }
 
@@ -104,99 +101,109 @@ final class CollectionViewAdapterTests: XCTestCase {
 
 extension CollectionViewAdapterTests {
 
-  func test_when_inititalized_then_setup_delegate() {
+  func test_when_register_then_setup_delegate() {
     // given
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
 
     // when
-    let sut = sut(collectionView: collectionView)
+    sut.register(collectionView: collectionView)
 
     // then
     XCTAssertTrue(collectionView.delegate === sut)
   }
 
-  func test_when_inititalized_then_setup_dataSource() {
+  func test_when_register_then_setup_dataSource() {
     // given
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
 
     // when
-    let sut = sut(collectionView: collectionView)
+    sut.register(collectionView: collectionView)
 
     // then
     XCTAssertTrue(collectionView.dataSource === sut)
   }
 
-  func test_when_inititalized_then_setup_layoutAdapterDataSource() {
+  func test_given_prefetchingPlugins_when_register_then_setup_prefetchDataSource() {
     // given
-    let layoutAdapter = CollectionViewLayoutAdapter()
-    let collectionView = UICollectionView(layoutAdapter: layoutAdapter)
-
-    // when
-    let sut = sut(
-      collectionView: collectionView,
-      layoutAdapter: layoutAdapter
+    let sut = sut(prefetchingPlugins: [CollectionViewPrefetchingPluginDummy()])
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
     )
 
-    // then
-    XCTAssertTrue(layoutAdapter.dataSource === sut)
-  }
-
-  func test_given_prefetchingPlugins_when_inititalized_then_setup_prefetchDataSource() {
-    // given
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
-    let prefetchingPluginDummy = CollectionViewPrefetchingPluginDummy()
-
     // when
-    let sut = sut(
-      collectionView: collectionView,
-      prefetchingPlugins: [prefetchingPluginDummy]
-    )
+    sut.register(collectionView: collectionView)
 
     // then
     XCTAssertTrue(collectionView.prefetchDataSource === sut)
   }
 
-  func test_given_emptyPrefetchingPlugins_when_inititalized_then_prefetchDataSource_is_nil() {
+  func test_given_emptyPrefetchingPlugins_when_register_then_prefetchDataSource_is_nil() {
     // given
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut(prefetchingPlugins: [])
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
 
     // when
-    _ = sut(
-      collectionView: collectionView,
-      prefetchingPlugins: []
-    )
+    sut.register(collectionView: collectionView)
 
     // then
     XCTAssertNil(collectionView.prefetchDataSource)
   }
 
-  func test_given_enabledRefreshControl_when_inititalized_then_setup_refreshControl() {
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+  func test_given_enabledRefreshControl_when_register_then_setup_refreshControl() {
+    // given
     let configuration = CollectionViewAdapterConfiguration(
       refreshControl: .enabled(tintColor: .clear)
     )
+    let sut = sut(configuration: configuration)
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
 
     // when
-    _ = sut(
-      configuration: configuration,
-      collectionView: collectionView
-    )
+    sut.register(collectionView: collectionView)
 
     // then
     XCTAssertNotNil(collectionView.refreshControl)
   }
 
-  func test_given_disabledRefreshControl_when_inititalized_then_refreshControl_is_nil() {
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
+  func test_given_disabledRefreshControl_when_register_then_refreshControl_is_nil() {
+    // given
     let configuration = CollectionViewAdapterConfiguration(
       refreshControl: .disabled()
     )
+    let sut = sut(configuration: configuration)
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
 
     // when
-    _ = sut(
-      configuration: configuration,
-      collectionView: collectionView
-    )
+    sut.register(collectionView: collectionView)
 
     // then
     XCTAssertNil(collectionView.refreshControl)
@@ -209,9 +216,14 @@ extension CollectionViewAdapterTests {
 
   func test_when_first_apply_then_setup_list() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView)
-    sut.list = nil
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
 
     // when
     sut.apply(
@@ -245,17 +257,25 @@ extension CollectionViewAdapterTests {
     let expectation = XCTestExpectation()
     expectation.expectedFulfillmentCount = 1
 
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
     collectionView.performBatchUpdatesHandler = { updates, completion in
       updates?()
       completion?(true)
     }
-    let sut = sut(collectionView: collectionView)
-    sut.list = List {
-      Section(id: UUID()) {
-        Cell(id: UUID(), component: DummyComponent())
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          Cell(id: UUID(), component: DummyComponent())
+        }
       }
-    }
+    )
 
     // when
     sut.apply(
@@ -294,7 +314,14 @@ extension CollectionViewAdapterTests {
     let expectation = XCTestExpectation()
     expectation.expectedFulfillmentCount = 1
 
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
     collectionView.performBatchUpdatesHandler = { updates, completion in
       updates?()
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
@@ -302,7 +329,6 @@ extension CollectionViewAdapterTests {
       }
     }
 
-    let sut = sut(collectionView: collectionView)
 
     // when
     for i in 0 ... 100 {
@@ -351,8 +377,15 @@ extension CollectionViewAdapterTests {
 
   func test_when_apply_then_can_return_cell() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView)
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+
     let view = UIView()
     var component = ComponentStub()
     component.contentStub = view
@@ -376,8 +409,15 @@ extension CollectionViewAdapterTests {
 
   func test_when_apply_then_can_return_header() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView)
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+
     let view = UIView()
     var component = ComponentStub()
     component.contentStub = view
@@ -401,8 +441,15 @@ extension CollectionViewAdapterTests {
 
   func test_when_apply_then_can_return_footer() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView)
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+
     let view = UIView()
     var component = ComponentStub()
     component.contentStub = view
@@ -431,18 +478,28 @@ extension CollectionViewAdapterTests {
 
   func test_given_selectionHandler_when_selectCell_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+
     var eventContext: DidSelectEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView)
-    sut.list = List {
-      Section(id: UUID()) {
-        Cell(id: UUID(), component: component)
-          .didSelect { context in
-            eventContext = context
-          }
+
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          Cell(id: UUID(), component: component)
+            .didSelect { context in
+              eventContext = context
+            }
+        }
       }
-    }
+    )
 
     // when
     collectionView
@@ -458,18 +515,27 @@ extension CollectionViewAdapterTests {
 
   func test_given_willDisplayHandler_when_willDisplayCell_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     var eventContext: WillDisplayEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView)
-    sut.list = List {
-      Section(id: UUID()) {
-        Cell(id: UUID(), component: component)
-          .willDisplay { context in
-            eventContext = context
-          }
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          Cell(id: UUID(), component: component)
+            .willDisplay { context in
+              eventContext = context
+            }
+        }
       }
-    }
+    )
 
     // when
     collectionView
@@ -488,18 +554,27 @@ extension CollectionViewAdapterTests {
 
   func test_given_didEndDisplayingHandler_when_didEndDisplayingCell_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     var eventContext: DidEndDisplayingEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView)
-    sut.list = List {
-      Section(id: UUID()) {
-        Cell(id: UUID(), component: component)
-          .didEndDisplay { context in
-            eventContext = context
-          }
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          Cell(id: UUID(), component: component)
+            .didEndDisplay { context in
+              eventContext = context
+            }
+        }
       }
-    }
+    )
 
     // when
     collectionView
@@ -518,17 +593,26 @@ extension CollectionViewAdapterTests {
 
   func test_given_willDisplayHandler_when_willDisplayHeader_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     var eventContext: WillDisplayEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView)
-    sut.list = List {
-      Section(id: UUID(), cells: [])
-        .withHeader(component)
-        .willDisplayHeader { context in
-          eventContext = context
-        }
-    }
+    sut.apply(
+      List {
+        Section(id: UUID(), cells: [])
+          .withHeader(component)
+          .willDisplayHeader { context in
+            eventContext = context
+          }
+      }
+    )
 
     // when
     collectionView
@@ -548,17 +632,26 @@ extension CollectionViewAdapterTests {
 
   func test_given_willDisplayHandler_when_willDisplayFooter_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     var eventContext: WillDisplayEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView)
-    sut.list = List {
-      Section(id: UUID(), cells: [])
-        .withFooter(component)
-        .willDisplayFooter { context in
-          eventContext = context
-        }
-    }
+    sut.apply(
+      List {
+        Section(id: UUID(), cells: [])
+          .withFooter(component)
+          .willDisplayFooter { context in
+            eventContext = context
+          }
+      }
+    )
 
     // when
     collectionView
@@ -578,17 +671,26 @@ extension CollectionViewAdapterTests {
 
   func test_given_didEndDisplayHandler_when_didEndDisplayingHeader_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     var eventContext: DidEndDisplayingEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView)
-    sut.list = List {
-      Section(id: UUID(), cells: [])
-        .withHeader(component)
-        .didEndDisplayHeader { context in
-          eventContext = context
-        }
-    }
+    sut.apply(
+      List {
+        Section(id: UUID(), cells: [])
+          .withHeader(component)
+          .didEndDisplayHeader { context in
+            eventContext = context
+          }
+      }
+    )
 
     // when
     collectionView
@@ -608,17 +710,26 @@ extension CollectionViewAdapterTests {
 
   func test_given_didEndDisplayHandler_when_didEndDisplayingFooter_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     var eventContext: DidEndDisplayingEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView)
-    sut.list = List {
-      Section(id: UUID(), cells: [])
-        .withFooter(component)
-        .didEndDisplayFooter { context in
-          eventContext = context
-        }
-    }
+    sut.apply(
+      List {
+        Section(id: UUID(), cells: [])
+          .withFooter(component)
+          .didEndDisplayFooter { context in
+            eventContext = context
+          }
+      }
+    )
 
     // when
     collectionView
@@ -638,18 +749,27 @@ extension CollectionViewAdapterTests {
 
   func test_given_highlightHandler_when_highlightCell_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     var eventContext: HighlightEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView)
-    sut.list = List {
-      Section(id: UUID()) {
-        Cell(id: UUID(), component: component)
-          .onHighlight { context in
-            eventContext = context
-          }
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          Cell(id: UUID(), component: component)
+            .onHighlight { context in
+              eventContext = context
+            }
+        }
       }
-    }
+    )
 
     // when
     collectionView
@@ -665,18 +785,27 @@ extension CollectionViewAdapterTests {
 
   func test_given_unhighlightHandler_when_unhighlightCell_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     var eventContext: UnhighlightEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let component = DummyComponent()
-    let sut = sut(collectionView: collectionView)
-    sut.list = List {
-      Section(id: UUID()) {
-        Cell(id: UUID(), component: component)
-          .onUnhighlight { context in
-            eventContext = context
-          }
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          Cell(id: UUID(), component: component)
+            .onUnhighlight { context in
+              eventContext = context
+            }
+        }
       }
-    }
+    )
 
     // when
     collectionView
@@ -697,14 +826,23 @@ extension CollectionViewAdapterTests {
 
   func test_given_didScrollHandler_when_didScroll_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     var eventContext: DidScrollEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView)
-    sut.list = List(
-      sections: []
-    ).didScroll { context in
-      eventContext = context
-    }
+    sut.apply(
+      List(
+        sections: []
+      ).didScroll { context in
+        eventContext = context
+      }
+    )
 
     // when
     collectionView
@@ -719,14 +857,23 @@ extension CollectionViewAdapterTests {
 
   func test_given_willBeginDraggingHandler_when_willBeginDragging_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     var eventContext: WillBeginDraggingEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView)
-    sut.list = List(
-      sections: []
-    ).willBeginDragging { context in
-      eventContext = context
-    }
+    sut.apply(
+      List(
+        sections: []
+      ).willBeginDragging { context in
+        eventContext = context
+      }
+    )
 
     // when
     collectionView
@@ -741,14 +888,23 @@ extension CollectionViewAdapterTests {
 
   func test_given_willEndDraggingHandler_when_willEndDragging_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     var eventContext: WillEndDraggingEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView)
-    sut.list = List(
-      sections: []
-    ).willEndDragging { context in
-      eventContext = context
-    }
+    sut.apply(
+      List(
+        sections: []
+      ).willEndDragging { context in
+        eventContext = context
+      }
+    )
 
     // when
     let velocity = CGPoint(x: 0, y: 100)
@@ -769,14 +925,23 @@ extension CollectionViewAdapterTests {
 
   func test_given_didEndDraggingHandler_when_didEndDragging_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     var eventContext: DidEndDraggingEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView)
-    sut.list = List(
-      sections: []
-    ).didEndDragging { context in
-      eventContext = context
-    }
+    sut.apply(
+      List(
+        sections: []
+      ).didEndDragging { context in
+        eventContext = context
+      }
+    )
 
     // when
     let decelerate = true
@@ -794,14 +959,23 @@ extension CollectionViewAdapterTests {
 
   func test_given_didScrollToTopHandler_when_didScrollToTop_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     var eventContext: DidScrollToTopEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView)
-    sut.list = List(
-      sections: []
-    ).didScrollToTop { context in
-      eventContext = context
-    }
+    sut.apply(
+      List(
+        sections: []
+      ).didScrollToTop { context in
+        eventContext = context
+      }
+    )
 
     // when
     collectionView
@@ -816,14 +990,23 @@ extension CollectionViewAdapterTests {
 
   func test_given_willBeginDeceleratingHandler_when_willBeginDecelerating_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     var eventContext: WillBeginDeceleratingEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView)
-    sut.list = List(
-      sections: []
-    ).willBeginDecelerating { context in
-      eventContext = context
-    }
+    sut.apply(
+      List(
+        sections: []
+      ).willBeginDecelerating { context in
+        eventContext = context
+      }
+    )
 
     // when
     collectionView
@@ -838,14 +1021,23 @@ extension CollectionViewAdapterTests {
 
   func test_given_didEndDeceleratingHandler_when_didEndDecelerating_then_handleEvent() {
     // given
+    let sut = sut()
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     var eventContext: DidEndDeceleratingEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView)
-    sut.list = List(
-      sections: []
-    ).didEndDecelerating { context in
-      eventContext = context
-    }
+    sut.apply(
+      List(
+        sections: []
+      ).didEndDecelerating { context in
+        eventContext = context
+      }
+    )
 
     // when
     collectionView
@@ -860,17 +1052,25 @@ extension CollectionViewAdapterTests {
 
   func test_given_refreshControlEnabled_and_handler_when_pullToRefresh_then_handleEvent() {
     // given
-    var eventContext: PullToRefreshEvent.EventContext!
-    let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
     let sut = sut(
-      configuration: .init(refreshControl: .enabled(tintColor: .clear)),
-      collectionView: collectionView
+      configuration: .init(refreshControl: .enabled(tintColor: .clear))
     )
-    sut.list = List(
-      sections: []
-    ).onRefresh { context in
-      eventContext = context
-    }
+    let collectionView = UICollectionView(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
+    var eventContext: PullToRefreshEvent.EventContext!
+    sut.apply(
+      List(
+        sections: []
+      ).onRefresh { context in
+        eventContext = context
+      }
+    )
 
     // when
     collectionView
@@ -894,18 +1094,26 @@ extension CollectionViewAdapterTests {
   func test_given_scrollToTopValue_when_try_scrollToTop_then_handleShouldScrollToTopEvent() {
     [true, false].forEach { value in
       // given
-      var eventContext: ShouldScrollToTopEvent.EventContext!
-      let collectionView = UICollectionView(layoutAdapter: CollectionViewLayoutAdapter())
       let sut = sut(
-        configuration: .init(),
-        collectionView: collectionView
+        configuration: .init()
       )
-      sut.list = List(
-        sections: []
-      ).shouldScrollToTop { context in
-        eventContext = context
-        return value
-      }
+      let collectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+      )
+      sut.register(collectionView: collectionView)
+      
+      var eventContext: ShouldScrollToTopEvent.EventContext!
+      sut.apply(
+        List(
+          sections: []
+        ).shouldScrollToTop { context in
+          eventContext = context
+          return value
+        }
+      )
 
       // when
       let shouldScrollToTop = collectionView
@@ -924,16 +1132,21 @@ extension CollectionViewAdapterTests {
 
   func test_given_prefetchable_when_prefetch_then_added() {
     // given: prefetchingPlugin and prefetchable component
-    let cancellable = AnyCancellable {}
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let prefetchingPlugin = CollectionViewPrefetchingPluginMock()
+    let cancellable = AnyCancellable {}
     prefetchingPlugin.prefetchHandler = { _ in
       cancellable
     }
     let sut = sut(
-      collectionView: collectionView,
       prefetchingPlugins: [prefetchingPlugin]
     )
+    let collectionView = CollectionViewMock(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
     // given: applied list
     sut.apply(
       List {
@@ -963,16 +1176,21 @@ extension CollectionViewAdapterTests {
 
   func test_given_prefetchingOperation_when_cancelPrefetching_then_removed() {
     // given: mocking prefetchingPlugin
-    let cancellable = CancellableSpy()
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let prefetchingPlugin = CollectionViewPrefetchingPluginMock()
+    let cancellable = CancellableSpy()
     prefetchingPlugin.prefetchHandler = { _ in
       AnyCancellable(cancellable)
     }
     let sut = sut(
-      collectionView: collectionView,
       prefetchingPlugins: [prefetchingPlugin]
     )
+    let collectionView = CollectionViewMock(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
     // given: applied list
     sut.apply(
       List {
@@ -1007,16 +1225,21 @@ extension CollectionViewAdapterTests {
 
   func test_given_prefetchingOperation_when_setUpCell_then_pass_operation() {
     // given: mocking prefetchingPlugin
-    let cancellable = AnyCancellable {}
     let prefetchingPlugin = CollectionViewPrefetchingPluginMock()
+    let cancellable = AnyCancellable {}
     prefetchingPlugin.prefetchHandler = { _ in
       cancellable
     }
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
     let sut = sut(
-      collectionView: collectionView,
       prefetchingPlugins: [prefetchingPlugin]
     )
+    let collectionView = CollectionViewMock(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
     // given: applied list
     sut.apply(List {
       Section(id: UUID()) {
@@ -1055,16 +1278,25 @@ extension CollectionViewAdapterTests {
 
   func test_given_applied_list_when_numberOfItems_then_item_count_in_section() {
     // given
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     let cellCount = 100
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView)
-    sut.list = List {
-      Section(id: UUID()) {
-        (0 ..< cellCount).map {
-          Cell(id: "\($0)", component: DummyComponent())
+    sut.apply(
+      List {
+        Section(id: UUID()) {
+          (0 ..< cellCount).map {
+            Cell(id: "\($0)", component: DummyComponent())
+          }
         }
       }
-    }
+    )
 
     // when
     let numberOfItems = collectionView
@@ -1080,14 +1312,23 @@ extension CollectionViewAdapterTests {
 
   func test_given_applied_list_when_numberOfSections_then_section_count() {
     // given
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     let sectionCount = 100
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    let sut = sut(collectionView: collectionView)
-    sut.list = List {
-      (0 ..< 100).map {
-        Section(id: "\($0)", cells: [])
+    sut.apply(
+      List {
+        (0 ..< 100).map {
+          Section(id: "\($0)", cells: [])
+        }
       }
-    }
+    )
 
     // when
     let numberOfSections = collectionView
@@ -1100,9 +1341,16 @@ extension CollectionViewAdapterTests {
 
   func test_given_applied_list_when_dequeue_cell_then_render() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     let component = ComponentSpy()
-    let sut = sut(collectionView: collectionView)
     sut.apply(
       List {
         Section(id: UUID()) {
@@ -1125,9 +1373,16 @@ extension CollectionViewAdapterTests {
 
   func test_given_applied_list_when_dequeue_header_then_render() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     let component = ComponentSpy()
-    let sut = sut(collectionView: collectionView)
     sut.apply(
       List {
         Section(id: UUID(), cells: [])
@@ -1150,9 +1405,16 @@ extension CollectionViewAdapterTests {
 
   func test_given_applied_list_when_dequeue_footer_then_render() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: .zero,
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+    
     let component = ComponentSpy()
-    let sut = sut(collectionView: collectionView)
     sut.apply(
       List {
         Section(id: UUID(), cells: [])
@@ -1180,13 +1442,19 @@ extension CollectionViewAdapterTests {
 
   func test_given_not_triggerable_offset_when_scrollViewWillEndDragging_then_not_triggered() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: CGRect(x: 0, y: 0, width: 1.0, height: 100.0),
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
     var handlerCallCount = 0
 
-    let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
         .onReachEnd(offsetFromEnd: .absolute(100.0)) { _ in
@@ -1210,13 +1478,18 @@ extension CollectionViewAdapterTests {
 
   func test_given_not_triggerable_offset_when_scrollViewWillEndDragging_then_not_triggered_2() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: CGRect(x: 0, y: 0, width: 1.0, height: 100.0),
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
     var handlerCallCount = 0
 
-    let sut = sut(collectionView: collectionView)
+    sut.register(collectionView: collectionView)
     sut.apply(
       List(sections: [])
         .onReachEnd(offsetFromEnd: .absolute(100.0)) { _ in
@@ -1240,13 +1513,18 @@ extension CollectionViewAdapterTests {
 
   func test_given_not_triggerable_offset_when_scrollViewWillEndDragging_then_not_triggered_3() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: CGRect(x: 0, y: 0, width: 1.0, height: 100.0),
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
     var handlerCallCount = 0
 
-    let sut = sut(collectionView: collectionView)
+    sut.register(collectionView: collectionView)
     sut.apply(
       List(sections: [])
         .onReachEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 1.0)) { _ in
@@ -1270,13 +1548,19 @@ extension CollectionViewAdapterTests {
 
   func test_given_not_triggerable_offset_when_scrollViewWillEndDragging_then_not_triggered_4() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: CGRect(x: 0, y: 0, width: 1.0, height: 100.0),
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
     var handlerCallCount = 0
 
-    let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
         .onReachEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 2.0)) { _ in
@@ -1300,13 +1584,19 @@ extension CollectionViewAdapterTests {
 
   func test_given_triggerable_offset_when_scrollViewWillEndDragging_then_triggered() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: CGRect(x: 0, y: 0, width: 1.0, height: 100.0),
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
     var handlerCallCount = 0
 
-    let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
         .onReachEnd(offsetFromEnd: .absolute(100.0)) { _ in
@@ -1330,13 +1620,19 @@ extension CollectionViewAdapterTests {
 
   func test_given_triggerable_offset_when_scrollViewWillEndDragging_then_triggered_2() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: CGRect(x: 0, y: 0, width: 1.0, height: 100.0),
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
     var handlerCallCount = 0
 
-    let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
         .onReachEnd(offsetFromEnd: .absolute(100.0)) { _ in
@@ -1360,13 +1656,19 @@ extension CollectionViewAdapterTests {
 
   func test_given_triggerable_offset_when_scrollViewWillEndDragging_then_triggered_3() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: CGRect(x: 0, y: 0, width: 1.0, height: 100.0),
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
     var handlerCallCount = 0
 
-    let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
         .onReachEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 1.0)) { _ in
@@ -1390,13 +1692,19 @@ extension CollectionViewAdapterTests {
 
   func test_given_triggerable_offset_when_scrollViewWillEndDragging_then_triggered_4() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: CGRect(x: 0, y: 0, width: 1.0, height: 100.0),
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 400.0) }
 
     var handlerCallCount = 0
 
-    let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
         .onReachEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 2.0)) { _ in
@@ -1420,13 +1728,19 @@ extension CollectionViewAdapterTests {
 
   func test_given_triggerable_offset_when_scrollViewWillEndDragging_then_triggered_5() {
     // given
-    let collectionView = CollectionViewMock(layoutAdapter: CollectionViewLayoutAdapter())
-    collectionView.frame = CGRect(x: 0, y: 0, width: 1.0, height: 100.0)
+    let sut = sut()
+    let collectionView = CollectionViewMock(
+      frame: CGRect(x: 0, y: 0, width: 1.0, height: 100.0),
+      collectionViewLayout: UICollectionViewCompositionalLayout(
+        sectionProvider: sut.sectionLayout
+      )
+    )
+    sut.register(collectionView: collectionView)
+
     collectionView.contentSizeHandler = { CGSize(width: 1.0, height: 99.0) }
 
     var handlerCallCount = 0
 
-    let sut = sut(collectionView: collectionView)
     sut.apply(
       List(sections: [])
         .onReachEnd(offsetFromEnd: .relativeToContainerSize(multiplier: 2.0)) { _ in
