@@ -4,54 +4,22 @@
 
 import UIKit
 
-/// A protocol that defines the layout strategy for a list.
-/// Each layout implementation provides its own section layout type.
 public protocol ListLayout {
   /// The type of section layout provider used by this list layout.
-  associatedtype SectionLayout
-}
-
-
-public protocol ListLayout2 {
-  /// The type of section layout provider used by this list layout.
-  associatedtype SectionLayout
+  associatedtype SectionProvider
   associatedtype Layout: UICollectionViewLayout
 
-  func makeLayout() -> Layout
+  func makeLayout(provider: SectionProvider) -> Layout
 }
 
-public struct List2<Layout: ListLayout2> {
+public struct CompositionalLayout: ListLayout {
 
-  public var sections: [Section<Layout.SectionLayout>]
-
-  public init(
-    sections: [Section<Layout.SectionLayout>]
-  ) {
-    self.sections = sections
-  }
-
-  public init(
-    @SectionsBuilder<Layout.SectionLayout> _ sections: () -> [Section<Layout.SectionLayout>]
-  ) {
-    self.sections = sections()
-  }
-}
-
-public struct CompositionalLayout2: ListLayout2 {
-
-  public typealias SectionLayout = UICollectionViewCompositionalLayoutSectionProvider
+  public typealias SectionProvider = UICollectionViewCompositionalLayoutSectionProvider
   public typealias Layout = UICollectionViewCompositionalLayout
 
-  public func makeLayout() -> Layout {
+  public func makeLayout(provider: @escaping SectionProvider) -> Layout {
     UICollectionViewCompositionalLayout(
-      sectionProvider: <#T##UICollectionViewCompositionalLayoutSectionProvider##UICollectionViewCompositionalLayoutSectionProvider##(Int, any NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection?#>
+      sectionProvider: provider
     )
-  }
-}
-
-extension Section<CompositionalLayout2> {
-
-  func sectionProvider() -> CompositionalLayout2.SectionLayout {
-
   }
 }
