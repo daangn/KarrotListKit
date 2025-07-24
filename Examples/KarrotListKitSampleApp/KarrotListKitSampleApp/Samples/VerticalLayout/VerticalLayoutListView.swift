@@ -16,14 +16,9 @@ final class VerticalLayoutListView: UIView {
 
   // MARK: UICollectionView
 
-  private let layoutAdapter = CollectionViewLayoutAdapter()
-
-  private lazy var collectionView = UICollectionView(layoutAdapter: layoutAdapter)
-
-  private lazy var collectionViewAdapter = CollectionViewAdapter(
-    configuration: CollectionViewAdapterConfiguration(),
-    collectionView: collectionView,
-    layoutAdapter: layoutAdapter
+  private let collectionView = CollectionView(
+    layout: UICollectionViewCompositionalLayout.proxy,
+    configuration: .init()
   )
 
   // MARK: ViewModel
@@ -66,7 +61,7 @@ final class VerticalLayoutListView: UIView {
   }
 
   private func applyViewModels() {
-    collectionViewAdapter.apply(
+    collectionView.apply(
       List {
         Section(id: "Section") {
           for viewModel in viewModels {

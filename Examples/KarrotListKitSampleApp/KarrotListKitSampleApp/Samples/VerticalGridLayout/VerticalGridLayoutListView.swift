@@ -16,14 +16,9 @@ final class VerticalGridLayoutListView: UIView {
 
   // MARK: UICollectionView
 
-  private let layoutAdapter = CollectionViewLayoutAdapter()
-
-  private lazy var collectionView = UICollectionView(layoutAdapter: layoutAdapter)
-
-  private lazy var collectionViewAdapter = CollectionViewAdapter(
-    configuration: CollectionViewAdapterConfiguration(),
-    collectionView: collectionView,
-    layoutAdapter: layoutAdapter
+  private let collectionView = CollectionView(
+    layout: UICollectionViewCompositionalLayout.proxy,
+    configuration: .init()
   )
 
   // MARK: ViewModel
@@ -66,7 +61,7 @@ final class VerticalGridLayoutListView: UIView {
   }
 
   private func applyViewModels() {
-    collectionViewAdapter.apply(
+    collectionView.apply(
       List {
         // 2-column grid section
         Section(id: "grid-2-columns") {
