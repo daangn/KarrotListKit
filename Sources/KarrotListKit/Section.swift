@@ -28,7 +28,7 @@ public struct Section<Layout>: Identifiable, ListingViewEventHandler {
   public var footer: SupplementaryView?
 
   /// The layout provider for this section
-  public var layoutProvider: Layout?
+  public var layout: Layout?
 
   let eventStorage: ListingViewEventStorage
 
@@ -101,9 +101,9 @@ public struct Section<Layout>: Identifiable, ListingViewEventHandler {
 
 extension Section where Layout == CompositionalLayoutSectionProvider {
 
-  public func withSectionLayout(_ provider: CompositionalLayoutSectionProvider) -> Self {
+  public func withSectionLayout(_ layout: CompositionalLayoutSectionProvider) -> Self {
     var copy = self
-    copy.layoutProvider = provider
+    copy.layout = layout
     return copy
   }
 }

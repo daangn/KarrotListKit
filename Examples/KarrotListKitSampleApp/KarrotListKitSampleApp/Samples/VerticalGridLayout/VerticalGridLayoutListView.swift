@@ -16,15 +16,14 @@ final class VerticalGridLayoutListView: UIView {
 
   // MARK: UICollectionView
 
-  private lazy var collectionView = UICollectionView(
+  private let collectionView = UICollectionView(
     frame: .zero,
-    collectionViewLayout: UICollectionViewCompositionalLayout(
-      sectionProvider: collectionViewAdapter.sectionLayout
-    )
+    collectionViewLayout: .empty
   )
 
-  private let collectionViewAdapter = CollectionViewAdapter<CompositionalLayout>(
-    configuration: CollectionViewAdapterConfiguration()
+  private lazy var collectionViewAdapter = CollectionViewAdapter<CompositionalLayout>(
+    configuration: CollectionViewAdapterConfiguration(),
+    collectionView: collectionView
   )
 
   // MARK: ViewModel
@@ -40,7 +39,6 @@ final class VerticalGridLayoutListView: UIView {
 
   override init(frame: CGRect) {
     super.init(frame: frame)
-    collectionViewAdapter.register(collectionView: collectionView)
     defineLayout()
     resetViewModels()
   }

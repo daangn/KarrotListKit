@@ -70,18 +70,14 @@ final public class CollectionViewAdapter<Layout: ListLayout>:
   ///   - prefetchingPlugins: The plugins for prefetching resource
   public init(
     configuration: CollectionViewAdapterConfiguration,
+    collectionView: UICollectionView,
     prefetchingPlugins: [CollectionViewPrefetchingPlugin] = []
   ) {
     self.configuration = configuration
     self.prefetchingPlugins = prefetchingPlugins
+    self.collectionView = collectionView
 
     super.init()
-  }
-
-  // MARK: - Public Methods
-
-  public func register(collectionView: UICollectionView) {
-    self.collectionView = collectionView
 
     collectionView.delegate = self
     collectionView.dataSource = self
@@ -108,6 +104,10 @@ final public class CollectionViewAdapter<Layout: ListLayout>:
   ) {
     guard let collectionView else {
       return
+    }
+
+    if collectionView.collectionViewLayout is EmptyCollectionViewLayout {
+      collectionView.collectionViewLayout = list.makeCollectionViewLayout()
     }
 
     guard isUpdating == false else {
@@ -732,20 +732,3 @@ extension CollectionViewAdapter {
   }
 }
 
-extension CollectionViewAdapter where Layout == CompositionalLayout {
-
-  public func sectionLayout(
-    index: Int,
-    environment: NSCollectionLayoutEnvironment
-  ) -> NSCollectionLayoutSection? {
-    guard let sectionItem = sectionItem(at: index), !sectionItem.cells.isEmpty else {
-      return nil
-    }
-
-    return sectionItem.layoutProvider?.makeSectionLayout(
-      section: sectionItem,
-      index: index,
-      layoutEnvironment: environment
-    )
-  }
-}

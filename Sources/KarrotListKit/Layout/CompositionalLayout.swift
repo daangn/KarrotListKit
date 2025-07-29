@@ -7,7 +7,26 @@ import UIKit
 /// A layout implementation that uses `UICollectionViewCompositionalLayout`.
 public struct CompositionalLayout: ListLayout {
   public typealias SectionLayout = CompositionalLayoutSectionProvider
+
+  public static func makeCollectionViewLayout(
+    sections: [Section<CompositionalLayoutSectionProvider>]
+  ) -> UICollectionViewLayout {
+    return UICollectionViewCompositionalLayout { index, environment in
+      guard
+        let section = sections[safe: index],
+        let layout = section.layout
+      else {
+        fatalError("Section layout is not provided for index \(index)")
+      }
+      return layout.resolve(
+        section: section,
+        index: index,
+        layoutEnvironment: environment
+      )
+    }
+  }
 }
+
 
 /// A provider that creates `NSCollectionLayoutSection` instances for compositional layouts.
 public struct CompositionalLayoutSectionProvider {
@@ -32,7 +51,7 @@ public struct CompositionalLayoutSectionProvider {
   }
 
   /// Creates a layout section for the given context.
-  func makeSectionLayout(
+  func resolve(
     section: Section<CompositionalLayout.SectionLayout>,
     index: Int,
     layoutEnvironment: NSCollectionLayoutEnvironment

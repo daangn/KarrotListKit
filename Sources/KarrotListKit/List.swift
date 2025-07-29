@@ -5,7 +5,7 @@
 //  Created by Ben.park on 7/22/25.
 //
 
-import Foundation
+import UIKit
 
 /// The `List` that representing a UICollectionView.
 public struct List<Layout: ListLayout>: ListingViewEventHandler {
@@ -35,6 +35,10 @@ public struct List<Layout: ListLayout>: ListingViewEventHandler {
     @SectionsBuilder<Layout.SectionLayout> _ sections: () -> [Section<Layout.SectionLayout>]
   ) {
     self.sections = sections()
+  }
+
+  func makeCollectionViewLayout() -> UICollectionViewLayout {
+    Layout.makeCollectionViewLayout(sections: sections)
   }
 }
 
