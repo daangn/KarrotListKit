@@ -11,6 +11,10 @@ let package = Package(
       name: "KarrotListKit",
       targets: ["KarrotListKit"]
     ),
+    .library(
+      name: "KarrotListKit5",
+      targets: ["KarrotListKit5"],
+    ),
   ],
   dependencies: [
     .package(
@@ -28,6 +32,12 @@ let package = Package(
     .testTarget(
       name: "KarrotListKitTests",
       dependencies: ["KarrotListKit"]
+    ),
+    .target(
+      name: "KarrotListKit5",
+      dependencies: [
+        "DifferenceKit",
+      ]
     ),
   ]
 )

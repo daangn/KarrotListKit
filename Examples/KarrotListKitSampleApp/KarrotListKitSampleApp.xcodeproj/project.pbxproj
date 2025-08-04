@@ -10,6 +10,7 @@
 		6C1530AE2E12A160000B37A2 /* KarrotListKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6C1530AD2E12A160000B37A2 /* KarrotListKit */; };
 		6C682E3D2E14C7DB00F816C0 /* PinLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 6C682E3C2E14C7DB00F816C0 /* PinLayout */; };
 		6C682E402E14C7F800F816C0 /* FlexLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 6C682E3F2E14C7F800F816C0 /* FlexLayout */; };
+		6CE69FE22E40B8950055BDA9 /* KarrotListKit5 in Frameworks */ = {isa = PBXBuildFile; productRef = 6CE69FE12E40B8950055BDA9 /* KarrotListKit5 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 			files = (
 				6C682E402E14C7F800F816C0 /* FlexLayout in Frameworks */,
 				6C682E3D2E14C7DB00F816C0 /* PinLayout in Frameworks */,
+				6CE69FE22E40B8950055BDA9 /* KarrotListKit5 in Frameworks */,
 				6C1530AE2E12A160000B37A2 /* KarrotListKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -44,6 +46,7 @@
 			children = (
 				6C1530A52E12A0CF000B37A2 /* KarrotListKit */,
 				6C15308A2E12966F000B37A2 /* KarrotListKitSampleApp */,
+				6C8F1CA62E37526800797220 /* Frameworks */,
 				6C1530892E12966F000B37A2 /* Products */,
 			);
 			indentWidth = 2;
@@ -56,6 +59,13 @@
 				6C1530882E12966F000B37A2 /* KarrotListKitSampleApp.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		6C8F1CA62E37526800797220 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -81,6 +91,7 @@
 				6C1530AD2E12A160000B37A2 /* KarrotListKit */,
 				6C682E3C2E14C7DB00F816C0 /* PinLayout */,
 				6C682E3F2E14C7F800F816C0 /* FlexLayout */,
+				6CE69FE12E40B8950055BDA9 /* KarrotListKit5 */,
 			);
 			productName = KarrotListKitSampleApp;
 			productReference = 6C1530882E12966F000B37A2 /* KarrotListKitSampleApp.app */;
@@ -381,6 +392,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6C682E3E2E14C7F800F816C0 /* XCRemoteSwiftPackageReference "FlexLayout" */;
 			productName = FlexLayout;
+		};
+		6CE69FE12E40B8950055BDA9 /* KarrotListKit5 */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = KarrotListKit5;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
