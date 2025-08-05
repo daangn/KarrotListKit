@@ -8,22 +8,12 @@ public protocol SupplementaryItemProtocol<LayoutValues> {
 }
 
 struct SupplementaryItemValues {
-  var willDisplaySupplementaryViewForElementKindAtIndexPath: (
-    (
-      _ collectionView: UICollectionView,
-      _ view: UICollectionReusableView,
-      _ elementKind: String,
-      _ indexPath: IndexPath
-    ) -> Void
-  )?
-  var didEndDisplayingSupplementaryViewForElementOfKindAtIndexPath: (
-    (
-      _ collectionView: UICollectionView,
-      _ view: UICollectionReusableView,
-      _ elementKind: String,
-      _ indexPath: IndexPath
-    ) -> Void
-  )?
+
+  @Handlers(UICollectionViewDelegate.collectionView(_:willDisplaySupplementaryView:forElementKind:at:))
+  var willDisplaySupplementaryViewForElementKindAtIndexPath = []
+
+  @Handlers(UICollectionViewDelegate.collectionView(_:didEndDisplayingSupplementaryView:forElementOfKind:at:))
+  var didEndDisplayingSupplementaryViewForElementOfKindAtIndexPath = []
 }
 
 public struct SupplementaryItem<LayoutValues>: SupplementaryItemProtocol {
@@ -64,7 +54,7 @@ extension SupplementaryItem {
     ) -> Void
   ) -> Self {
     var copy = self
-    copy.values.willDisplaySupplementaryViewForElementKindAtIndexPath = handler
+    copy.values.willDisplaySupplementaryViewForElementKindAtIndexPath.append(handler)
     return copy
   }
 
@@ -77,7 +67,7 @@ extension SupplementaryItem {
     ) -> Void
   ) -> Self {
     var copy = self
-    copy.values.didEndDisplayingSupplementaryViewForElementOfKindAtIndexPath = handler
+    copy.values.didEndDisplayingSupplementaryViewForElementOfKindAtIndexPath.append(handler)
     return copy
   }
 }

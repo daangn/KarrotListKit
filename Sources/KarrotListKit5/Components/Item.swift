@@ -1,17 +1,27 @@
 import UIKit
 
 struct ItemValues {
-  var didSelectItemAtIndexPath: ((_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void)?
-  var didDeselectItemAtIndexPath: ((_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void)?
 
-  var willDisplayCellForItemAtIndexPath: ((_ collectionView: UICollectionView, _ cell: UICollectionViewCell, _ indexPath: IndexPath) -> Void)?
-  var didEndDisplayingCellForItemAtIndexPath: ((_ collectionView: UICollectionView, _ cell: UICollectionViewCell, _ indexPath: IndexPath) -> Void)?
+  @Handlers(UICollectionViewDelegate.collectionView(_:didSelectItemAt:))
+  var didSelectItemAtIndexPath = []
 
-  var canPerformPrimaryActionForItemAtIndexPath: ((_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Bool)?
-  var performPrimaryActionForItemAtIndexPath: ((_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void)?
+  @Handlers(UICollectionViewDelegate.collectionView(_:didDeselectItemAt:))
+  var didDeselectItemAtIndexPath = []
 
-  var prefetchItemAtIndexPath: ((_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void)?
-  var cancelPrefetchingForItemAtIndexPath: ((_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void)?
+  @Handlers(UICollectionViewDelegate.collectionView(_:willDisplay:forItemAt:))
+  var willDisplayCellForItemAtIndexPath = []
+
+  @Handlers(UICollectionViewDelegate.collectionView(_:didEndDisplaying:forItemAt:))
+  var didEndDisplayingCellForItemAtIndexPath = []
+
+  @Handler(UICollectionViewDelegate.collectionView(_:canPerformPrimaryActionForItemAt:))
+  var canPerformPrimaryActionForItemAtIndexPath = nil
+
+  @Handlers(UICollectionViewDelegate.collectionView(_:performPrimaryActionForItemAt:))
+  var performPrimaryActionForItemAtIndexPath = []
+
+  var prefetchItemAtIndexPath: [(_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void] = []
+  var cancelPrefetchingForItemAtIndexPath: [(_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void] = []
 }
 
 public struct Item<Layout: CollectionLayout> {
@@ -52,7 +62,7 @@ extension Item {
     handler: @escaping (_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void
   ) -> Self {
     var copy = self
-    copy.values.didSelectItemAtIndexPath = handler
+    copy.values.didSelectItemAtIndexPath.append(handler)
     return copy
   }
 
@@ -60,7 +70,7 @@ extension Item {
     handler: @escaping (_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void
   ) -> Self {
     var copy = self
-    copy.values.didDeselectItemAtIndexPath = handler
+    copy.values.didDeselectItemAtIndexPath.append(handler)
     return copy
   }
 
@@ -68,7 +78,7 @@ extension Item {
     handler: @escaping (_ collectionView: UICollectionView, _ cell: UICollectionViewCell, _ indexPath: IndexPath) -> Void
   ) -> Self {
     var copy = self
-    copy.values.willDisplayCellForItemAtIndexPath = handler
+    copy.values.willDisplayCellForItemAtIndexPath.append(handler)
     return copy
   }
 
@@ -76,7 +86,7 @@ extension Item {
     handler: @escaping (_ collectionView: UICollectionView, _ cell: UICollectionViewCell, _ indexPath: IndexPath) -> Void
   ) -> Self {
     var copy = self
-    copy.values.didEndDisplayingCellForItemAtIndexPath = handler
+    copy.values.didEndDisplayingCellForItemAtIndexPath.append(handler)
     return copy
   }
 
@@ -88,7 +98,7 @@ extension Item {
 
   public func performPrimaryAction(_ primaryAction: @escaping () -> Void) -> Self {
     var copy = self
-    copy.values.performPrimaryActionForItemAtIndexPath = { _, _ in primaryAction() }
+    copy.values.performPrimaryActionForItemAtIndexPath.append({ _, _ in primaryAction() })
     return copy
   }
 }
@@ -99,7 +109,7 @@ extension Item {
     handler: @escaping (_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void
   ) -> Self {
     var copy = self
-    copy.values.prefetchItemAtIndexPath = handler
+    copy.values.prefetchItemAtIndexPath.append(handler)
     return copy
   }
 
@@ -107,7 +117,7 @@ extension Item {
     handler: @escaping (_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void
   ) -> Self {
     var copy = self
-    copy.values.cancelPrefetchingForItemAtIndexPath = handler
+    copy.values.cancelPrefetchingForItemAtIndexPath.append(handler)
     return copy
   }
 

@@ -159,16 +159,24 @@ public final class CollectionViewAdapter<
   // MARK: UICollectionViewDataSourcePrefetching
 
   public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-    list?.values.prefetchItemsAtIndexPaths?(collectionView, indexPaths)
+    list?.values.prefetchItemsAtIndexPaths.forEach {
+      $0(collectionView, indexPaths)
+    }
     for indexPath in indexPaths {
-      list?.sections[indexPath.section].items[indexPath.item].values.prefetchItemAtIndexPath?(collectionView, indexPath)
+      list?.sections[indexPath.section].items[indexPath.item].values.prefetchItemAtIndexPath.forEach {
+        $0(collectionView, indexPath)
+      }
     }
   }
 
   public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-    list?.values.cancelPrefetchingForItemsAtIndexPaths?(collectionView, indexPaths)
+    list?.values.cancelPrefetchingForItemsAtIndexPaths.forEach {
+      $0(collectionView, indexPaths)
+    }
     for indexPath in indexPaths {
-      list?.sections[indexPath.section].items[indexPath.item].values.cancelPrefetchingForItemAtIndexPath?(collectionView, indexPath)
+      list?.sections[indexPath.section].items[indexPath.item].values.cancelPrefetchingForItemAtIndexPath.forEach {
+        $0(collectionView, indexPath)
+      }
     }
   }
 }

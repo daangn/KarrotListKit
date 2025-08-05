@@ -50,14 +50,18 @@ open class BaseCollectionViewDelegate<Layout: CollectionLayout>: NSObject, UICol
     _ collectionView: UICollectionView,
     didSelectItemAt indexPath: IndexPath
   ) {
-    item(for: collectionView, at: indexPath)?.values.didSelectItemAtIndexPath?(collectionView, indexPath)
+    item(for: collectionView, at: indexPath)?.values.didSelectItemAtIndexPath.forEach {
+      $0(collectionView, indexPath)
+    }
   }
 
   public func collectionView(
     _ collectionView: UICollectionView,
     didDeselectItemAt indexPath: IndexPath
   ) {
-    item(for: collectionView, at: indexPath)?.values.didDeselectItemAtIndexPath?(collectionView, indexPath)
+    item(for: collectionView, at: indexPath)?.values.didDeselectItemAtIndexPath.forEach {
+      $0(collectionView, indexPath)
+    }
   }
 
   public func collectionView(
@@ -65,7 +69,9 @@ open class BaseCollectionViewDelegate<Layout: CollectionLayout>: NSObject, UICol
     willDisplay cell: UICollectionViewCell,
     forItemAt indexPath: IndexPath
   ) {
-    item(for: collectionView, at: indexPath)?.values.willDisplayCellForItemAtIndexPath?(collectionView, cell, indexPath)
+    item(for: collectionView, at: indexPath)?.values.willDisplayCellForItemAtIndexPath.forEach {
+      $0(collectionView, cell, indexPath)
+    }
   }
 
   public func collectionView(
@@ -73,7 +79,9 @@ open class BaseCollectionViewDelegate<Layout: CollectionLayout>: NSObject, UICol
     didEndDisplaying cell: UICollectionViewCell,
     forItemAt indexPath: IndexPath
   ) {
-    item(for: collectionView, at: indexPath)?.values.didEndDisplayingCellForItemAtIndexPath?(collectionView, cell, indexPath)
+    item(for: collectionView, at: indexPath)?.values.didEndDisplayingCellForItemAtIndexPath.forEach {
+      $0(collectionView, cell, indexPath)
+    }
   }
 
   public func collectionView(
@@ -87,7 +95,9 @@ open class BaseCollectionViewDelegate<Layout: CollectionLayout>: NSObject, UICol
     _ collectionView: UICollectionView,
     performPrimaryActionForItemAt indexPath: IndexPath
   ) {
-    item(for: collectionView, at: indexPath)?.values.performPrimaryActionForItemAtIndexPath?(collectionView, indexPath)
+    item(for: collectionView, at: indexPath)?.values.performPrimaryActionForItemAtIndexPath.forEach {
+      $0(collectionView, indexPath)
+    }
   }
 
   // MARK: List

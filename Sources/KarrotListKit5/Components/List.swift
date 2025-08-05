@@ -1,10 +1,15 @@
 import UIKit
 
 struct ListValues {
-  var targetContentOffsetForProposedContentOffset: ((_ collectionView: UICollectionView, _ proposedContentOffset: CGPoint) -> CGPoint)?
 
-  var prefetchItemsAtIndexPaths: ((_ collectionView: UICollectionView, _ indexPaths: [IndexPath]) -> Void)?
-  var cancelPrefetchingForItemsAtIndexPaths: ((_ collectionView: UICollectionView, _ indexPaths: [IndexPath]) -> Void)?
+  @Handler(UICollectionViewDelegate.collectionView(_:targetContentOffsetForProposedContentOffset:))
+  var targetContentOffsetForProposedContentOffset = nil
+
+  @Handlers(UICollectionViewDataSourcePrefetching.collectionView(_:prefetchItemsAt:))
+  var prefetchItemsAtIndexPaths = []
+
+  @Handlers(UICollectionViewDataSourcePrefetching.collectionView(_:cancelPrefetchingForItemsAt:))
+  var cancelPrefetchingForItemsAtIndexPaths = []
 }
 
 public struct List<Layout: CollectionLayout> {
@@ -46,7 +51,7 @@ extension List {
     handler: @escaping (_ collectionView: UICollectionView, _ indexPaths: [IndexPath]) -> Void
   ) -> Self {
     var copy = self
-    copy.values.prefetchItemsAtIndexPaths = handler
+    copy.values.prefetchItemsAtIndexPaths.append(handler)
     return copy
   }
 
@@ -54,7 +59,7 @@ extension List {
     handler: @escaping (_ collectionView: UICollectionView, _ indexPaths: [IndexPath]) -> Void
   ) -> Self {
     var copy = self
-    copy.values.cancelPrefetchingForItemsAtIndexPaths = handler
+    copy.values.cancelPrefetchingForItemsAtIndexPaths.append(handler)
     return copy
   }
 
