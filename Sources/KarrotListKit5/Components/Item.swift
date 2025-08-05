@@ -9,6 +9,9 @@ struct ItemValues {
 
   var canPerformPrimaryActionForItemAtIndexPath: ((_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Bool)?
   var performPrimaryActionForItemAtIndexPath: ((_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void)?
+
+  var prefetchItemAtIndexPath: ((_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void)?
+  var cancelPrefetchingForItemAtIndexPath: ((_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void)?
 }
 
 public struct Item<Layout: CollectionLayout> {
@@ -87,5 +90,39 @@ extension Item {
     var copy = self
     copy.values.performPrimaryActionForItemAtIndexPath = { _, _ in primaryAction() }
     return copy
+  }
+}
+
+extension Item {
+
+  public func prefetch(
+    handler: @escaping (_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void
+  ) -> Self {
+    var copy = self
+    copy.values.prefetchItemAtIndexPath = handler
+    return copy
+  }
+
+  public func cancelPrefetching(
+    handler: @escaping (_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void
+  ) -> Self {
+    var copy = self
+    copy.values.cancelPrefetchingForItemAtIndexPath = handler
+    return copy
+  }
+
+  public func prefetchable(
+    action: @escaping (_ indexPath: IndexPath) async -> Void
+  ) -> Self {
+    var task: Task<Void, Never>?
+    return self
+      .prefetch { collectionView, indexPath in
+        task = Task {
+          await action(indexPath)
+        }
+      }
+      .cancelPrefetching { collectionView, indexPath in
+        task?.cancel()
+      }
   }
 }

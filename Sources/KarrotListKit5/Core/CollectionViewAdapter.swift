@@ -2,7 +2,7 @@ import UIKit
 
 public final class CollectionViewAdapter<
   CollectionLayoutType: CollectionLayout
->: NSObject, UICollectionViewDataSource {
+>: NSObject, UICollectionViewDataSource, UICollectionViewDataSourcePrefetching {
 
   private let defaultReuseIdentifier = "defaultReuseIdentifier"
 
@@ -74,6 +74,7 @@ public final class CollectionViewAdapter<
     self.collectionView = collectionView
     super.init()
     self.collectionView.dataSource = self
+    self.collectionView.prefetchDataSource = self
     self.collectionView.delegate = collectionViewDelegate
   }
 
@@ -84,6 +85,8 @@ public final class CollectionViewAdapter<
     self.list = list
     collectionView.performBatchUpdates(nil, completion: completion)
   }
+
+  // MARK: UICollectionViewDataSource
 
   public func numberOfSections(
     in collectionView: UICollectionView
@@ -151,5 +154,21 @@ public final class CollectionViewAdapter<
     }
     cell.contentConfiguration = supplementaryItem.contentConfiguration
     return cell
+  }
+
+  // MARK: UICollectionViewDataSourcePrefetching
+
+  public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+    list?.values.prefetchItemsAtIndexPaths?(collectionView, indexPaths)
+    for indexPath in indexPaths {
+      list?.sections[indexPath.section].items[indexPath.item].values.prefetchItemAtIndexPath?(collectionView, indexPath)
+    }
+  }
+
+  public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+    list?.values.cancelPrefetchingForItemsAtIndexPaths?(collectionView, indexPaths)
+    for indexPath in indexPaths {
+      list?.sections[indexPath.section].items[indexPath.item].values.cancelPrefetchingForItemAtIndexPath?(collectionView, indexPath)
+    }
   }
 }
