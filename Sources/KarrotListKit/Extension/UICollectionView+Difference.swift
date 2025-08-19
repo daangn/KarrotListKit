@@ -65,7 +65,11 @@ extension UICollectionView {
         }
 
         if !changeset.elementUpdated.isEmpty {
-          reloadItems(at: changeset.elementUpdated.map { IndexPath(item: $0.element, section: $0.section) })
+          if #available(iOS 15.0, *) {
+            reconfigureItems(at: changeset.elementUpdated.map { IndexPath(item: $0.element, section: $0.section) })
+          } else {
+            reloadItems(at: changeset.elementUpdated.map { IndexPath(item: $0.element, section: $0.section) })
+          }
         }
 
         for (source, target) in changeset.elementMoved {
