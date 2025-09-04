@@ -23,22 +23,22 @@ public struct CollectionViewAdapterConfiguration {
   /// cells rather than recreating them.
   ///
   /// The default value is false.
-  public let enableReconfigureWhenUpdateItem: Bool
+  public let enablesReconfigureItems: Bool
 
   /// Initialize a new instance of `UICollectionViewAdapter`.
   ///
   /// - Parameters:
   ///   - refreshControl: RefreshControl of the CollectionView
   ///   - batchUpdateInterruptCount: maximum changeSet count that can be animated updates
-  ///   - enableReconfigureWhenUpdateItem: whether to use reconfigureItems API for item updates
+  ///   - enablesReconfigureItems: whether to use reconfigureItems API for item updates
   public init(
     refreshControl: RefreshControl = .disabled(),
     batchUpdateInterruptCount: Int = 100,
-    enableReconfigureWhenUpdateItem: Bool = false
+    enablesReconfigureItems: Bool = false
   ) {
     self.refreshControl = refreshControl
     self.batchUpdateInterruptCount = batchUpdateInterruptCount
-    self.enableReconfigureWhenUpdateItem = enableReconfigureWhenUpdateItem
+    self.enablesReconfigureItems = enablesReconfigureItems
   }
 }
 
