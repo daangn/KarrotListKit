@@ -11,6 +11,7 @@ extension UICollectionView {
     using stagedChangeset: StagedChangeset<C>,
     interrupt: ((Changeset<C>) -> Bool)? = nil,
     setData: (C) -> Void,
+    enablesReconfigureItems: Bool,
     completion: ((Bool) -> ())? = nil
   ) {
     if stagedChangeset.isEmpty {
@@ -65,7 +66,11 @@ extension UICollectionView {
         }
 
         if !changeset.elementUpdated.isEmpty {
-          reloadItems(at: changeset.elementUpdated.map { IndexPath(item: $0.element, section: $0.section) })
+          if #available(iOS 15.0, *), enablesReconfigureItems {
+            reconfigureItems(at: changeset.elementUpdated.map { IndexPath(item: $0.element, section: $0.section) })
+          } else {
+            reloadItems(at: changeset.elementUpdated.map { IndexPath(item: $0.element, section: $0.section) })
+          }
         }
 
         for (source, target) in changeset.elementMoved {

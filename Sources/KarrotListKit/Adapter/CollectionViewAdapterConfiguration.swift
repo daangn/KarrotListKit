@@ -18,17 +18,27 @@ public struct CollectionViewAdapterConfiguration {
   /// The default value is 100.
   public let batchUpdateInterruptCount: Int
 
+  /// If true, uses UICollectionView's reconfigureItems API when updating items
+  /// instead of reloadItems. This provides better performance by updating existing
+  /// cells rather than recreating them.
+  ///
+  /// The default value is false.
+  public let enablesReconfigureItems: Bool
+
   /// Initialize a new instance of `UICollectionViewAdapter`.
   ///
   /// - Parameters:
   ///   - refreshControl: RefreshControl of the CollectionView
   ///   - batchUpdateInterruptCount: maximum changeSet count that can be animated updates
+  ///   - enablesReconfigureItems: whether to use reconfigureItems API for item updates
   public init(
     refreshControl: RefreshControl = .disabled(),
-    batchUpdateInterruptCount: Int = 100
+    batchUpdateInterruptCount: Int = 100,
+    enablesReconfigureItems: Bool = false
   ) {
     self.refreshControl = refreshControl
     self.batchUpdateInterruptCount = batchUpdateInterruptCount
+    self.enablesReconfigureItems = enablesReconfigureItems
   }
 }
 

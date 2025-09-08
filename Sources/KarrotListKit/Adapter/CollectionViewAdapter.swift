@@ -210,6 +210,7 @@ final public class CollectionViewAdapter: NSObject {
       setData: { sections in
         list?.sections = sections
       },
+      enablesReconfigureItems: configuration.enablesReconfigureItems,
       completion: completion
     )
   }
