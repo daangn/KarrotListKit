@@ -17,10 +17,6 @@ public protocol CollectionViewLayoutAdapterDataSource: AnyObject {
   /// - Parameter index: The index of the section to return.
   /// - Returns: The section at the index.
   func sectionItem(at index: Int) -> Section?
-
-  /// Returns the ComponentSizeStorage that managing the cached size information.
-  /// - Returns: The ComponentSizeStorage that managing the cached size information.
-  func sizeStorage() -> ComponentSizeStorage
 }
 
 /// The `CollectionViewLayoutAdaptable` interface serves as an adapter between the UICollectionViewCompositionalLayout logic and the `KarrotListKit` layout logic
@@ -83,8 +79,7 @@ public class CollectionViewLayoutAdapter: CollectionViewLayoutAdaptable {
 
     return sectionItem.layout(
       index: index,
-      environment: environment,
-      sizeStorage: dataSource.sizeStorage()
+      environment: environment
     )
   }
 }

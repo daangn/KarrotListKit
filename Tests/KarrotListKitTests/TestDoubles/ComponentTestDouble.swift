@@ -13,10 +13,6 @@ struct DummyComponent: Component, ComponentResourcePrefetchable {
   typealias Content = UIView
   typealias Coordinator = Void
 
-  var layoutMode: ContentLayoutMode {
-    .flexibleHeight(estimatedHeight: 44.0)
-  }
-
   var viewModel: ViewModel = .init()
 
   func renderContent(coordinator: Coordinator) -> UIView {
@@ -38,12 +34,6 @@ struct ComponentStub: Component {
   var viewModel: ViewModel {
     viewModelStub
   }
-
-  var layoutMode: ContentLayoutMode {
-    layoutModeStub
-  }
-
-  var layoutModeStub: ContentLayoutMode!
   var viewModelStub: ViewModel!
   var contentStub: UIView!
 
@@ -65,10 +55,6 @@ class ComponentSpy: Component {
 
   var viewModel: ViewModel {
     .init()
-  }
-
-  var layoutMode: ContentLayoutMode {
-    .fitContainer
   }
 
   var renderContentCallCount = 0
