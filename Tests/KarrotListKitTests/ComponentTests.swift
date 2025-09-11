@@ -6,6 +6,9 @@ import XCTest
 
 @testable import KarrotListKit
 
+#if canImport(UIKit)
+import UIKit
+
 final class ComponentTests: XCTestCase {
 
   struct FatalComponent: Component {
@@ -51,3 +54,4 @@ final class ComponentTests: XCTestCase {
     XCTAssertEqual(content.frame, frame)
   }
 }
+#endif

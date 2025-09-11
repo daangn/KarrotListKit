@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 /// This object provides default layout factories
@@ -151,3 +152,4 @@ public struct DefaultCompositionalLayoutSectionFactory: CompositionalLayoutSecti
     return copy
   }
 }
+#endif

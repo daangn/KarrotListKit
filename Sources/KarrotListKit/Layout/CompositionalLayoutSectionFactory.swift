@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 /// A protocol that creates and returns layout for section
@@ -194,3 +195,4 @@ extension CompositionalLayoutSectionFactory {
     }
   }
 }
+#endif

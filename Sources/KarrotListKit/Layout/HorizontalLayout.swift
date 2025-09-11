@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 /// This layout supports horizontal scrolling.
@@ -114,3 +115,4 @@ public struct HorizontalLayout: CompositionalLayoutSectionFactory {
     return copy
   }
 }
+#endif

@@ -2,9 +2,10 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
-import UIKit
-
 import DifferenceKit
+
+#if canImport(UIKit)
+import UIKit
 
 extension UICollectionView {
   func reload<C>(
@@ -78,4 +79,4 @@ extension UICollectionView {
     }
   }
 }
-
+#endif

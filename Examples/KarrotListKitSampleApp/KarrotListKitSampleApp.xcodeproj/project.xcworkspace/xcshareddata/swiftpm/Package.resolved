@@ -1,43 +1,51 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "DifferenceKit",
-        "repositoryURL": "https://github.com/ra1028/DifferenceKit.git",
-        "state": {
-          "branch": null,
-          "revision": "073b9671ce2b9b5b96398611427a1f929927e428",
-          "version": "1.3.0"
-        }
-      },
-      {
-        "package": "FlexLayout",
-        "repositoryURL": "https://github.com/layoutBox/FlexLayout.git",
-        "state": {
-          "branch": null,
-          "revision": "68c784bea59e4ed905f16cc6c62d22afd34d68d9",
-          "version": "2.2.0"
-        }
-      },
-      {
-        "package": "PinLayout",
-        "repositoryURL": "https://github.com/layoutBox/PinLayout.git",
-        "state": {
-          "branch": null,
-          "revision": "8eaa3a15e4dcabaca4c95aea4c0ff0c9b4a67213",
-          "version": "1.10.5"
-        }
-      },
-      {
-        "package": "yoga",
-        "repositoryURL": "https://github.com/facebook/yoga.git",
-        "state": {
-          "branch": null,
-          "revision": "042f5013152eb81c1552dec945b88f7b95ca350f",
-          "version": "3.2.1"
-        }
+  "originHash" : "0b5eaa67f50c0214fd087c1770246a75503c7051b3953d97f40cadf05c5f3f31",
+  "pins" : [
+    {
+      "identity" : "differencekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ra1028/DifferenceKit.git",
+      "state" : {
+        "revision" : "073b9671ce2b9b5b96398611427a1f929927e428",
+        "version" : "1.3.0"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "flexlayout",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/layoutBox/FlexLayout.git",
+      "state" : {
+        "revision" : "68c784bea59e4ed905f16cc6c62d22afd34d68d9",
+        "version" : "2.2.0"
+      }
+    },
+    {
+      "identity" : "pinlayout",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/layoutBox/PinLayout.git",
+      "state" : {
+        "revision" : "8eaa3a15e4dcabaca4c95aea4c0ff0c9b4a67213",
+        "version" : "1.10.5"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "f99ae8aa18f0cf0d53481901f88a0991dc3bd4a2",
+        "version" : "601.0.1"
+      }
+    },
+    {
+      "identity" : "yoga",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/facebook/yoga.git",
+      "state" : {
+        "revision" : "042f5013152eb81c1552dec945b88f7b95ca350f",
+        "version" : "3.2.1"
+      }
+    }
+  ],
+  "version" : 3
 }

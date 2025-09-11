@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 /// The configuration for the CollectionViewAdapter object.
@@ -57,3 +58,4 @@ extension CollectionViewAdapterConfiguration {
     }
   }
 }
+#endif

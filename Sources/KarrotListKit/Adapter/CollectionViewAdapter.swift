@@ -3,9 +3,10 @@
 //
 
 import Combine
-import UIKit
-
 import DifferenceKit
+
+#if canImport(UIKit)
+import UIKit
 
 /// An adapter for `UICollectionView`
 ///
@@ -771,3 +772,4 @@ extension CollectionViewAdapter: UICollectionViewDataSource {
     }
   }
 }
+#endif
