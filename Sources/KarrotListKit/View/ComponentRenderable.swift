@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 protocol ComponentRenderable: AnyObject {
@@ -45,3 +46,4 @@ extension ComponentRenderable where Self: UIView {
     }
   }
 }
+#endif

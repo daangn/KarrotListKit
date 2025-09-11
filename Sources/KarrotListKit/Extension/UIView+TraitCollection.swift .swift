@@ -2,6 +2,7 @@
 //  Copyright (c) 2025 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 extension UIView {
@@ -25,3 +26,4 @@ extension UIView {
     return false
   }
 }
+#endif

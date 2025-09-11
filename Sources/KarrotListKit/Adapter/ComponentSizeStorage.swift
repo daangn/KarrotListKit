@@ -4,6 +4,9 @@
 
 import Foundation
 
+#if canImport(UIKit)
+import CoreGraphics
+
 /// A protocol that defines the functionality for storing the sizes of components.
 public protocol ComponentSizeStorage {
 
@@ -79,3 +82,4 @@ final class ComponentSizeStorageImpl: ComponentSizeStorage {
     footerSizeStore[hash] = size
   }
 }
+#endif

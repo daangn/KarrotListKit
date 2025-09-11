@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 extension UICollectionView {
@@ -14,3 +15,4 @@ extension UICollectionView {
     )
   }
 }
+#endif

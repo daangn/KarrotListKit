@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 /// This structure encapsulates the willDisplayEvent event information and contains a closure object for handling the willDisplayEvent event.
@@ -21,3 +22,4 @@ public struct WillDisplayEvent: ListingViewEvent {
   /// A closure that's called when the view being added
   let handler: (EventContext) -> Void
 }
+#endif

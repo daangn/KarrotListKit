@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 /// This structure encapsulates the did end dragging event information and contains a closure object for handling the did end dragging event.
@@ -19,3 +20,4 @@ public struct DidEndDraggingEvent: ListingViewEvent {
   /// A closure that's called when the user finished scrolling the content.
   let handler: (EventContext) -> Void
 }
+#endif

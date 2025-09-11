@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(SwiftUI) && canImport(UIKit)
 import SwiftUI
 
 struct ComponentRepresented<C: Component>: UIViewRepresentable {
@@ -33,3 +34,4 @@ extension Component {
     ComponentRepresented(component: self)
   }
 }
+#endif

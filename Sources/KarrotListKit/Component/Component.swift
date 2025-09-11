@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 /// The Component is the smallest unit within the framework.
@@ -80,3 +81,4 @@ extension Component where Content: UIView {
     ])
   }
 }
+#endif

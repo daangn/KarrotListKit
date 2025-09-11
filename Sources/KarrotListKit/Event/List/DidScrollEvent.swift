@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 /// This structure encapsulates the did scroll event information and contains a closure object for handling the did scroll event.
@@ -15,3 +16,4 @@ public struct DidScrollEvent: ListingViewEvent {
   /// A closure that's called when the user scrolls the content view within the collectionView.
   let handler: (EventContext) -> Void
 }
+#endif
