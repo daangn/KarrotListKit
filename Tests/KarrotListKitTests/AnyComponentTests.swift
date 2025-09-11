@@ -6,6 +6,7 @@ import XCTest
 
 @testable import KarrotListKit
 
+#if canImport(UIKit)
 final class AnyComponentTests: XCTestCase {
 
   func test_properties() {
@@ -53,3 +54,4 @@ final class AnyComponentTests: XCTestCase {
     XCTAssertIdentical(anyComponent.as(ComponentSpy.self), component)
   }
 }
+#endif

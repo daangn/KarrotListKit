@@ -3,6 +3,8 @@
 //
 
 import Combine
+
+#if canImport(UIKit)
 import UIKit
 
 public final class UICollectionViewComponentCell: UICollectionViewCell, ComponentRenderable {
@@ -89,3 +91,4 @@ public final class UICollectionViewComponentCell: UICollectionViewCell, Componen
     return attributes
   }
 }
+#endif

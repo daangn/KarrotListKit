@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 /// This structure encapsulates the unhighlight event information and contains a closure object for handling the unhighlight event.
@@ -22,4 +23,4 @@ public struct UnhighlightEvent: ListingViewEvent {
   /// A closure that's called when the cell was unhighlight
   let handler: (EventContext) -> Void
 }
-
+#endif

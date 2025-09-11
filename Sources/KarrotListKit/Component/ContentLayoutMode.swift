@@ -4,6 +4,9 @@
 
 import Foundation
 
+#if canImport(UIKit)
+import CoreGraphics
+
 /// An enumeration that defines how a `Component`'s content should be laid out in a `UICollectionView`.
 public enum ContentLayoutMode: Equatable {
 
@@ -28,3 +31,4 @@ public enum ContentLayoutMode: Equatable {
   /// - Parameter estimatedSize: The estimated size of the content.
   case fitContent(estimatedSize: CGSize)
 }
+#endif

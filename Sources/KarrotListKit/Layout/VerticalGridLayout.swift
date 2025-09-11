@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 /// This layout supports grid-style vertical scrolling.
@@ -142,3 +143,4 @@ public struct VerticalGridLayout: CompositionalLayoutSectionFactory {
     return copy
   }
 }
+#endif

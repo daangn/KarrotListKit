@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 @testable import KarrotListKit
@@ -82,3 +83,4 @@ class ComponentSpy: Component {
     renderCallCount += 1
   }
 }
+#endif

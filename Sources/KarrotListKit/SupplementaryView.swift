@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 /// The `SupplementaryView` that represents a supplementary view in a `UICollectionView`.
@@ -69,3 +70,4 @@ extension SupplementaryView {
     registerEvent(DidEndDisplayingEvent(handler: handler))
   }
 }
+#endif

@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 /// A protocol that manage data and size information for List
@@ -88,3 +89,4 @@ public class CollectionViewLayoutAdapter: CollectionViewLayoutAdaptable {
     )
   }
 }
+#endif

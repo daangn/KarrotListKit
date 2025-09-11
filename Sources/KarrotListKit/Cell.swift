@@ -2,9 +2,10 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
-import UIKit
-
 import DifferenceKit
+
+#if canImport(UIKit)
+import UIKit
 
 /// The `Cell` that representing a UICollectionViewCell.
 public struct Cell: Identifiable, ListingViewEventHandler {
@@ -108,3 +109,4 @@ extension Cell: Differentiable {
     self == source
   }
 }
+#endif

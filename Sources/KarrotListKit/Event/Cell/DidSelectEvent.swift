@@ -4,6 +4,8 @@
 
 import Foundation
 
+#if canImport(UIKit)
+
 /// This structure encapsulates the selection event information and contains a closure object for handling the selection event.
 public struct DidSelectEvent: ListingViewEvent {
 
@@ -19,3 +21,4 @@ public struct DidSelectEvent: ListingViewEvent {
   /// A closure that's called when the cell was selected
   let handler: (EventContext) -> Void
 }
+#endif

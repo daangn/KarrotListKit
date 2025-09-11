@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 /// This layout supports vertical scrolling.
@@ -104,3 +105,4 @@ public struct VerticalLayout: CompositionalLayoutSectionFactory {
     return copy
   }
 }
+#endif

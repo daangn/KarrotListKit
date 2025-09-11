@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 /// A type-erased wrapper for any `Component`'s `ViewModel` that conforms to `Equatable`.
@@ -173,3 +174,4 @@ private struct AnyComponentBox<Base: Component>: ComponentBox {
     baseComponent.makeCoordinator()
   }
 }
+#endif

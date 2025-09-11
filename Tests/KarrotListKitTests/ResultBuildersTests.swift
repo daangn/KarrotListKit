@@ -6,6 +6,7 @@ import XCTest
 
 @testable import KarrotListKit
 
+#if canImport(UIKit)
 final class ResultBuildersTests: XCTestCase {
 
   struct DummyComponent: Component {
@@ -234,3 +235,4 @@ extension ResultBuildersTests {
     XCTAssertEqual(list.sections.count, 23)
   }
 }
+#endif

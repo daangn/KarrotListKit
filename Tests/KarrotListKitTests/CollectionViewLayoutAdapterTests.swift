@@ -3,12 +3,15 @@
 //
 
 import Combine
+#if canImport(UIKit)
 import UIKit
+#endif
 
 import XCTest
 
 @testable import KarrotListKit
 
+#if canImport(UIKit)
 final class CollectionViewLayoutAdapterTests: XCTestCase {
 
   final class NSCollectionLayoutEnvironmentDummy: NSObject, NSCollectionLayoutEnvironment {
@@ -146,3 +149,4 @@ extension CollectionViewLayoutAdapterTests {
     XCTAssertNotNil(sectionLayout)
   }
 }
+#endif

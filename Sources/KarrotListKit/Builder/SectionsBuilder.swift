@@ -4,6 +4,8 @@
 
 import Foundation
 
+#if canImport(UIKit)
+
 /// Provides a resultBuilder for creating an array of section.
 @resultBuilder
 public enum SectionsBuilder {
@@ -43,3 +45,4 @@ public enum SectionsBuilder {
     components.flatMap { $0 }
   }
 }
+#endif
