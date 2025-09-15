@@ -20,15 +20,11 @@ final class CollectionViewAdapterTests: XCTestCase {
 
   final class CollectionViewMock: UICollectionView {
 
-    override var window: UIWindow? {
-      .init()
-    }
-
     var contentSizeHandler: (() -> CGSize)?
 
     override var contentSize: CGSize {
       get { contentSizeHandler?() ?? super.contentSize }
-      set {  }
+      set {}
     }
 
     var indexPathsForVisibleItemsHandler: (() -> [IndexPath])?
@@ -1274,12 +1270,12 @@ extension CollectionViewAdapterTests {
         viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionFooter,
         at: IndexPath(item: 0, section: 0)
       ) as! UICollectionComponentReusableView
-    
+
     // when
     _ = header.preferredLayoutAttributesFitting(
       UICollectionViewLayoutAttributes(forCellWith: IndexPath(item: 0, section: 0))
     )
-    
+
     // then
     XCTAssertEqual(
       sut.sizeStorage().footerSize(for: sectionID)?.size,
@@ -1287,7 +1283,6 @@ extension CollectionViewAdapterTests {
     )
   }
 }
-
 
 // MARK: - Reached End Event Trigger
 
