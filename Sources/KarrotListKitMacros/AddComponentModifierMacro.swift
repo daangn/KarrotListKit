@@ -9,16 +9,24 @@ import SwiftSyntaxMacros
 
 public struct AddComponentModifierMacro: PeerMacro {
   public static func expansion(
-    of _: SwiftSyntax.AttributeSyntax,
+    of node: AttributeSyntax,
     providingPeersOf declaration: some DeclSyntaxProtocol,
     in context: some MacroExpansionContext
   ) throws -> [DeclSyntax] {
     // struct 선언인지 확인
+    #if canImport(SwiftSyntax600)
     guard
       let structDecl = context.lexicalContext.compactMap({ $0.as(StructDeclSyntax.self) }).first
     else {
       throw KarrotListKitMacroError(message: "@AddComponentModifier can only be applied to structs")
     }
+    #else
+    guard
+      let structDecl = declaration.parent?.as(StructDeclSyntax.self)
+    else {
+      throw KarrotListKitMacroError(message: "@AddComponentModifier can only be applied to structs")
+    }
+    #endif
 
     // 변수 선언인지 확인
     guard
