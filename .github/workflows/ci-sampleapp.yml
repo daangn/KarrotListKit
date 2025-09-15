@@ -17,6 +17,9 @@ concurrency:
 jobs:
   build:
     runs-on: macos-15
+    defaults:
+      run:
+        working-directory: Examples/KarrotListKitSampleApp
 
     env:
       SCHEME: KarrotListKitSampleApp
@@ -30,7 +33,6 @@ jobs:
         shell: bash
 
       - name: Run `build-for-testing`
-        working-directory: ./Examples/KarrotListKitSampleApp
         run: |
           set -o pipefail && xcodebuild build-for-testing \
             -scheme "$SCHEME" \
