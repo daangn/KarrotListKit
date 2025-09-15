@@ -20,13 +20,13 @@ jobs:
 
     env:
       SCHEME: KarrotListKitSampleApp
-      DESTINATION: platform=iOS Simulator,name=iPhone 16,OS=18.1
+      DESTINATION: platform=iOS Simulator,name=iPhone 16,OS=18.5
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup Xcode Version
-        run: sudo xcode-select --switch /Applications/Xcode_16.1.0.app
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app/Contents/Developer
         shell: bash
 
       - name: Run `build-for-testing`
