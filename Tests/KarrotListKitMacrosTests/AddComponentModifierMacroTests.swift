@@ -152,7 +152,7 @@ final class AddComponentModifierMacroTests: XCTestCase {
         """,
       diagnostics: [
         DiagnosticSpec(
-          message: "KarrotListKitMacroError(message: \"@AddComponentModifier can only be applied to structs\")",
+          message: "KarrotListKitMacroError(message: \"@AddComponentModifier can only be used on properties inside structs\")",
           line: 2,
           column: 3
         ),

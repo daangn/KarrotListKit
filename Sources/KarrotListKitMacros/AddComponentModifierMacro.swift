@@ -18,13 +18,13 @@ public struct AddComponentModifierMacro: PeerMacro {
     guard
       let structDecl = context.lexicalContext.compactMap({ $0.as(StructDeclSyntax.self) }).first
     else {
-      throw KarrotListKitMacroError(message: "@AddComponentModifier can only be applied to structs")
+      throw KarrotListKitMacroError(message: "@AddComponentModifier can only be used on properties inside structs")
     }
     #else
     guard
       let structDecl = declaration.parent?.as(StructDeclSyntax.self)
     else {
-      throw KarrotListKitMacroError(message: "@AddComponentModifier can only be applied to structs")
+      throw KarrotListKitMacroError(message: "@AddComponentModifier can only be used on properties inside structs")
     }
     #endif
 
