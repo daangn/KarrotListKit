@@ -2,9 +2,10 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
-import UIKit
-
 import DifferenceKit
+
+#if canImport(UIKit)
+import UIKit
 
 /// The `Section` that representing a UICollectionView Section.
 ///
@@ -230,3 +231,4 @@ extension Section: DifferentiableSection {
     self == source
   }
 }
+#endif

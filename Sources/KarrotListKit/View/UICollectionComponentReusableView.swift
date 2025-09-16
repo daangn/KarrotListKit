@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 final class UICollectionComponentReusableView: UICollectionReusableView, ComponentRenderable {
@@ -80,3 +81,4 @@ final class UICollectionComponentReusableView: UICollectionReusableView, Compone
     return attributes
   }
 }
+#endif

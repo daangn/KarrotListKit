@@ -4,5 +4,8 @@
 
 import Foundation
 
+#if canImport(UIKit)
+
 /// Represents a component that can be uniquely identify.
 public protocol IdentifiableComponent: Identifiable, Component {}
+#endif

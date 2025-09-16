@@ -2,6 +2,7 @@
 //  Copyright (c) 2024 Danggeun Market Inc.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 /// This structure encapsulates the will begin decelerating event information and contains a closure object for handling the will begin decelerating event.
@@ -15,3 +16,4 @@ public struct WillBeginDeceleratingEvent: ListingViewEvent {
   /// A closure that's called when the collection view is starting to decelerate the scrolling movement.
   let handler: (EventContext) -> Void
 }
+#endif

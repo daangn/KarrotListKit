@@ -4,6 +4,8 @@
 
 import Foundation
 
+#if canImport(UIKit)
+
 /// Provides a resultBuilder for creating an array of cell.
 @resultBuilder
 public enum CellsBuilder {
@@ -51,3 +53,4 @@ public enum CellsBuilder {
     components.flatMap { $0 }
   }
 }
+#endif

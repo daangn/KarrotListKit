@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.head_ref || github.run_id }}
+  group: "${{ github.workflow }}-${{ github.head_ref || github.run_id }}-${{ github.job }}"
   cancel-in-progress: true
 
 jobs:
@@ -29,8 +29,12 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup Xcode Version
-        run: sudo xcode-select --switch /Applications/Xcode_16.4.app/Contents/Developer
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app
         shell: bash
+
+      - name: Set Swift Syntax Prebuilts
+        run: |
+          defaults write com.apple.dt.Xcode IDEPackageEnablePrebuilts YES
 
       - name: Run `build-for-testing`
         run: |

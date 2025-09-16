@@ -10,12 +10,17 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.head_ref || github.run_id }}
+  group: "${{ github.workflow }}-${{ github.head_ref || github.run_id }}-${{ github.job }}"
   cancel-in-progress: true
 
 jobs:
   build_and_test:
+    name: Build and Test
     runs-on: macos-15
+    strategy:
+      matrix:
+        xcode: ['16.4']
+        config: ['Debug', 'Release']
 
     env:
       SCHEME: KarrotListKit
@@ -24,16 +29,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Xcode Version
-        run: sudo xcode-select --switch /Applications/Xcode_16.4.app/Contents/Developer
+      - name: Setup Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
         shell: bash
+
+      - name: Set Swift Syntax Prebuilts
+        run: |
+          defaults write com.apple.dt.Xcode IDEPackageEnablePrebuilts YES
 
       - name: Run `build-for-testing`
         run: |
           set -o pipefail && xcodebuild build-for-testing \
             -scheme "$SCHEME" \
             -destination "$DESTINATION" \
-            -configuration Debug \
+            -configuration ${{ matrix.config }} \
+            ENABLE_TESTABILITY=YES \
             | xcbeautify --renderer github-actions
 
       - name: Run `test-without-building`
@@ -41,5 +51,16 @@ jobs:
           set -o pipefail && xcodebuild test-without-building \
             -scheme "$SCHEME" \
             -destination "$DESTINATION" \
-            -configuration Debug \
+            -configuration ${{ matrix.config }} \
+            ENABLE_TESTABILITY=YES \
             | xcbeautify --renderer github-actions
+
+  check-macro-compatibility:
+    name: Check Macro Compatibility
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Swift Macro Compatibility Check
+        uses: Matejkob/swift-macro-compatibility-check@v1

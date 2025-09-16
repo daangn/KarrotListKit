@@ -3,12 +3,15 @@
 //
 
 import Combine
+#if canImport(UIKit)
 import UIKit
+#endif
 
 import XCTest
 
 @testable import KarrotListKit
 
+#if canImport(UIKit)
 final class CollectionViewAdapterTests: XCTestCase {
 
   final class CollectionViewPrefetchingPluginDummy: CollectionViewPrefetchingPlugin {
@@ -1558,3 +1561,4 @@ extension CollectionViewAdapterTests {
     XCTAssertEqual(handlerCallCount, 1)
   }
 }
+#endif

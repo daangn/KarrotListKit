@@ -4,6 +4,8 @@
 
 import Foundation
 
+#if canImport(UIKit)
+
 /// The `List` that representing a UICollectionView.
 public struct List: ListingViewEventHandler {
 
@@ -129,3 +131,4 @@ extension List {
     registerEvent(ShouldScrollToTopEvent(handler: handler))
   }
 }
+#endif

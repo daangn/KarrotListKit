@@ -10,6 +10,18 @@ struct VerticalLayoutItemComponent: Component {
 
   let viewModel: ViewModel
 
+  @AddComponentModifier
+  var onTapButtonHandler: (() -> Void)?
+
+  @AddComponentModifier
+  var onTapButtonWithValueHandler: ((Int) -> Void)?
+
+  @AddComponentModifier
+  var onTapButtonWithValuesHandler: ((Int, String) -> Void)?
+
+  @AddComponentModifier
+  var onTapButtonWithNamedValuesHandler: ((_ intValue: Int, _ stringValue: String) -> Void)?
+
   init(viewModel: ViewModel) {
     self.viewModel = viewModel
   }
