@@ -1,8 +1,6 @@
 //
-//  File.swift
-//  KarrotListKit
-//
 //  Created by Daangn Jaxtyn on 7/18/25.
+//  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
 import SwiftSyntaxMacros
@@ -22,7 +20,7 @@ final class AddComponentModifierMacroTests: XCTestCase {
   #endif
 
   func testExpansionWithPublicStruct() throws {
-    #if canImport(KarrotListKitMacros)
+    #if canImport(KarrotListKitMacros) && canImport(SwiftSyntax600)
     assertMacroExpansion(
       """
       public struct VerticalLayoutItemComponent: Component {
@@ -81,7 +79,7 @@ final class AddComponentModifierMacroTests: XCTestCase {
   }
 
   func testExpansionWithInternalStruct() throws {
-    #if canImport(KarrotListKitMacros)
+    #if canImport(KarrotListKitMacros) && canImport(SwiftSyntax600)
     assertMacroExpansion(
       """
       struct InternalComponent: Component {
@@ -109,7 +107,7 @@ final class AddComponentModifierMacroTests: XCTestCase {
   }
 
   func testExpansionWithPrivateStruct() throws {
-    #if canImport(KarrotListKitMacros)
+    #if canImport(KarrotListKitMacros) && canImport(SwiftSyntax600)
     assertMacroExpansion(
       """
       private struct PrivateComponent: Component {
@@ -137,7 +135,7 @@ final class AddComponentModifierMacroTests: XCTestCase {
   }
 
   func testNonStructError() throws {
-    #if canImport(KarrotListKitMacros)
+    #if canImport(KarrotListKitMacros) && canImport(SwiftSyntax600)
     assertMacroExpansion(
       """
       enum PrivateComponent: Component {
@@ -166,7 +164,7 @@ final class AddComponentModifierMacroTests: XCTestCase {
   }
 
   func testPropertyError() throws {
-    #if canImport(KarrotListKitMacros)
+    #if canImport(KarrotListKitMacros) && canImport(SwiftSyntax600)
     assertMacroExpansion(
       """
       struct PrivateComponent: Component {
@@ -221,4 +219,32 @@ final class AddComponentModifierMacroTests: XCTestCase {
     #endif
   }
 
+  func testSwiftSyntaxVersionError() throws {
+    #if canImport(KarrotListKitMacros) && !canImport(SwiftSyntax600)
+    assertMacroExpansion(
+      """
+      struct PrivateComponent: Component {
+        @AddComponentModifier
+        var onTapHandler: (() -> Void)?
+      }
+      """,
+      expandedSource: """
+        enum PrivateComponent: Component {
+          var onTapHandler: (() -> Void)?
+        }
+        """,
+      diagnostics: [
+        DiagnosticSpec(
+          message: "KarrotListKitMacroError(message: \"@AddComponentModifier macro requires SwiftSyntax 600.0.0 or later.\")",
+          line: 2,
+          column: 3
+        ),
+      ],
+      macros: testMacros,
+      indentationWidth: .spaces(2)
+    )
+    #else
+    throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
+  }
 }
