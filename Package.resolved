@@ -1,4 +1,5 @@
 {
+  "originHash" : "e280704b7a9f32eb19580af23176f57bd572eea60ffc46f6776438305dec5882",
   "pins" : [
     {
       "identity" : "differencekit",
@@ -14,10 +15,10 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax.git",
       "state" : {
-        "revision" : "f99ae8aa18f0cf0d53481901f88a0991dc3bd4a2",
-        "version" : "601.0.1"
+        "revision" : "4799286537280063c85a32f09884cfbca301b1a1",
+        "version" : "602.0.0"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
