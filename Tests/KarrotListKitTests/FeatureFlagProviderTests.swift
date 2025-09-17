@@ -18,6 +18,7 @@ final class FeatureFlagProviderTests: XCTestCase {
     }
   }
 
+  @MainActor
   func test_default_featureFlags_is_empty() {
     // given
     let sut = KarrotListKitFeatureFlag.provider
@@ -29,6 +30,7 @@ final class FeatureFlagProviderTests: XCTestCase {
     XCTAssertTrue(featureFlags.isEmpty)
   }
 
+  @MainActor
   func test_usesCachedViewSize_isEnabled() {
     [true, false].forEach { flag in
       // given

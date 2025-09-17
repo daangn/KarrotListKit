@@ -5,6 +5,7 @@
 import Foundation
 
 /// An interface for injecting a feature flag provider.
+@MainActor
 public enum KarrotListKitFeatureFlag {
 
   /// The feature flag provider used by `KarrotListKit`.
