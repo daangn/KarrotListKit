@@ -4,7 +4,7 @@
 
 import Foundation
 
-#if canImport(UIKit)
+#if canImport(UIKit) && compiler(>=6.0)
 @attached(peer, names: arbitrary)
 public macro AddComponentModifier() = #externalMacro(
   module: "KarrotListKitMacros",
