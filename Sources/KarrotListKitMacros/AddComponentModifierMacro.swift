@@ -1,5 +1,6 @@
 //
-//  Copyright (c) 2024 Danggeun Market Inc.
+//  Created by Daangn Jaxtyn on 7/18/25.
+//  Copyright © 2025 Danggeun Market Inc. All rights reserved.
 //
 
 import Foundation
@@ -13,22 +14,13 @@ public struct AddComponentModifierMacro: PeerMacro {
     providingPeersOf declaration: some DeclSyntaxProtocol,
     in context: some MacroExpansionContext
   ) throws -> [DeclSyntax] {
-    // struct 선언인지 확인
     #if canImport(SwiftSyntax600)
     guard
       let structDecl = context.lexicalContext.compactMap({ $0.as(StructDeclSyntax.self) }).first
     else {
       throw KarrotListKitMacroError(message: "@AddComponentModifier can only be used on properties inside structs")
     }
-    #else
-    guard
-      let structDecl = declaration.parent?.as(StructDeclSyntax.self)
-    else {
-      throw KarrotListKitMacroError(message: "@AddComponentModifier can only be used on properties inside structs")
-    }
-    #endif
 
-    // 변수 선언인지 확인
     guard
       let varDecl = declaration.as(VariableDeclSyntax.self),
       varDecl.bindingSpecifier.tokenKind == .keyword(.var)
@@ -38,7 +30,6 @@ public struct AddComponentModifierMacro: PeerMacro {
       )
     }
 
-    // 첫 번째 바인딩 가져오기
     guard
       let binding = varDecl.bindings.first,
       let identifier = binding.pattern.as(IdentifierPatternSyntax.self),
@@ -52,21 +43,8 @@ public struct AddComponentModifierMacro: PeerMacro {
     }
 
     let propertyName = identifier.identifier.text
-
-    // Handler 접미사 확인
-    guard propertyName.hasSuffix("Handler") else {
-      throw KarrotListKitMacroError(
-        message: "@AddComponentModifier can only be applied to properties with 'Handler' suffix"
-      )
-    }
-
-    // struct의 access level 가져오기
     let accessLevelString = extractAccessLevel(from: structDecl)
-
-    // 메서드 이름 생성 (Handler 접미사 제거)
     let methodName = propertyName.replacingOccurrences(of: "Handler", with: "")
-
-    // 클로저 파라미터 분석 및 메서드 시그니처 생성
     let handlerType = functionType.description.trimmingCharacters(in: .whitespaces)
 
     let componentModifier = """
@@ -80,6 +58,11 @@ public struct AddComponentModifierMacro: PeerMacro {
     return [
       DeclSyntax(stringLiteral: componentModifier),
     ]
+    #else
+    throw KarrotListKitMacroError(
+      message: "@AddComponentModifier macro requires SwiftSyntax 600.0.0 or later."
+    )
+    #endif
   }
 
   private static func convertToFunctionType(
@@ -99,9 +82,9 @@ public struct AddComponentModifierMacro: PeerMacro {
   private static func extractAccessLevel(from structDecl: StructDeclSyntax) -> String {
     let structAccessLevel = structDecl.modifiers.first(where: { modifier in
       modifier.name.tokenKind == .keyword(.public) ||
-      modifier.name.tokenKind == .keyword(.internal) ||
-      modifier.name.tokenKind == .keyword(.fileprivate) ||
-      modifier.name.tokenKind == .keyword(.private)
+        modifier.name.tokenKind == .keyword(.internal) ||
+        modifier.name.tokenKind == .keyword(.fileprivate) ||
+        modifier.name.tokenKind == .keyword(.private)
     })
 
     guard let structAccessLevel else { return "" }
