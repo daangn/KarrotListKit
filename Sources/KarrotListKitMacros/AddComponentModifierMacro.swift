@@ -43,12 +43,6 @@ public struct AddComponentModifierMacro: PeerMacro {
     }
 
     let propertyName = identifier.identifier.text
-    guard propertyName.hasSuffix("Handler") else {
-      throw KarrotListKitMacroError(
-        message: "@AddComponentModifier can only be applied to properties with 'Handler' suffix"
-      )
-    }
-
     let accessLevelString = extractAccessLevel(from: structDecl)
     let methodName = propertyName.replacingOccurrences(of: "Handler", with: "")
     let handlerType = functionType.description.trimmingCharacters(in: .whitespaces)

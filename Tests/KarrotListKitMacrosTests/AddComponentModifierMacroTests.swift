@@ -187,6 +187,12 @@ final class AddComponentModifierMacroTests: XCTestCase {
           let onTap2Handler: (() -> Void)? = nil
           var onTap3Handler: Int = 0
           var onTap4: (() -> Void)?
+
+          func onTap4(_ handler: @escaping () -> Void) -> Self {
+            var copy = self
+            copy.onTap4 = handler
+            return copy
+          }
         }
         """,
       diagnostics: [
@@ -203,11 +209,6 @@ final class AddComponentModifierMacroTests: XCTestCase {
         DiagnosticSpec(
           message: "KarrotListKitMacroError(message: \"@AddComponentModifier can only be applied to optional closure properties\")",
           line: 8,
-          column: 3
-        ),
-        DiagnosticSpec(
-          message: "KarrotListKitMacroError(message: \"@AddComponentModifier can only be applied to properties with \\'Handler\\' suffix\")",
-          line: 11,
           column: 3
         ),
       ],
